@@ -121,7 +121,7 @@ public class MainFragment extends Fragment {
                     referencia = Double.parseDouble(etReferencia.getText().toString());
                     tamanoPosicionC = tamanoPosicion / referencia;
                     loteC = tamanoPosicionC / 100000;
-                    tTamanoConversion.setText(String.format("%.0f", tamanoPosicionC));
+                    tTamanoConversion.setText(String.format("%,.0f", tamanoPosicionC));
                     tLoteConversion.setText(String.format("%.4f", loteC));
                 } else {
                     tTamanoConversion.setText("TPC");
@@ -130,7 +130,7 @@ public class MainFragment extends Fragment {
 
 
                 lote = tamanoPosicion / 100000;
-                tTamano.setText(String.format("%.0f", tamanoPosicion));
+                tTamano.setText(String.format("%,.0f", tamanoPosicion));
                 tLote.setText(String.format("%.4f", lote));
 
             } else {
