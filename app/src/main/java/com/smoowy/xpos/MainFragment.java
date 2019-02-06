@@ -72,7 +72,7 @@ public class MainFragment extends Fragment {
         registerForContextMenu(bApalancamiento);
         sharedPreferences = getActivity().getSharedPreferences("xPos", Context.MODE_PRIVATE);
         if (sharedPreferences.contains("tipoApalancamiento"))
-            tipoApalancamiento = sharedPreferences.getInt("tipoApalancamiento",9);
+            tipoApalancamiento = sharedPreferences.getInt("tipoApalancamiento", 9);
         cambioApalancamiento();
         return view;
     }
@@ -80,7 +80,7 @@ public class MainFragment extends Fragment {
     @Override
     public void onDestroy() {
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putInt("tipoApalancamiento",tipoApalancamiento);
+        editor.putInt("tipoApalancamiento", tipoApalancamiento);
         editor.apply();
         super.onDestroy();
     }
@@ -290,7 +290,10 @@ public class MainFragment extends Fragment {
                     loteC = tamanoPosicionC / 100000;
                     margenC = tamanoPosicionC / apalancamiento;
                     necesarioC = (cantidad / referencia) + margenC;
-                    tTamanoC.setText(String.format("%,.0f", tamanoPosicionC));
+                    if (tamanoPosicionC % 1 == 0)
+                        tTamanoC.setText(String.format("%,.0f", tamanoPosicionC));
+                    else
+                        tTamanoC.setText(String.format("%,.2f", tamanoPosicionC));
                     tLoteC.setText(String.format("%.4f", loteC));
                     tMargenC.setText(String.format("%,.2f", margenC));
                     tSeguroC.setText(String.format("%,.2f", necesarioC));
