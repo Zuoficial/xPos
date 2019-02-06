@@ -4,6 +4,7 @@ package com.smoowy.xpos;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
@@ -30,13 +31,14 @@ public class MainFragment extends Fragment {
     EditText etCantidad, etPorcentaje, etReferencia;
     TextView tTamano, tLote, tTamanoC, tLoteC,
             tCant, tPorcentaje, tConversion, tMargen, tMargenC,
-            tNecesario, tNecesarioC;
+            tSeguro, tSeguroC;
     double cantidad, porcentaje, referencia, tamanoPosicion,
             lote, tamanoPosicionC, loteC, margen, margenC, necesario, necesarioC;
-    int apalancamiento = 100;
-    int tipoApalancamiento = 6;
+    int apalancamiento;
+    int tipoApalancamiento = 9;
     ClipboardManager clipboard;
     Button bApalancamiento, bLimpiarClaro;
+    SharedPreferences sharedPreferences;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -59,8 +61,8 @@ public class MainFragment extends Fragment {
         tCant.setOnClickListener(onClickListener);
         tPorcentaje.setOnClickListener(onClickListener);
         tConversion.setOnClickListener(onClickListener);
-        tNecesario = view.findViewById(R.id.t_necesario);
-        tNecesarioC = view.findViewById(R.id.t_necesarioC);
+        tSeguro = view.findViewById(R.id.t_seguro);
+        tSeguroC = view.findViewById(R.id.t_seguroC);
         tMargen = view.findViewById(R.id.t_margen);
         tMargenC = view.findViewById(R.id.t_margenC);
         bApalancamiento = view.findViewById(R.id.b_apalancamiento);
@@ -68,9 +70,19 @@ public class MainFragment extends Fragment {
         bLimpiarClaro = view.findViewById(R.id.b_limpiar_claro);
         bLimpiarClaro.setOnClickListener(onClickListener);
         registerForContextMenu(bApalancamiento);
-
-
+        sharedPreferences = getActivity().getSharedPreferences("xPos", Context.MODE_PRIVATE);
+        if (sharedPreferences.contains("tipoApalancamiento"))
+            tipoApalancamiento = sharedPreferences.getInt("tipoApalancamiento",9);
+        cambioApalancamiento();
         return view;
+    }
+
+    @Override
+    public void onDestroy() {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt("tipoApalancamiento",tipoApalancamiento);
+        editor.apply();
+        super.onDestroy();
     }
 
     @Override
@@ -157,8 +169,8 @@ public class MainFragment extends Fragment {
                     tLoteC.setText("LC");
                     tMargen.setText("Margen");
                     tMargenC.setText("MC");
-                    tNecesario.setText("Necesario");
-                    tNecesarioC.setText("NC");
+                    tSeguro.setText("Seguro");
+                    tSeguroC.setText("SC");
                     break;
                 }
                 case R.id.b_apalancamiento: {
@@ -237,13 +249,13 @@ public class MainFragment extends Fragment {
             margen = tamanoPosicion / apalancamiento;
             necesario = cantidad + margen;
             tMargen.setText(String.format("%,.2f", margen));
-            tNecesario.setText(String.format("%,.2f", necesario));
+            tSeguro.setText(String.format("%,.2f", necesario));
 
             if (!tTamanoC.getText().toString().equals("TPC")) {
                 margenC = tamanoPosicionC / apalancamiento;
-                necesarioC = (cantidad/referencia) + margenC;
+                necesarioC = (cantidad / referencia) + margenC;
                 tMargenC.setText(String.format("%,.2f", margenC));
-                tNecesarioC.setText(String.format("%,.2f", necesarioC));
+                tSeguroC.setText(String.format("%,.2f", necesarioC));
 
             }
         }
@@ -277,18 +289,18 @@ public class MainFragment extends Fragment {
                     tamanoPosicionC = tamanoPosicion / referencia;
                     loteC = tamanoPosicionC / 100000;
                     margenC = tamanoPosicionC / apalancamiento;
-                    necesarioC = (cantidad/referencia) + margenC;
+                    necesarioC = (cantidad / referencia) + margenC;
                     tTamanoC.setText(String.format("%,.0f", tamanoPosicionC));
                     tLoteC.setText(String.format("%.4f", loteC));
                     tMargenC.setText(String.format("%,.2f", margenC));
-                    tNecesarioC.setText(String.format("%,.2f", necesarioC));
+                    tSeguroC.setText(String.format("%,.2f", necesarioC));
                 } else {
 
                     if (!tTamanoC.getText().toString().equals("TPC")) {
                         tTamanoC.setText("TPC");
                         tLoteC.setText("LC");
                         tMargenC.setText("MC");
-                        tNecesarioC.setText("NC");
+                        tSeguroC.setText("SC");
                     }
                 }
 
@@ -299,7 +311,7 @@ public class MainFragment extends Fragment {
                 tTamano.setText(String.format("%,.0f", tamanoPosicion));
                 tLote.setText(String.format("%.4f", lote));
                 tMargen.setText(String.format("%,.2f", margen));
-                tNecesario.setText(String.format("%,.2f", necesario));
+                tSeguro.setText(String.format("%,.2f", necesario));
 
 
             } else {
@@ -311,8 +323,8 @@ public class MainFragment extends Fragment {
                     tLoteC.setText("LC");
                     tMargen.setText("Margen");
                     tMargenC.setText("MC");
-                    tNecesario.setText("Necesario");
-                    tNecesarioC.setText("NC");
+                    tSeguro.setText("Seguro");
+                    tSeguroC.setText("SC");
                 }
 
             }

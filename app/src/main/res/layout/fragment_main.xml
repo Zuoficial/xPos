@@ -155,12 +155,12 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/t_necesario"
+        android:id="@+id/t_seguro"
         android:layout_width="170dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginBottom="72dp"
-        android:text="Necesario"
+        android:text="Seguro"
         android:textColor="@android:color/white"
         android:textSize="30dp"
         android:gravity="center"
@@ -213,12 +213,12 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <TextView
-        android:id="@+id/t_necesarioC"
+        android:id="@+id/t_seguroC"
         android:layout_width="170dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="72dp"
-        android:text="NC"
+        android:text="SC"
         android:textColor="@android:color/white"
         android:textSize="30dp"
         android:textAlignment="center"
