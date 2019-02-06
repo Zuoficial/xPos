@@ -73,20 +73,20 @@ public class MainFragment extends Fragment {
         bLimpiarClaro = view.findViewById(R.id.b_limpiar_claro);
         bLimpiarClaro.setOnClickListener(onClickListener);
         registerForContextMenu(bApalancamiento);
-        sharedPreferences = getActivity().getSharedPreferences("xPos", Context.MODE_PRIVATE);
-        if (sharedPreferences.contains("tipoApalancamiento"))
-            tipoApalancamiento = sharedPreferences.getInt("tipoApalancamiento", 9);
-        if (sharedPreferences.contains("decimales"))
-            decimales = sharedPreferences.getBoolean("decimales", false);
+        checadaSharedPreference();
         cambioApalancamiento();
         return view;
     }
+
 
     @Override
     public void onDestroy() {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putInt("tipoApalancamiento", tipoApalancamiento);
         editor.putBoolean("decimales", decimales);
+        editor.putString("cantidad", etCantidad.getText().toString());
+        editor.putString("porcentaje", etPorcentaje.getText().toString());
+        editor.putString("referencia", etReferencia.getText().toString());
         editor.apply();
         super.onDestroy();
     }
@@ -361,6 +361,21 @@ public class MainFragment extends Fragment {
 
         }
     };
+
+    private void checadaSharedPreference() {
+        sharedPreferences = getActivity().getSharedPreferences("xPos", Context.MODE_PRIVATE);
+        if (sharedPreferences.contains("tipoApalancamiento"))
+            tipoApalancamiento = sharedPreferences.getInt("tipoApalancamiento", 9);
+        if (sharedPreferences.contains("decimales"))
+            decimales = sharedPreferences.getBoolean("decimales", false);
+        if (sharedPreferences.contains("cantidad"))
+            etCantidad.setText(sharedPreferences.getString("cantidad", ""));
+        if (sharedPreferences.contains("porcentaje"))
+            etPorcentaje.setText(sharedPreferences.getString("porcentaje", ""));
+        if (sharedPreferences.contains("referencia"))
+            etReferencia.setText(sharedPreferences.getString("referencia", ""));
+    }
+
 
 
     private void copyToast(ClipboardManager clipboard, CharSequence text) {
