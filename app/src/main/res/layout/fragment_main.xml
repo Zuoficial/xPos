@@ -20,7 +20,7 @@
         android:id="@+id/text_cant"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="36dp"
+        android:layout_marginTop="16dp"
         android:text="Cantidad a arriesgar"
         android:textColor="@android:color/white"
         android:textSize="20dp"
@@ -77,7 +77,6 @@
         android:id="@+id/texto_convers"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:text="Referencia de conversion"
         android:textColor="@android:color/white"
         android:textSize="20dp"
@@ -105,7 +104,6 @@
         android:id="@+id/texto_tamano"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
         android:text="Tamaño posicion"
         android:textColor="@android:color/white"
         android:textSize="20dp"
@@ -127,6 +125,49 @@
         app:layout_constraintBottom_toTopOf="@+id/t_posicion_lote"
         app:layout_constraintStart_toStartOf="parent" />
 
+
+    <TextView
+        android:id="@+id/t_posicion_lote"
+        android:layout_width="170dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginBottom="8dp"
+        android:gravity="center"
+        android:text="Lotes"
+        android:textAlignment="center"
+        android:textColor="@android:color/white"
+        android:textSize="30dp"
+        app:layout_constraintBottom_toTopOf="@+id/t_margen"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/t_margen"
+        android:layout_width="170dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginBottom="128dp"
+        android:text="Margen"
+        android:textColor="@android:color/white"
+        android:textSize="30dp"
+        android:gravity="center"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/t_necesario"
+        android:layout_width="170dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginBottom="72dp"
+        android:text="Necesario"
+        android:textColor="@android:color/white"
+        android:textSize="30dp"
+        android:gravity="center"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <TextView
         android:id="@+id/t_posicion_tamano_conversion"
         android:layout_width="170dp"
@@ -141,27 +182,43 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
 
-    <TextView
-        android:id="@+id/t_posicion_lote"
-        android:layout_width="170dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginBottom="118dp"
-        android:text="Lotes"
-        android:textColor="@android:color/white"
-        android:textSize="30dp"
-        android:gravity="center"
-        android:textAlignment="center"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+
 
     <TextView
         android:id="@+id/t_posicion_lote_conversion"
         android:layout_width="170dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="10dp"
-        android:layout_marginBottom="118dp"
+        android:layout_marginBottom="8dp"
+        android:gravity="center"
         android:text="LC"
+        android:textAlignment="center"
+        android:textColor="@android:color/white"
+        android:textSize="30dp"
+        app:layout_constraintBottom_toTopOf="@+id/t_margenC"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/t_margenC"
+        android:layout_width="170dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="128dp"
+        android:text="MC"
+        android:textColor="@android:color/white"
+        android:textSize="30dp"
+        android:textAlignment="center"
+        android:gravity="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/t_necesarioC"
+        android:layout_width="170dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="72dp"
+        android:text="NC"
         android:textColor="@android:color/white"
         android:textSize="30dp"
         android:textAlignment="center"
@@ -170,18 +227,18 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <Button
-        android:id="@+id/b_limpiar"
+        android:id="@+id/b_apalancamiento"
         android:layout_width="100dp"
         android:layout_height="55dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="32dp"
+        android:layout_marginBottom="12dp"
         android:background="@android:color/transparent"
-        android:text="Limpiar"
+        android:text="100X"
         android:textAlignment="center"
         android:textAllCaps="false"
         android:textColor="@android:color/white"
-        android:textSize="20dp"
+        android:textSize="30dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
