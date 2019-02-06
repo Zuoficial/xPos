@@ -30,12 +30,13 @@ public class MainFragment extends Fragment {
 
     EditText etCantidad, etPorcentaje, etReferencia;
     TextView tTamano, tLote, tTamanoC, tLoteC,
-            tCant, tPorcentaje, tConversion, tMargen, tMargenC,
+            tTituloCantidad, tTituloPorcentaje, tTituloConversion, tTituloTamano, tMargen, tMargenC,
             tSeguro, tSeguroC;
     double cantidad, porcentaje, referencia, tamanoPosicion,
             lote, tamanoPosicionC, loteC, margen, margenC, necesario, necesarioC;
     int apalancamiento;
     int tipoApalancamiento = 9;
+    boolean decimales;
     ClipboardManager clipboard;
     Button bApalancamiento, bLimpiarClaro;
     SharedPreferences sharedPreferences;
@@ -55,12 +56,14 @@ public class MainFragment extends Fragment {
         tLote = view.findViewById(R.id.t_posicion_lote);
         tTamanoC = view.findViewById(R.id.t_posicion_tamano_conversion);
         tLoteC = view.findViewById(R.id.t_posicion_lote_conversion);
-        tCant = view.findViewById(R.id.text_cant);
-        tPorcentaje = view.findViewById(R.id.text_porcen);
-        tConversion = view.findViewById(R.id.texto_convers);
-        tCant.setOnClickListener(onClickListener);
-        tPorcentaje.setOnClickListener(onClickListener);
-        tConversion.setOnClickListener(onClickListener);
+        tTituloCantidad = view.findViewById(R.id.t_titulo_cant);
+        tTituloPorcentaje = view.findViewById(R.id.t_titulo_porcen);
+        tTituloConversion = view.findViewById(R.id.t_titulo_convers);
+        tTituloTamano = view.findViewById(R.id.t_titulo_tamano);
+        tTituloCantidad.setOnClickListener(onClickListener);
+        tTituloPorcentaje.setOnClickListener(onClickListener);
+        tTituloConversion.setOnClickListener(onClickListener);
+        tTituloTamano.setOnClickListener(onClickListener);
         tSeguro = view.findViewById(R.id.t_seguro);
         tSeguroC = view.findViewById(R.id.t_seguroC);
         tMargen = view.findViewById(R.id.t_margen);
@@ -73,6 +76,8 @@ public class MainFragment extends Fragment {
         sharedPreferences = getActivity().getSharedPreferences("xPos", Context.MODE_PRIVATE);
         if (sharedPreferences.contains("tipoApalancamiento"))
             tipoApalancamiento = sharedPreferences.getInt("tipoApalancamiento", 9);
+        if (sharedPreferences.contains("decimales"))
+            decimales = sharedPreferences.getBoolean("decimales", false);
         cambioApalancamiento();
         return view;
     }
@@ -81,6 +86,7 @@ public class MainFragment extends Fragment {
     public void onDestroy() {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putInt("tipoApalancamiento", tipoApalancamiento);
+        editor.putBoolean("decimales", decimales);
         editor.apply();
         super.onDestroy();
     }
@@ -147,15 +153,15 @@ public class MainFragment extends Fragment {
         @Override
         public void onClick(View view) {
             switch (view.getId()) {
-                case R.id.text_cant:
+                case R.id.t_titulo_cant:
                     etCantidad.getText().clear();
                     break;
 
-                case R.id.text_porcen:
+                case R.id.t_titulo_porcen:
                     etPorcentaje.getText().clear();
                     break;
 
-                case R.id.texto_convers:
+                case R.id.t_titulo_convers:
                     etReferencia.getText().clear();
                     break;
 
@@ -181,6 +187,21 @@ public class MainFragment extends Fragment {
                         tipoApalancamiento = 0;
 
                     cambioApalancamiento();
+                    break;
+
+
+                }
+
+                case R.id.t_titulo_tamano: {
+                    decimales = !decimales;
+
+
+                    if (!tTamanoC.getText().toString().equals("TPC")) {
+                        if (!decimales)
+                            tTamanoC.setText(String.format("%,.0f", tamanoPosicionC));
+                        else
+                            tTamanoC.setText(String.format("%,.2f", tamanoPosicionC));
+                    }
                     break;
 
                 }
@@ -290,7 +311,7 @@ public class MainFragment extends Fragment {
                     loteC = tamanoPosicionC / 100000;
                     margenC = tamanoPosicionC / apalancamiento;
                     necesarioC = (cantidad / referencia) + margenC;
-                    if (tamanoPosicionC % 1 == 0)
+                    if (!decimales)
                         tTamanoC.setText(String.format("%,.0f", tamanoPosicionC));
                     else
                         tTamanoC.setText(String.format("%,.2f", tamanoPosicionC));

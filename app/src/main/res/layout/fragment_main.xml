@@ -17,7 +17,7 @@
 
 
     <TextView
-        android:id="@+id/text_cant"
+        android:id="@+id/t_titulo_cant"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -43,10 +43,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_cant" />
+        app:layout_constraintTop_toBottomOf="@+id/t_titulo_cant" />
 
     <TextView
-        android:id="@+id/text_porcen"
+        android:id="@+id/t_titulo_porcen"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -71,10 +71,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_porcen" />
+        app:layout_constraintTop_toBottomOf="@+id/t_titulo_porcen" />
 
     <TextView
-        android:id="@+id/texto_convers"
+        android:id="@+id/t_titulo_convers"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Referencia de conversion"
@@ -98,10 +98,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/texto_convers" />
+        app:layout_constraintTop_toBottomOf="@+id/t_titulo_convers" />
 
     <TextView
-        android:id="@+id/texto_tamano"
+        android:id="@+id/t_titulo_tamano"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Tamaño posicion"
