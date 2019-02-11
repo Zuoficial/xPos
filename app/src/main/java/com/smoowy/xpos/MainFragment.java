@@ -1,6 +1,7 @@
 package com.smoowy.xpos;
 
 
+import android.app.Dialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -33,13 +34,15 @@ public class MainFragment extends Fragment {
             tTituloCantidad, tTituloPorcentaje, tTituloConversion, tTituloTamano, tMargen, tMargenC,
             tSeguro, tSeguroC;
     double cantidad, porcentaje, referencia, tamanoPosicion,
-            lote, tamanoPosicionC, loteC, margen, margenC, necesario, necesarioC;
+            lote, tamanoPosicionC, loteC, margen, margenC, necesario, necesarioC,
+            ajusteRef = 1000, ajusteRefRespaldo;
     int apalancamiento;
     int tipoApalancamiento = 9;
     boolean decimales;
     ClipboardManager clipboard;
-    Button bApalancamiento, bLimpiarClaro;
+    Button bApalancamiento, bLimpiarClaro, bAjuste, bRegresarClaro;
     SharedPreferences sharedPreferences;
+    String resCantidad, resPorcentaje, resReferencia;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -72,10 +75,33 @@ public class MainFragment extends Fragment {
         bApalancamiento.setOnClickListener(onClickListener);
         bLimpiarClaro = view.findViewById(R.id.b_limpiar_claro);
         bLimpiarClaro.setOnClickListener(onClickListener);
+        bAjuste = view.findViewById(R.id.b_ajuste);
+        bAjuste.setOnClickListener(onClickListener);
+        bAjuste.setOnLongClickListener(onLongClickListener);
+        bRegresarClaro = view.findViewById(R.id.b_regresar_claro);
+        bRegresarClaro.setOnClickListener(onClickListener);
         registerForContextMenu(bApalancamiento);
         checadaSharedPreference();
         cambioApalancamiento();
         return view;
+    }
+
+    Dialog dialog;
+    Button bDialogAplicar;
+    EditText etDialogReferencia;
+
+    private void crearDialog() {
+        dialog = new Dialog(getActivity(), R.style.MyDialogStyle);
+        dialog.setContentView(R.layout.dialog_redondeo);
+        dialog.show();
+        bDialogAplicar = dialog.findViewById(R.id.b_dialog_aplicar);
+        etDialogReferencia = dialog.findViewById(R.id.et_dialog_ref);
+        etDialogReferencia.setText(String.valueOf(ajusteRef));
+        bDialogAplicar.setOnClickListener(view -> {
+            ajusteRef = Double.parseDouble(etDialogReferencia.getText().toString());
+            ajusteRedondeo();
+            dialog.dismiss();
+        });
     }
 
 
@@ -87,6 +113,7 @@ public class MainFragment extends Fragment {
         editor.putString("cantidad", etCantidad.getText().toString());
         editor.putString("porcentaje", etPorcentaje.getText().toString());
         editor.putString("referencia", etReferencia.getText().toString());
+        editor.putString("ajusteRef", String.valueOf(ajusteRef));
         editor.apply();
         super.onDestroy();
     }
@@ -149,66 +176,120 @@ public class MainFragment extends Fragment {
         return super.onContextItemSelected(item);
     }
 
-    View.OnClickListener onClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            switch (view.getId()) {
-                case R.id.t_titulo_cant:
-                    etCantidad.getText().clear();
-                    break;
+    View.OnLongClickListener onLongClickListener = view -> {
+        crearDialog();
+        return true;
+    };
 
-                case R.id.t_titulo_porcen:
-                    etPorcentaje.getText().clear();
-                    break;
+    View.OnClickListener onClickListener = view -> {
 
-                case R.id.t_titulo_convers:
-                    etReferencia.getText().clear();
-                    break;
+        switch (view.getId()) {
+            case R.id.t_titulo_cant:
+                etCantidad.getText().clear();
+                break;
 
-                case R.id.b_limpiar_claro: {
-                    etCantidad.getText().clear();
-                    etPorcentaje.getText().clear();
-                    etReferencia.getText().clear();
-                    tTamano.setText("TP");
-                    tLote.setText("Lotes");
-                    tTamanoC.setText("TPC");
-                    tLoteC.setText("LC");
-                    tMargen.setText("Margen");
-                    tMargenC.setText("MC");
-                    tSeguro.setText("Seguro");
-                    tSeguroC.setText("SC");
-                    break;
-                }
-                case R.id.b_apalancamiento: {
+            case R.id.t_titulo_porcen:
+                etPorcentaje.getText().clear();
+                break;
 
-                    tipoApalancamiento += 1;
+            case R.id.t_titulo_convers:
+                etReferencia.getText().clear();
+                break;
 
-                    if (tipoApalancamiento > 9)
-                        tipoApalancamiento = 0;
-
-                    cambioApalancamiento();
-                    break;
-
-
-                }
-
-                case R.id.t_titulo_tamano: {
-                    decimales = !decimales;
-
-
-                    if (!tTamanoC.getText().toString().equals("TPC")) {
-                        if (!decimales)
-                            tTamanoC.setText(String.format("%,.0f", tamanoPosicionC));
-                        else
-                            tTamanoC.setText(String.format("%,.2f", tamanoPosicionC));
-                    }
-                    break;
-
-                }
+            case R.id.b_limpiar_claro: {
+                resCantidad = etCantidad.getText().toString();
+                resPorcentaje = etPorcentaje.getText().toString();
+                resReferencia = etReferencia.getText().toString();
+                etCantidad.getText().clear();
+                etPorcentaje.getText().clear();
+                etReferencia.getText().clear();
+                ajusteRefRespaldo = ajusteRef;
+                ajusteRef = 1000;
+                tTamano.setText("TP");
+                tLote.setText("Lotes");
+                tTamanoC.setText("TPC");
+                tLoteC.setText("LC");
+                tMargen.setText("Margen");
+                tMargenC.setText("MC");
+                tSeguro.setText("Seguro");
+                tSeguroC.setText("SC");
+                break;
             }
 
+            case R.id.b_regresar_claro: {
+
+                if (resCantidad == null)
+                    break;
+
+                etCantidad.setText(resCantidad);
+                etPorcentaje.setText(resPorcentaje);
+                etReferencia.setText(resReferencia);
+                ajusteRef = ajusteRefRespaldo;
+                break;
+
+            }
+
+
+            case R.id.b_apalancamiento: {
+
+                tipoApalancamiento += 1;
+
+                if (tipoApalancamiento > 9)
+                    tipoApalancamiento = 0;
+
+                cambioApalancamiento();
+                break;
+
+
+            }
+
+            case R.id.t_titulo_tamano: {
+                decimales = !decimales;
+
+
+                if (!tTamanoC.getText().toString().equals("TPC")) {
+                    if (!decimales)
+                        tTamanoC.setText(String.format("%,.0f", tamanoPosicionC));
+                    else
+                        tTamanoC.setText(String.format("%,.2f", tamanoPosicionC));
+                }
+                break;
+
+            }
+            case R.id.b_ajuste: {
+
+                ajusteRedondeo();
+                break;
+
+            }
+
+
         }
+
     };
+
+    private void ajusteRedondeo() {
+        double restante, num;
+
+        if (!tTamanoC.getText().toString().equals("TPC")) {
+
+            restante = tamanoPosicionC % ajusteRef;
+            num = tamanoPosicionC - restante;
+            num *= referencia;
+            num *= (porcentaje / 100);
+            etCantidad.setText(String.format("%.3f", num));
+
+
+        } else if (!tTamano.getText().toString().equals("TP") ) {
+
+                restante = tamanoPosicion % ajusteRef;
+                num = tamanoPosicion - restante;
+                num *= (porcentaje / 100);
+                etCantidad.setText(String.format("%.3f", num));
+
+        }
+    }
+
 
     private void cambioApalancamiento() {
 
@@ -374,8 +455,9 @@ public class MainFragment extends Fragment {
             etPorcentaje.setText(sharedPreferences.getString("porcentaje", ""));
         if (sharedPreferences.contains("referencia"))
             etReferencia.setText(sharedPreferences.getString("referencia", ""));
+        if (sharedPreferences.contains("ajusteRef"))
+            ajusteRef = Double.parseDouble(sharedPreferences.getString("ajusteRef","1000"));
     }
-
 
 
     private void copyToast(ClipboardManager clipboard, CharSequence text) {

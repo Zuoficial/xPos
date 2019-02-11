@@ -5,6 +5,19 @@
     android:layout_height="match_parent"
     android:background="@color/fondoPrincipal">
 
+
+    <Button
+        android:id="@+id/b_regresar_claro"
+        android:layout_width="100dp"
+        android:layout_height="300dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+
     <Button
         android:id="@+id/b_limpiar_claro"
         android:layout_width="100dp"
@@ -232,7 +245,7 @@
         android:layout_height="55dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="12dp"
+        android:layout_marginBottom="16dp"
         android:background="@android:color/transparent"
         android:text="100X"
         android:textAlignment="center"
@@ -241,6 +254,25 @@
         android:textSize="30dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.50"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/b_ajuste"
+        android:layout_width="100dp"
+        android:layout_height="55dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="16dp"
+        android:background="@android:color/transparent"
+        android:gravity="center"
+        android:textAllCaps="false"
+        android:text="R"
+        android:textAlignment="center"
+        android:textColor="@android:color/white"
+        android:textSize="30dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.82"
         app:layout_constraintStart_toStartOf="parent" />
 
 
