@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -108,6 +109,19 @@ public class MainFragment extends Fragment {
             dialog.dismiss();
         });
         inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+        etDialogReferencia.setOnKeyListener((view, i, keyEvent) -> {
+
+            if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_ENTER) {
+                ajusteRef = Double.parseDouble(etDialogReferencia.getText().toString());
+                ajusteRedondeo();
+                inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+                dialog.dismiss();
+                return true;
+
+            } else
+                return false;
+        });
+
     }
 
     private void crearDialogApalancamiento() {
@@ -125,6 +139,19 @@ public class MainFragment extends Fragment {
             dialog.dismiss();
         });
         inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+        etDialogReferencia.setOnKeyListener((view, i, keyEvent) -> {
+
+            if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_ENTER) {
+                apalancamiento = (int) Double.parseDouble(etDialogReferencia.getText().toString());
+                tipoApalancamiento = 0;
+                cambioApalancamiento();
+                inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+                dialog.dismiss();
+                return true;
+
+            } else
+                return false;
+        });
     }
 
     @Override
