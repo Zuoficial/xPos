@@ -96,7 +96,10 @@ public class MainFragment extends Fragment {
         dialog.show();
         bDialogAplicar = dialog.findViewById(R.id.b_dialog_aplicar);
         etDialogReferencia = dialog.findViewById(R.id.et_dialog_ref);
-        etDialogReferencia.setText(String.valueOf(ajusteRef));
+        if (ajusteRef % 1 == 0)
+            etDialogReferencia.setText(String.format("%.0f", ajusteRef));
+        else
+            etDialogReferencia.setText(String.valueOf(ajusteRef));
         bDialogAplicar.setOnClickListener(view -> {
             ajusteRef = Double.parseDouble(etDialogReferencia.getText().toString());
             ajusteRedondeo();
