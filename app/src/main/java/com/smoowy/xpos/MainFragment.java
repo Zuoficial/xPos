@@ -11,12 +11,10 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -43,12 +41,14 @@ public class MainFragment extends Fragment {
     Button bApalancamiento, bLimpiarClaro, bAjuste, bRegresarClaro;
     SharedPreferences sharedPreferences;
     String resCantidad, resPorcentaje, resReferencia;
+    InputMethodManager inputMethodManager;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
         clipboard = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
+        inputMethodManager = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
         etCantidad = view.findViewById(R.id.et_cantidad);
         etPorcentaje = view.findViewById(R.id.et_porcentaje);
         etReferencia = view.findViewById(R.id.et_referencia);
@@ -104,8 +104,10 @@ public class MainFragment extends Fragment {
         bDialogAplicar.setOnClickListener(view -> {
             ajusteRef = Double.parseDouble(etDialogReferencia.getText().toString());
             ajusteRedondeo();
+            inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
             dialog.dismiss();
         });
+        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
     }
 
     private void crearDialogApalancamiento() {
@@ -119,8 +121,10 @@ public class MainFragment extends Fragment {
             apalancamiento = (int) Double.parseDouble(etDialogReferencia.getText().toString());
             tipoApalancamiento = 0;
             cambioApalancamiento();
+            inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
             dialog.dismiss();
         });
+        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
     }
 
     @Override
