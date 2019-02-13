@@ -3,26 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/menu_3x"
-        android:title="3X" />
-    <item
-        android:id="@+id/menu_5x"
-        android:title="5X" />
-    <item
-        android:id="@+id/menu_10x"
-        android:title="10X" />
-    <item
-        android:id="@+id/menu_20x"
-        android:title="20X" />
-    <item
-        android:id="@+id/menu_25x"
-        android:title="25X" />
-    <item
-        android:id="@+id/menu_50x"
-        android:title="50X" />
+        android:id="@+id/menu_manual"
+        android:title="Manual" />
     <item
         android:id="@+id/menu_100x"
-        android:title="100X" />
+        android:title="100X"/>
     <item
         android:id="@+id/menu_200x"
         android:title="200X" />

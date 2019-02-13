@@ -8,7 +8,7 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:fontFamily">@font/comforta_regular</item>
         <item name="android:windowBackground">@color/colorPrimary</item>
-        <item name="android:itemBackground">@color/colorPrimaryDark</item>
+        <item name="android:itemBackground">@color/colorMenu</item>
         <item name="android:itemTextAppearance">@style/myCustomMenuTextAppearance</item>
 
 
@@ -17,7 +17,7 @@
     <style name="myCustomMenuTextAppearance" parent="@android:style/TextAppearance.Widget.IconMenu.Item">
         <item name="android:textColor">@android:color/white</item>
         <item name="android:fontFamily">@font/comforta_regular</item>
-        <item name="android:textSize">20dp</item>
+        <item name="android:textSize">30dp</item>
     </style>
 
     <style name="MyDialogStyle" parent="android:Theme.Material.Light.Dialog.NoActionBar">

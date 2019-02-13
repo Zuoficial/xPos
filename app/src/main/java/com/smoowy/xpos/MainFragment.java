@@ -2,6 +2,7 @@ package com.smoowy.xpos;
 
 
 import android.app.Dialog;
+import android.arch.lifecycle.Lifecycle;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -26,7 +27,6 @@ public class MainFragment extends Fragment {
 
 
     public MainFragment() {
-        // Required empty public constructor
     }
 
     EditText etCantidad, etPorcentaje, etReferencia;
@@ -37,7 +37,7 @@ public class MainFragment extends Fragment {
             lote, tamanoPosicionC, loteC, margen, margenC, necesario, necesarioC,
             ajusteRef = 1000, ajusteRefRespaldo;
     int apalancamiento;
-    int tipoApalancamiento = 9;
+    int tipoApalancamiento = 4;
     boolean decimales;
     ClipboardManager clipboard;
     Button bApalancamiento, bLimpiarClaro, bAjuste, bRegresarClaro;
@@ -90,9 +90,9 @@ public class MainFragment extends Fragment {
     Button bDialogAplicar;
     EditText etDialogReferencia;
 
-    private void crearDialog() {
+    private void crearDialogRedondeo() {
         dialog = new Dialog(getActivity(), R.style.MyDialogStyle);
-        dialog.setContentView(R.layout.dialog_redondeo);
+        dialog.setContentView(R.layout.dialog);
         dialog.show();
         bDialogAplicar = dialog.findViewById(R.id.b_dialog_aplicar);
         etDialogReferencia = dialog.findViewById(R.id.et_dialog_ref);
@@ -104,6 +104,20 @@ public class MainFragment extends Fragment {
         });
     }
 
+    private void crearDialogApalancamiento() {
+        dialog = new Dialog(getActivity(), R.style.MyDialogStyle);
+        dialog.setContentView(R.layout.dialog);
+        dialog.show();
+        bDialogAplicar = dialog.findViewById(R.id.b_dialog_aplicar);
+        etDialogReferencia = dialog.findViewById(R.id.et_dialog_ref);
+        etDialogReferencia.setText(String.valueOf(apalancamiento));
+        bDialogAplicar.setOnClickListener(view -> {
+            apalancamiento = (int) Double.parseDouble(etDialogReferencia.getText().toString());
+            tipoApalancamiento = 0;
+            cambioApalancamiento();
+            dialog.dismiss();
+        });
+    }
 
     @Override
     public void onDestroy() {
@@ -114,6 +128,7 @@ public class MainFragment extends Fragment {
         editor.putString("porcentaje", etPorcentaje.getText().toString());
         editor.putString("referencia", etReferencia.getText().toString());
         editor.putString("ajusteRef", String.valueOf(ajusteRef));
+        editor.putInt("apalancamiento", apalancamiento);
         editor.apply();
         super.onDestroy();
     }
@@ -132,44 +147,24 @@ public class MainFragment extends Fragment {
         switch (item.getItemId()) {
 
 
-            case R.id.menu_3x:
-                tipoApalancamiento = 0;
-                break;
-
-            case R.id.menu_5x:
-                tipoApalancamiento = 1;
-                break;
-
-            case R.id.menu_10x:
-                tipoApalancamiento = 2;
-                break;
-
-            case R.id.menu_20x:
-                tipoApalancamiento = 3;
-                break;
-
-            case R.id.menu_25x:
-                tipoApalancamiento = 4;
-                break;
-
-            case R.id.menu_50x:
-                tipoApalancamiento = 5;
+            case R.id.menu_manual:
+                crearDialogApalancamiento();
                 break;
 
             case R.id.menu_100x:
-                tipoApalancamiento = 6;
+                tipoApalancamiento = 1;
                 break;
 
             case R.id.menu_200x:
-                tipoApalancamiento = 7;
+                tipoApalancamiento = 2;
                 break;
 
             case R.id.menu_400x:
-                tipoApalancamiento = 8;
+                tipoApalancamiento = 3;
                 break;
 
             case R.id.menu_500x:
-                tipoApalancamiento = 9;
+                tipoApalancamiento = 4;
                 break;
         }
         cambioApalancamiento();
@@ -177,7 +172,7 @@ public class MainFragment extends Fragment {
     }
 
     View.OnLongClickListener onLongClickListener = view -> {
-        crearDialog();
+        crearDialogRedondeo();
         return true;
     };
 
@@ -234,8 +229,8 @@ public class MainFragment extends Fragment {
 
                 tipoApalancamiento += 1;
 
-                if (tipoApalancamiento > 9)
-                    tipoApalancamiento = 0;
+                if (tipoApalancamiento > 4)
+                    tipoApalancamiento = 1;
 
                 cambioApalancamiento();
                 break;
@@ -280,12 +275,12 @@ public class MainFragment extends Fragment {
             etCantidad.setText(String.format("%.3f", num));
 
 
-        } else if (!tTamano.getText().toString().equals("TP") ) {
+        } else if (!tTamano.getText().toString().equals("TP")) {
 
-                restante = tamanoPosicion % ajusteRef;
-                num = tamanoPosicion - restante;
-                num *= (porcentaje / 100);
-                etCantidad.setText(String.format("%.3f", num));
+            restante = tamanoPosicion % ajusteRef;
+            num = tamanoPosicion - restante;
+            num *= (porcentaje / 100);
+            etCantidad.setText(String.format("%.3f", num));
 
         }
     }
@@ -296,50 +291,29 @@ public class MainFragment extends Fragment {
         switch (tipoApalancamiento) {
 
             case 0:
-                apalancamiento = 3;
-                bApalancamiento.setText("3X");
+                if (getLifecycle().getCurrentState().equals(Lifecycle.State.STARTED)) {
+                    if (sharedPreferences.contains("apalancamiento"))
+                        apalancamiento = sharedPreferences.getInt("apalancamiento", 100);
+                }
+                bApalancamiento.setText(String.valueOf(apalancamiento) + "X");
                 break;
 
             case 1:
-                apalancamiento = 5;
-                bApalancamiento.setText("5X");
-                break;
-            case 2:
-                apalancamiento = 10;
-                bApalancamiento.setText("10X");
-                break;
-
-            case 3:
-                apalancamiento = 20;
-                bApalancamiento.setText("20X");
-                break;
-
-            case 4:
-                apalancamiento = 25;
-                bApalancamiento.setText("25X");
-                break;
-
-            case 5:
-                apalancamiento = 50;
-                bApalancamiento.setText("50X");
-                break;
-
-            case 6:
                 apalancamiento = 100;
                 bApalancamiento.setText("100X");
                 break;
 
-            case 7:
+            case 2:
                 apalancamiento = 200;
                 bApalancamiento.setText("200X");
                 break;
 
-            case 8:
+            case 3:
                 apalancamiento = 400;
                 bApalancamiento.setText("400X");
                 break;
 
-            case 9:
+            case 4:
                 apalancamiento = 500;
                 bApalancamiento.setText("500X");
                 break;
@@ -446,7 +420,7 @@ public class MainFragment extends Fragment {
     private void checadaSharedPreference() {
         sharedPreferences = getActivity().getSharedPreferences("xPos", Context.MODE_PRIVATE);
         if (sharedPreferences.contains("tipoApalancamiento"))
-            tipoApalancamiento = sharedPreferences.getInt("tipoApalancamiento", 9);
+            tipoApalancamiento = sharedPreferences.getInt("tipoApalancamiento", 1);
         if (sharedPreferences.contains("decimales"))
             decimales = sharedPreferences.getBoolean("decimales", false);
         if (sharedPreferences.contains("cantidad"))
@@ -456,7 +430,9 @@ public class MainFragment extends Fragment {
         if (sharedPreferences.contains("referencia"))
             etReferencia.setText(sharedPreferences.getString("referencia", ""));
         if (sharedPreferences.contains("ajusteRef"))
-            ajusteRef = Double.parseDouble(sharedPreferences.getString("ajusteRef","1000"));
+            ajusteRef = Double.parseDouble(sharedPreferences.getString("ajusteRef", "1000"));
+        if (sharedPreferences.contains("apalancamiento"))
+            apalancamiento = sharedPreferences.getInt("apalancamiento", 100);
     }
 
 
