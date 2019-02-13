@@ -73,17 +73,18 @@ public class MainFragment extends Fragment {
         tMargenC = view.findViewById(R.id.t_margenC);
         bApalancamiento = view.findViewById(R.id.b_apalancamiento);
         bApalancamiento.setOnClickListener(onClickListener);
+        bApalancamiento.setOnLongClickListener(onLongClickListenerApalancamiento);
         bLimpiarClaro = view.findViewById(R.id.b_limpiar_claro);
         bLimpiarClaro.setOnClickListener(onClickListener);
         bAjuste = view.findViewById(R.id.b_ajuste);
         bAjuste.setOnClickListener(onClickListener);
-        bAjuste.setOnLongClickListener(onLongClickListener);
+        bAjuste.setOnLongClickListener(onLongClickListenerRedondeo);
         bRegresarClaro = view.findViewById(R.id.b_regresar_claro);
         bRegresarClaro.setOnClickListener(onClickListener);
-        registerForContextMenu(bApalancamiento);
         checadaSharedPreference();
         cambioApalancamiento();
         return view;
+
     }
 
     Dialog dialog;
@@ -136,48 +137,17 @@ public class MainFragment extends Fragment {
         super.onDestroy();
     }
 
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-        MenuInflater inflater = getActivity().getMenuInflater();
-        inflater.inflate(R.menu.menu, menu);
-    }
 
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-
-
-        switch (item.getItemId()) {
-
-
-            case R.id.menu_manual:
-                crearDialogApalancamiento();
-                break;
-
-            case R.id.menu_100x:
-                tipoApalancamiento = 1;
-                break;
-
-            case R.id.menu_200x:
-                tipoApalancamiento = 2;
-                break;
-
-            case R.id.menu_400x:
-                tipoApalancamiento = 3;
-                break;
-
-            case R.id.menu_500x:
-                tipoApalancamiento = 4;
-                break;
-        }
-        cambioApalancamiento();
-        return super.onContextItemSelected(item);
-    }
-
-    View.OnLongClickListener onLongClickListener = view -> {
+    View.OnLongClickListener onLongClickListenerRedondeo = view -> {
         crearDialogRedondeo();
         return true;
     };
+
+    View.OnLongClickListener onLongClickListenerApalancamiento = view -> {
+        crearDialogApalancamiento();
+        return true;
+    };
+
 
     View.OnClickListener onClickListener = view -> {
 
@@ -445,5 +415,6 @@ public class MainFragment extends Fragment {
         clipboard.setPrimaryClip(clip);
         Toast.makeText(getContext(), "Referencia grabada: " + text.toString(), Toast.LENGTH_SHORT).show();
     }
+
 
 }
