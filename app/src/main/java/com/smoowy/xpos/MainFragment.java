@@ -253,6 +253,14 @@ public class MainFragment extends Fragment {
                     else
                         tTamanoC.setText(String.format("%,.2f", tamanoPosicionC));
                 }
+
+                if (!tTamano.getText().toString().equals("TP")) {
+                    if (!hayDecimales)
+                        tTamano.setText(String.format("%,.0f", tamanoPosicion));
+                    else
+                        tTamano.setText(String.format("%,.2f", tamanoPosicion));
+
+                }
                 break;
 
             }
@@ -271,20 +279,26 @@ public class MainFragment extends Fragment {
     };
 
     private void ajusteRedondeo(boolean esAscendente) {
-        double restante, restanteFinal, num;
+        double restante, restanteFinal, num,
+                tamanoPosicioncAjustada, tamanoPosicionAjustada;
 
         if (!tTamanoC.getText().toString().equals("TPC")) {
 
-            restante = tamanoPosicionC % redondeoRef;
+            if (hayDecimales)
+                tamanoPosicioncAjustada = tamanoPosicionC;
+            else
+                tamanoPosicioncAjustada = Math.round(tamanoPosicionC);
+
+            restante = tamanoPosicioncAjustada % redondeoRef;
             restanteFinal = redondeoRef - restante;
             if (esAscendente)
-                num = tamanoPosicionC + restanteFinal;
+                num = tamanoPosicioncAjustada + restanteFinal;
 
             else {
-                num = tamanoPosicionC - restanteFinal;
+                num = tamanoPosicioncAjustada - restanteFinal;
 
                 if (num % redondeoRef > 0)
-                    num = tamanoPosicionC - restante;
+                    num = tamanoPosicioncAjustada - restante;
             }
 
             num *= referencia;
@@ -294,18 +308,24 @@ public class MainFragment extends Fragment {
 
         } else if (!tTamano.getText().toString().equals("TP")) {
 
-            restante = tamanoPosicion % redondeoRef;
+
+            if (hayDecimales)
+                tamanoPosicionAjustada = tamanoPosicion;
+            else
+                tamanoPosicionAjustada = Math.round(tamanoPosicion);
+
+            restante = tamanoPosicionAjustada % redondeoRef;
             restanteFinal = redondeoRef - restante;
 
             if (esAscendente)
-                num = tamanoPosicion + restanteFinal;
+                num = tamanoPosicionAjustada + restanteFinal;
 
             else {
 
-                num = tamanoPosicion - restanteFinal;
+                num = tamanoPosicionAjustada - restanteFinal;
 
                 if (num % redondeoRef > 0)
-                    num = tamanoPosicion - restante;
+                    num = tamanoPosicionAjustada - restante;
             }
 
 
@@ -417,7 +437,10 @@ public class MainFragment extends Fragment {
                 lote = tamanoPosicion / 100000;
                 margen = tamanoPosicion / apalancamiento;
                 necesario = margen + cantidad;
-                tTamano.setText(String.format("%,.0f", tamanoPosicion));
+                if (!hayDecimales)
+                    tTamano.setText(String.format("%,.0f", tamanoPosicion));
+                else
+                    tTamano.setText(String.format("%,.2f", tamanoPosicion));
                 tLote.setText(String.format("%.4f", lote));
                 tMargen.setText(String.format("%,.2f", margen));
                 tSeguro.setText(String.format("%,.2f", necesario));
