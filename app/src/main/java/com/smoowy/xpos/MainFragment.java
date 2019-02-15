@@ -34,12 +34,12 @@ public class MainFragment extends Fragment {
             tSeguro, tSeguroC;
     double cantidad, porcentaje, referencia, tamanoPosicion,
             lote, tamanoPosicionC, loteC, margen, margenC, necesario, necesarioC,
-            ajusteRef = 1000, ajusteRefRespaldo;
+            redondeoRef = 1000, ajusteRefRespaldo;
     int apalancamiento;
     int tipoApalancamiento = 4;
-    boolean decimales;
+    boolean hayDecimales;
     ClipboardManager clipboard;
-    Button bApalancamiento, bLimpiarClaro, bAjuste, bRegresarClaro;
+    Button bApalancamiento, bLimpiarClaro, bRedondeoDescendente, bRedondeoAscendente, bRegresarClaro;
     SharedPreferences sharedPreferences;
     String resCantidad, resPorcentaje, resReferencia;
     InputMethodManager inputMethodManager;
@@ -77,9 +77,12 @@ public class MainFragment extends Fragment {
         bApalancamiento.setOnLongClickListener(onLongClickListenerApalancamiento);
         bLimpiarClaro = view.findViewById(R.id.b_limpiar_claro);
         bLimpiarClaro.setOnClickListener(onClickListener);
-        bAjuste = view.findViewById(R.id.b_ajuste);
-        bAjuste.setOnClickListener(onClickListener);
-        bAjuste.setOnLongClickListener(onLongClickListenerRedondeo);
+        bRedondeoDescendente = view.findViewById(R.id.b_redondeo_descendente);
+        bRedondeoDescendente.setOnClickListener(onClickListener);
+        bRedondeoDescendente.setOnLongClickListener(oLClickListenerRedondeoDescendente);
+        bRedondeoAscendente = view.findViewById(R.id.b_redondeo_ascendente);
+        bRedondeoAscendente.setOnClickListener(onClickListener);
+        bRedondeoAscendente.setOnLongClickListener(oLClickListenerRedondeoAscendente);
         bRegresarClaro = view.findViewById(R.id.b_regresar_claro);
         bRegresarClaro.setOnClickListener(onClickListener);
         checadaSharedPreference();
@@ -89,31 +92,30 @@ public class MainFragment extends Fragment {
     }
 
     Dialog dialog;
-    Button bDialogAplicar;
     EditText etDialogReferencia;
+    TextView tDialogTitulo;
 
-    private void crearDialogRedondeo() {
+    private void crearDialogRedondeo(boolean esAscendente) {
         dialog = new Dialog(getActivity(), R.style.MyDialogStyle);
         dialog.setContentView(R.layout.dialog);
         dialog.show();
-        bDialogAplicar = dialog.findViewById(R.id.b_dialog_aplicar);
         etDialogReferencia = dialog.findViewById(R.id.et_dialog_ref);
-        if (ajusteRef % 1 == 0)
-            etDialogReferencia.setText(String.format("%.0f", ajusteRef));
+        tDialogTitulo = dialog.findViewById(R.id.t_dialog_titulo);
+        tDialogTitulo.setText("Redondeo");
+        if (redondeoRef % 1 == 0)
+            etDialogReferencia.setText(String.format("%.0f", redondeoRef));
         else
-            etDialogReferencia.setText(String.valueOf(ajusteRef));
-        bDialogAplicar.setOnClickListener(view -> {
-            ajusteRef = Double.parseDouble(etDialogReferencia.getText().toString());
-            ajusteRedondeo();
-            inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-            dialog.dismiss();
-        });
+            etDialogReferencia.setText(String.valueOf(redondeoRef));
+
         inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
         etDialogReferencia.setOnKeyListener((view, i, keyEvent) -> {
 
             if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_ENTER) {
-                ajusteRef = Double.parseDouble(etDialogReferencia.getText().toString());
-                ajusteRedondeo();
+                redondeoRef = Double.parseDouble(etDialogReferencia.getText().toString());
+                if (esAscendente)
+                    ajusteRedondeo(true);
+                else
+                    ajusteRedondeo(false);
                 inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
                 dialog.dismiss();
                 return true;
@@ -128,16 +130,10 @@ public class MainFragment extends Fragment {
         dialog = new Dialog(getActivity(), R.style.MyDialogStyle);
         dialog.setContentView(R.layout.dialog);
         dialog.show();
-        bDialogAplicar = dialog.findViewById(R.id.b_dialog_aplicar);
         etDialogReferencia = dialog.findViewById(R.id.et_dialog_ref);
         etDialogReferencia.setText(String.valueOf(apalancamiento));
-        bDialogAplicar.setOnClickListener(view -> {
-            apalancamiento = (int) Double.parseDouble(etDialogReferencia.getText().toString());
-            tipoApalancamiento = 0;
-            cambioApalancamiento();
-            inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-            dialog.dismiss();
-        });
+        tDialogTitulo = dialog.findViewById(R.id.t_dialog_titulo);
+        tDialogTitulo.setText("Leverage");
         inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
         etDialogReferencia.setOnKeyListener((view, i, keyEvent) -> {
 
@@ -158,19 +154,24 @@ public class MainFragment extends Fragment {
     public void onDestroy() {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putInt("tipoApalancamiento", tipoApalancamiento);
-        editor.putBoolean("decimales", decimales);
+        editor.putBoolean("hayDecimales", hayDecimales);
         editor.putString("cantidad", etCantidad.getText().toString());
         editor.putString("porcentaje", etPorcentaje.getText().toString());
         editor.putString("referencia", etReferencia.getText().toString());
-        editor.putString("ajusteRef", String.valueOf(ajusteRef));
+        editor.putString("redondeoRef", String.valueOf(redondeoRef));
         editor.putInt("apalancamiento", apalancamiento);
         editor.apply();
         super.onDestroy();
     }
 
 
-    View.OnLongClickListener onLongClickListenerRedondeo = view -> {
-        crearDialogRedondeo();
+    View.OnLongClickListener oLClickListenerRedondeoDescendente = view -> {
+        crearDialogRedondeo(false);
+        return true;
+    };
+
+    View.OnLongClickListener oLClickListenerRedondeoAscendente = view -> {
+        crearDialogRedondeo(true);
         return true;
     };
 
@@ -202,8 +203,8 @@ public class MainFragment extends Fragment {
                 etCantidad.getText().clear();
                 etPorcentaje.getText().clear();
                 etReferencia.getText().clear();
-                ajusteRefRespaldo = ajusteRef;
-                ajusteRef = 1000;
+                ajusteRefRespaldo = redondeoRef;
+                redondeoRef = 1000;
                 tTamano.setText("TP");
                 tLote.setText("Lotes");
                 tTamanoC.setText("TPC");
@@ -223,7 +224,7 @@ public class MainFragment extends Fragment {
                 etCantidad.setText(resCantidad);
                 etPorcentaje.setText(resPorcentaje);
                 etReferencia.setText(resReferencia);
-                ajusteRef = ajusteRefRespaldo;
+                redondeoRef = ajusteRefRespaldo;
                 break;
 
             }
@@ -243,11 +244,11 @@ public class MainFragment extends Fragment {
             }
 
             case R.id.t_titulo_tamano: {
-                decimales = !decimales;
+                hayDecimales = !hayDecimales;
 
 
                 if (!tTamanoC.getText().toString().equals("TPC")) {
-                    if (!decimales)
+                    if (!hayDecimales)
                         tTamanoC.setText(String.format("%,.0f", tamanoPosicionC));
                     else
                         tTamanoC.setText(String.format("%,.2f", tamanoPosicionC));
@@ -255,25 +256,37 @@ public class MainFragment extends Fragment {
                 break;
 
             }
-            case R.id.b_ajuste: {
-
-                ajusteRedondeo();
+            case R.id.b_redondeo_descendente:
+                ajusteRedondeo(false);
                 break;
 
-            }
+
+            case R.id.b_redondeo_ascendente:
+                ajusteRedondeo(true);
+                break;
 
 
         }
 
     };
 
-    private void ajusteRedondeo() {
-        double restante, num;
+    private void ajusteRedondeo(boolean esAscendente) {
+        double restante, restanteFinal, num;
 
         if (!tTamanoC.getText().toString().equals("TPC")) {
 
-            restante = tamanoPosicionC % ajusteRef;
-            num = tamanoPosicionC - restante;
+            restante = tamanoPosicionC % redondeoRef;
+            restanteFinal = redondeoRef - restante;
+            if (esAscendente)
+                num = tamanoPosicionC + restanteFinal;
+
+            else {
+                num = tamanoPosicionC - restanteFinal;
+
+                if (num % redondeoRef > 0)
+                    num = tamanoPosicionC - restante;
+            }
+
             num *= referencia;
             num *= (porcentaje / 100);
             etCantidad.setText(String.format("%.3f", num));
@@ -281,8 +294,21 @@ public class MainFragment extends Fragment {
 
         } else if (!tTamano.getText().toString().equals("TP")) {
 
-            restante = tamanoPosicion % ajusteRef;
-            num = tamanoPosicion - restante;
+            restante = tamanoPosicion % redondeoRef;
+            restanteFinal = redondeoRef - restante;
+
+            if (esAscendente)
+                num = tamanoPosicion + restanteFinal;
+
+            else {
+
+                num = tamanoPosicion - restanteFinal;
+
+                if (num % redondeoRef > 0)
+                    num = tamanoPosicion - restante;
+            }
+
+
             num *= (porcentaje / 100);
             etCantidad.setText(String.format("%.3f", num));
 
@@ -370,7 +396,7 @@ public class MainFragment extends Fragment {
                     loteC = tamanoPosicionC / 100000;
                     margenC = tamanoPosicionC / apalancamiento;
                     necesarioC = (cantidad / referencia) + margenC;
-                    if (!decimales)
+                    if (!hayDecimales)
                         tTamanoC.setText(String.format("%,.0f", tamanoPosicionC));
                     else
                         tTamanoC.setText(String.format("%,.2f", tamanoPosicionC));
@@ -425,16 +451,16 @@ public class MainFragment extends Fragment {
         sharedPreferences = getActivity().getSharedPreferences("xPos", Context.MODE_PRIVATE);
         if (sharedPreferences.contains("tipoApalancamiento"))
             tipoApalancamiento = sharedPreferences.getInt("tipoApalancamiento", 1);
-        if (sharedPreferences.contains("decimales"))
-            decimales = sharedPreferences.getBoolean("decimales", false);
+        if (sharedPreferences.contains("hayDecimales"))
+            hayDecimales = sharedPreferences.getBoolean("hayDecimales", false);
         if (sharedPreferences.contains("cantidad"))
             etCantidad.setText(sharedPreferences.getString("cantidad", ""));
         if (sharedPreferences.contains("porcentaje"))
             etPorcentaje.setText(sharedPreferences.getString("porcentaje", ""));
         if (sharedPreferences.contains("referencia"))
             etReferencia.setText(sharedPreferences.getString("referencia", ""));
-        if (sharedPreferences.contains("ajusteRef"))
-            ajusteRef = Double.parseDouble(sharedPreferences.getString("ajusteRef", "1000"));
+        if (sharedPreferences.contains("redondeoRef"))
+            redondeoRef = Double.parseDouble(sharedPreferences.getString("redondeoRef", "1000"));
         if (sharedPreferences.contains("apalancamiento"))
             apalancamiento = sharedPreferences.getInt("apalancamiento", 100);
     }

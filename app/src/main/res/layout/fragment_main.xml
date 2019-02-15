@@ -258,21 +258,39 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/b_ajuste"
-        android:layout_width="100dp"
+    android:id="@+id/b_redondeo_descendente"
+    android:layout_width="wrap_content"
+    android:layout_height="55dp"
+    android:layout_marginStart="8dp"
+    android:layout_marginBottom="16dp"
+    android:background="@android:color/transparent"
+    android:gravity="center"
+    android:textAllCaps="false"
+    android:text="RD"
+    android:textAlignment="center"
+    android:textColor="@android:color/white"
+    android:textSize="30dp"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintHorizontal_bias="0.78"
+    app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/b_redondeo_ascendente"
+        android:layout_width="wrap_content"
         android:layout_height="55dp"
         android:layout_marginStart="8dp"
         android:layout_marginBottom="16dp"
         android:background="@android:color/transparent"
         android:gravity="center"
         android:textAllCaps="false"
-        android:text="R"
+        android:text="RA"
         android:textAlignment="center"
         android:textColor="@android:color/white"
         android:textSize="30dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.82"
+        app:layout_constraintHorizontal_bias="0.98"
         app:layout_constraintStart_toStartOf="parent" />
 
 
