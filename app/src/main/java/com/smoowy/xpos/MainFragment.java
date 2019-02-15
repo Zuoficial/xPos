@@ -39,9 +39,11 @@ public class MainFragment extends Fragment {
     int tipoApalancamiento = 4;
     boolean hayDecimales;
     ClipboardManager clipboard;
-    Button bApalancamiento, bLimpiarClaro, bRedondeoDescendente, bRedondeoAscendente, bRegresarClaro;
+    Button bApalancamiento, bLimpiarClaro, bRedondeoDescendente,
+            bRedondeoAscendente, bRegresarClaro,bRegresarRedondeo;
     SharedPreferences sharedPreferences;
     String resCantidad, resPorcentaje, resReferencia;
+    String resCantidadRedo,resPorcentajeRedo,resReferenciaRedo;
     InputMethodManager inputMethodManager;
 
     @Override
@@ -85,6 +87,8 @@ public class MainFragment extends Fragment {
         bRedondeoAscendente.setOnLongClickListener(oLClickListenerRedondeoAscendente);
         bRegresarClaro = view.findViewById(R.id.b_regresar_claro);
         bRegresarClaro.setOnClickListener(onClickListener);
+        bRegresarRedondeo= view.findViewById(R.id.b_regresar_redondeo);
+        bRegresarRedondeo.setOnClickListener(onClickListener);
         checadaSharedPreference();
         cambioApalancamiento();
         return view;
@@ -273,6 +277,16 @@ public class MainFragment extends Fragment {
                 ajusteRedondeo(true);
                 break;
 
+            case R.id.b_regresar_redondeo :
+                if (resCantidadRedo == null)
+                    break;
+
+                etCantidad.setText(resCantidadRedo);
+                etPorcentaje.setText(resPorcentajeRedo);
+                etReferencia.setText(resReferenciaRedo);
+                break;
+
+
 
         }
 
@@ -281,6 +295,10 @@ public class MainFragment extends Fragment {
     private void ajusteRedondeo(boolean esAscendente) {
         double restante, restanteFinal, num,
                 tamanoPosicioncAjustada, tamanoPosicionAjustada;
+
+        resCantidadRedo = etCantidad.getText().toString();
+        resPorcentajeRedo = etPorcentaje.getText().toString();
+        resReferenciaRedo = etReferencia.getText().toString();
 
         if (!tTamanoC.getText().toString().equals("TPC")) {
 
