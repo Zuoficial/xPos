@@ -28,7 +28,7 @@ public class MainFragment extends Fragment {
     public MainFragment() {
     }
 
-    EditText etCantidad, etPorcentaje, etReferencia;
+    EditText etCantidad, etPorcentaje, etReferencia, etCantidadMostrador;
     TextView tTamano, tLote, tTamanoC, tLoteC,
             tTituloCantidad, tTituloPorcentaje, tTituloConversion, tTituloTamano, tMargen, tMargenC,
             tSeguro, tSeguroC;
@@ -37,12 +37,12 @@ public class MainFragment extends Fragment {
             redondeoRef = 1000, ajusteRefRespaldo;
     int apalancamiento;
     int tipoApalancamiento = 4;
-    boolean hayDecimales, yaRedondeo, resYaRedondeo;
+    boolean hayDecimales, yaRedondeo, resYaRedondeo, seAplanoLimpiar;
     ClipboardManager clipboard;
     Button bApalancamiento, bLimpiarClaro, bRedondeoDescendente,
             bRedondeoAscendente, bRegresarClaro, bRegresarRedondeo;
     SharedPreferences sharedPreferences;
-    String resCantidad, resPorcentaje, resReferencia;
+    String resCantidad, resCantidadMostrador, resPorcentaje, resReferencia;
     String resCantidadRedo, resPorcentajeRedo, resReferenciaRedo;
     InputMethodManager inputMethodManager;
 
@@ -53,6 +53,8 @@ public class MainFragment extends Fragment {
         clipboard = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
         inputMethodManager = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
         etCantidad = view.findViewById(R.id.et_cantidad);
+        etCantidadMostrador = view.findViewById(R.id.et_cantidad_mostrador);
+        etCantidadMostrador.addTextChangedListener(textWatcherMostrador);
         etPorcentaje = view.findViewById(R.id.et_porcentaje);
         etReferencia = view.findViewById(R.id.et_referencia);
         etCantidad.addTextChangedListener(textWatcher);
@@ -189,7 +191,7 @@ public class MainFragment extends Fragment {
 
         switch (view.getId()) {
             case R.id.t_titulo_cant:
-                etCantidad.getText().clear();
+                etCantidadMostrador.getText().clear();
                 yaRedondeo = false;
                 break;
 
@@ -205,10 +207,11 @@ public class MainFragment extends Fragment {
 
             case R.id.b_limpiar_claro: {
                 resCantidad = etCantidad.getText().toString();
+                resCantidadMostrador = etCantidadMostrador.getText().toString();
                 resPorcentaje = etPorcentaje.getText().toString();
                 resReferencia = etReferencia.getText().toString();
                 resYaRedondeo = yaRedondeo;
-                etCantidad.getText().clear();
+                etCantidadMostrador.getText().clear();
                 etPorcentaje.getText().clear();
                 etReferencia.getText().clear();
                 ajusteRefRespaldo = redondeoRef;
@@ -222,19 +225,25 @@ public class MainFragment extends Fragment {
                 tSeguro.setText("Seguro");
                 tSeguroC.setText("SC");
                 yaRedondeo = false;
+                seAplanoLimpiar = true;
                 break;
             }
 
             case R.id.b_regresar_claro: {
 
-                if (resCantidad == null)
-                    break;
+                if (seAplanoLimpiar) {
 
-                etCantidad.setText(resCantidad);
-                etPorcentaje.setText(resPorcentaje);
-                etReferencia.setText(resReferencia);
-                redondeoRef = ajusteRefRespaldo;
-                yaRedondeo = resYaRedondeo;
+                    if (resCantidad == null)
+                        break;
+
+                    etCantidadMostrador.setText(String.format("%.2f", Double.valueOf(resCantidad)));
+                    etCantidad.setText(resCantidad);
+                    etPorcentaje.setText(resPorcentaje);
+                    etReferencia.setText(resReferencia);
+                    redondeoRef = ajusteRefRespaldo;
+                    yaRedondeo = resYaRedondeo;
+                    seAplanoLimpiar = false;
+                }
                 break;
 
             }
@@ -287,6 +296,7 @@ public class MainFragment extends Fragment {
                 if (resCantidadRedo == null)
                     break;
 
+                etCantidadMostrador.setText(String.format("%.2f", Double.valueOf(resCantidad)));
                 etCantidad.setText(resCantidadRedo);
                 etPorcentaje.setText(resPorcentajeRedo);
                 etReferencia.setText(resReferenciaRedo);
@@ -341,8 +351,13 @@ public class MainFragment extends Fragment {
             num *= referencia;
             num *= (porcentaje / 100);
 
+            if (num % 1 > 0) {
+                etCantidadMostrador.setText(String.format("%.2f", num));
+                etCantidad.setText(String.format("%.4f", num));
 
-            etCantidad.setText(String.format("%.4f", num));
+            } else {
+                etCantidadMostrador.setText(String.format("%.0f", num));
+            }
 
 
         } else if (!tTamano.getText().toString().equals("TP")) {
@@ -377,7 +392,14 @@ public class MainFragment extends Fragment {
 
 
             num *= (porcentaje / 100);
-            etCantidad.setText(String.format("%.4f", num));
+
+            if (num % 1 > 0) {
+                etCantidadMostrador.setText(String.format("%.2f", num));
+                etCantidad.setText(String.format("%.4f", num));
+
+            } else {
+                etCantidadMostrador.setText(String.format("%.0f", num));
+            }
 
         }
 
@@ -518,6 +540,22 @@ public class MainFragment extends Fragment {
 
         }
     };
+    TextWatcher textWatcherMostrador = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            etCantidad.setText(charSequence);
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+
+        }
+    };
 
     private void checadaSharedPreference() {
         sharedPreferences = getActivity().getSharedPreferences("xPos", Context.MODE_PRIVATE);
@@ -525,8 +563,17 @@ public class MainFragment extends Fragment {
             tipoApalancamiento = sharedPreferences.getInt("tipoApalancamiento", 1);
         if (sharedPreferences.contains("hayDecimales"))
             hayDecimales = sharedPreferences.getBoolean("hayDecimales", false);
-        if (sharedPreferences.contains("cantidad"))
-            etCantidad.setText(sharedPreferences.getString("cantidad", ""));
+        if (sharedPreferences.contains("cantidad")) {
+
+            if (sharedPreferences.getString("cantidad", "").isEmpty()) {
+                etCantidadMostrador.setText("");
+                return;
+            }
+            double valor = Double.valueOf(sharedPreferences.getString("cantidad", ""));
+            etCantidadMostrador.setText(String.format("%.2f", Double.valueOf(valor)));
+            etCantidad.setText(String.format("%.4f", Double.valueOf(valor)));
+        }
+
         if (sharedPreferences.contains("porcentaje"))
             etPorcentaje.setText(sharedPreferences.getString("porcentaje", ""));
         if (sharedPreferences.contains("referencia"))
