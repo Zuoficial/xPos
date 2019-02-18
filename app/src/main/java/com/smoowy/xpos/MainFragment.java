@@ -37,13 +37,13 @@ public class MainFragment extends Fragment {
             redondeoRef = 1000, ajusteRefRespaldo;
     int apalancamiento;
     int tipoApalancamiento = 4;
-    boolean hayDecimales;
+    boolean hayDecimales, yaRedondeo, resYaRedondeo;
     ClipboardManager clipboard;
     Button bApalancamiento, bLimpiarClaro, bRedondeoDescendente,
-            bRedondeoAscendente, bRegresarClaro,bRegresarRedondeo;
+            bRedondeoAscendente, bRegresarClaro, bRegresarRedondeo;
     SharedPreferences sharedPreferences;
     String resCantidad, resPorcentaje, resReferencia;
-    String resCantidadRedo,resPorcentajeRedo,resReferenciaRedo;
+    String resCantidadRedo, resPorcentajeRedo, resReferenciaRedo;
     InputMethodManager inputMethodManager;
 
     @Override
@@ -87,7 +87,7 @@ public class MainFragment extends Fragment {
         bRedondeoAscendente.setOnLongClickListener(oLClickListenerRedondeoAscendente);
         bRegresarClaro = view.findViewById(R.id.b_regresar_claro);
         bRegresarClaro.setOnClickListener(onClickListener);
-        bRegresarRedondeo= view.findViewById(R.id.b_regresar_redondeo);
+        bRegresarRedondeo = view.findViewById(R.id.b_regresar_redondeo);
         bRegresarRedondeo.setOnClickListener(onClickListener);
         checadaSharedPreference();
         cambioApalancamiento();
@@ -190,20 +190,24 @@ public class MainFragment extends Fragment {
         switch (view.getId()) {
             case R.id.t_titulo_cant:
                 etCantidad.getText().clear();
+                yaRedondeo = false;
                 break;
 
             case R.id.t_titulo_porcen:
                 etPorcentaje.getText().clear();
+                yaRedondeo = false;
                 break;
 
             case R.id.t_titulo_convers:
                 etReferencia.getText().clear();
+                yaRedondeo = false;
                 break;
 
             case R.id.b_limpiar_claro: {
                 resCantidad = etCantidad.getText().toString();
                 resPorcentaje = etPorcentaje.getText().toString();
                 resReferencia = etReferencia.getText().toString();
+                resYaRedondeo = yaRedondeo;
                 etCantidad.getText().clear();
                 etPorcentaje.getText().clear();
                 etReferencia.getText().clear();
@@ -217,6 +221,7 @@ public class MainFragment extends Fragment {
                 tMargenC.setText("MC");
                 tSeguro.setText("Seguro");
                 tSeguroC.setText("SC");
+                yaRedondeo = false;
                 break;
             }
 
@@ -229,6 +234,7 @@ public class MainFragment extends Fragment {
                 etPorcentaje.setText(resPorcentaje);
                 etReferencia.setText(resReferencia);
                 redondeoRef = ajusteRefRespaldo;
+                yaRedondeo = resYaRedondeo;
                 break;
 
             }
@@ -277,15 +283,16 @@ public class MainFragment extends Fragment {
                 ajusteRedondeo(true);
                 break;
 
-            case R.id.b_regresar_redondeo :
+            case R.id.b_regresar_redondeo:
                 if (resCantidadRedo == null)
                     break;
 
                 etCantidad.setText(resCantidadRedo);
                 etPorcentaje.setText(resPorcentajeRedo);
                 etReferencia.setText(resReferenciaRedo);
+                if (yaRedondeo)
+                    yaRedondeo = false;
                 break;
-
 
 
         }
@@ -304,8 +311,23 @@ public class MainFragment extends Fragment {
 
             if (hayDecimales)
                 tamanoPosicioncAjustada = tamanoPosicionC;
-            else
+            else {
+
                 tamanoPosicioncAjustada = Math.round(tamanoPosicionC);
+
+
+                if (yaRedondeo) {
+                    restante = tamanoPosicioncAjustada % redondeoRef;
+                    tamanoPosicioncAjustada -= restante;
+
+                    if (esAscendente) {
+                        if (restante >= 1)
+                            tamanoPosicioncAjustada += redondeoRef;
+                    }
+                }
+
+            }
+
 
             restante = tamanoPosicioncAjustada % redondeoRef;
             restanteFinal = redondeoRef - restante;
@@ -314,14 +336,13 @@ public class MainFragment extends Fragment {
 
             else {
                 num = tamanoPosicioncAjustada - restanteFinal;
-
-                if (num % redondeoRef > 0)
-                    num = tamanoPosicioncAjustada - restante;
             }
 
             num *= referencia;
             num *= (porcentaje / 100);
-            etCantidad.setText(String.format("%.3f", num));
+
+
+            etCantidad.setText(String.format("%.4f", num));
 
 
         } else if (!tTamano.getText().toString().equals("TP")) {
@@ -329,8 +350,20 @@ public class MainFragment extends Fragment {
 
             if (hayDecimales)
                 tamanoPosicionAjustada = tamanoPosicion;
-            else
+            else {
                 tamanoPosicionAjustada = Math.round(tamanoPosicion);
+
+                if (yaRedondeo) {
+                    restante = tamanoPosicionAjustada % redondeoRef;
+                    tamanoPosicionAjustada -= restante;
+
+                    if (esAscendente) {
+                        if (restante >= 1)
+                            tamanoPosicionAjustada += redondeoRef;
+                    }
+                }
+
+            }
 
             restante = tamanoPosicionAjustada % redondeoRef;
             restanteFinal = redondeoRef - restante;
@@ -339,18 +372,16 @@ public class MainFragment extends Fragment {
                 num = tamanoPosicionAjustada + restanteFinal;
 
             else {
-
                 num = tamanoPosicionAjustada - restanteFinal;
-
-                if (num % redondeoRef > 0)
-                    num = tamanoPosicionAjustada - restante;
             }
 
 
             num *= (porcentaje / 100);
-            etCantidad.setText(String.format("%.3f", num));
+            etCantidad.setText(String.format("%.4f", num));
 
         }
+
+        yaRedondeo = true;
     }
 
 
