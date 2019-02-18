@@ -567,11 +567,11 @@ public class MainFragment extends Fragment {
 
             if (sharedPreferences.getString("cantidad", "").isEmpty()) {
                 etCantidadMostrador.setText("");
-                return;
+            } else {
+                double valor = Double.valueOf(sharedPreferences.getString("cantidad", ""));
+                etCantidadMostrador.setText(String.format("%.2f", Double.valueOf(valor)));
+                etCantidad.setText(String.format("%.4f", Double.valueOf(valor)));
             }
-            double valor = Double.valueOf(sharedPreferences.getString("cantidad", ""));
-            etCantidadMostrador.setText(String.format("%.2f", Double.valueOf(valor)));
-            etCantidad.setText(String.format("%.4f", Double.valueOf(valor)));
         }
 
         if (sharedPreferences.contains("porcentaje"))
