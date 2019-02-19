@@ -345,7 +345,12 @@ public class MainFragment extends Fragment {
                 num = tamanoPosicioncAjustada + restanteFinal;
 
             else {
-                num = tamanoPosicioncAjustada - restanteFinal;
+
+                if (yaRedondeo)
+                    num = tamanoPosicioncAjustada - restanteFinal;
+                else
+                    num = tamanoPosicioncAjustada - restante;
+                
             }
 
             num *= referencia;
@@ -387,7 +392,11 @@ public class MainFragment extends Fragment {
                 num = tamanoPosicionAjustada + restanteFinal;
 
             else {
-                num = tamanoPosicionAjustada - restanteFinal;
+
+                if (yaRedondeo)
+                    num = tamanoPosicionAjustada - restanteFinal;
+                else
+                    num = tamanoPosicionAjustada - restante;
             }
 
 
