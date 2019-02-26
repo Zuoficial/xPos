@@ -345,12 +345,10 @@ public class MainFragment extends Fragment {
                 num = tamanoPosicioncAjustada + restanteFinal;
 
             else {
-
                 if (yaRedondeo)
                     num = tamanoPosicioncAjustada - restanteFinal;
                 else
                     num = tamanoPosicioncAjustada - restante;
-
             }
 
             num *= referencia;
