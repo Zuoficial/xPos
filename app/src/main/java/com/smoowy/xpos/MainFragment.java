@@ -407,7 +407,6 @@ public class MainFragment extends Fragment {
             } else {
                 etCantidadMostrador.setText(String.format("%.0f", num));
             }
-
         }
 
         yaRedondeo = true;
