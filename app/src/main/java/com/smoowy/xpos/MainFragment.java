@@ -61,8 +61,10 @@ public class MainFragment extends Fragment {
         etPorcentaje.addTextChangedListener(textWatcher);
         etReferencia.addTextChangedListener(textWatcher);
         tTamano = view.findViewById(R.id.t_posicion_tamano);
+        tTamano.setOnLongClickListener(oLClickListenerTamano);
         tLote = view.findViewById(R.id.t_posicion_lote);
         tTamanoC = view.findViewById(R.id.t_posicion_tamano_conversion);
+        tTamanoC.setOnLongClickListener(oLClickListenerTamanoConversion);
         tLoteC = view.findViewById(R.id.t_posicion_lote_conversion);
         tTituloCantidad = view.findViewById(R.id.t_titulo_cant);
         tTituloPorcentaje = view.findViewById(R.id.t_titulo_porcen);
@@ -75,10 +77,12 @@ public class MainFragment extends Fragment {
         tSeguro = view.findViewById(R.id.t_seguro);
         tSeguroC = view.findViewById(R.id.t_seguroC);
         tMargen = view.findViewById(R.id.t_margen);
+        tMargen.setOnLongClickListener(oLClickListenerMargen);
         tMargenC = view.findViewById(R.id.t_margenC);
+        tMargenC.setOnLongClickListener(oLClickListenerMargenConversion);
         bApalancamiento = view.findViewById(R.id.b_apalancamiento);
         bApalancamiento.setOnClickListener(onClickListener);
-        bApalancamiento.setOnLongClickListener(onLongClickListenerApalancamiento);
+        bApalancamiento.setOnLongClickListener(oLClickListenerApalancamiento);
         bLimpiarClaro = view.findViewById(R.id.b_limpiar_claro);
         bLimpiarClaro.setOnClickListener(onClickListener);
         bRedondeoDescendente = view.findViewById(R.id.b_redondeo_descendente);
@@ -156,6 +160,155 @@ public class MainFragment extends Fragment {
         });
     }
 
+
+    private void crearDialogTamano() {
+        dialog = new Dialog(getActivity(), R.style.MyDialogStyle);
+        dialog.setContentView(R.layout.dialog);
+        dialog.show();
+        etDialogReferencia = dialog.findViewById(R.id.et_dialog_ref);
+        if (hayDecimales)
+            etDialogReferencia.setText(String.format("%.2f", tamanoPosicion));
+        else
+            etDialogReferencia.setText(String.format("%.0f", tamanoPosicion));
+        tDialogTitulo = dialog.findViewById(R.id.t_dialog_titulo);
+        tDialogTitulo.setText("TP");
+        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+        etDialogReferencia.setOnKeyListener((view, i, keyEvent) -> {
+
+            if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_ENTER) {
+                double num = Double.parseDouble(etDialogReferencia.getText().toString());
+                num *= porcentaje / 100;
+
+                if (num % 1 > 0) {
+                    etCantidadMostrador.setText(String.format("%.2f", num));
+                    etCantidad.setText(String.format("%.4f", num));
+
+                } else {
+                    etCantidadMostrador.setText(String.format("%.0f", num));
+                }
+
+                inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+                dialog.dismiss();
+                return true;
+
+            } else
+                return false;
+        });
+    }
+
+
+    private void crearDialogTamanoConversion() {
+        dialog = new Dialog(getActivity(), R.style.MyDialogStyle);
+        dialog.setContentView(R.layout.dialog);
+        dialog.show();
+        etDialogReferencia = dialog.findViewById(R.id.et_dialog_ref);
+        if (hayDecimales)
+            etDialogReferencia.setText(String.format("%.2f", tamanoPosicionC));
+        else
+            etDialogReferencia.setText(String.format("%.0f", tamanoPosicionC));
+        tDialogTitulo = dialog.findViewById(R.id.t_dialog_titulo);
+        tDialogTitulo.setText("TPC");
+        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+        etDialogReferencia.setOnKeyListener((view, i, keyEvent) -> {
+
+            if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_ENTER) {
+                double num = Double.parseDouble(etDialogReferencia.getText().toString());
+                num *= referencia;
+                num *= porcentaje / 100;
+
+                if (num % 1 > 0) {
+                    etCantidadMostrador.setText(String.format("%.2f", num));
+                    etCantidad.setText(String.format("%.4f", num));
+
+                } else {
+                    etCantidadMostrador.setText(String.format("%.0f", num));
+                }
+
+                inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+                dialog.dismiss();
+                return true;
+
+            } else
+                return false;
+        });
+    }
+
+
+    private void crearDialogMargen() {
+        dialog = new Dialog(getActivity(), R.style.MyDialogStyle);
+        dialog.setContentView(R.layout.dialog);
+        dialog.show();
+        etDialogReferencia = dialog.findViewById(R.id.et_dialog_ref);
+        etDialogReferencia.setText(String.format("%.2f", margen));
+        tDialogTitulo = dialog.findViewById(R.id.t_dialog_titulo);
+        tDialogTitulo.setText("Margen");
+        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+        etDialogReferencia.setOnKeyListener((view, i, keyEvent) -> {
+
+            if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_ENTER) {
+
+
+                double num = Double.parseDouble(etDialogReferencia.getText().toString());
+                num *= apalancamiento;
+                double porc = cantidad / num;
+                porc *= 100;
+
+
+                if (porc % 1 > 0) {
+                    etPorcentaje.setText(String.format("%.4f", porc));
+
+                } else {
+                    etPorcentaje.setText(String.format("%.0f", porc));
+                }
+
+
+                inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+                dialog.dismiss();
+                return true;
+
+            } else
+                return false;
+        });
+    }
+
+
+    private void crearDialogTamanoMargenConversion() {
+        dialog = new Dialog(getActivity(), R.style.MyDialogStyle);
+        dialog.setContentView(R.layout.dialog);
+        dialog.show();
+        etDialogReferencia = dialog.findViewById(R.id.et_dialog_ref);
+        etDialogReferencia.setText(String.format("%.2f", margenC));
+        tDialogTitulo = dialog.findViewById(R.id.t_dialog_titulo);
+        tDialogTitulo.setText("MC");
+        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+        etDialogReferencia.setOnKeyListener((view, i, keyEvent) -> {
+
+            if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_ENTER) {
+
+
+                double num = Double.parseDouble(etDialogReferencia.getText().toString());
+                num *= apalancamiento;
+                num *= referencia;
+                double porc = cantidad / num;
+                porc *= 100;
+
+
+                if (porc % 1 > 0) {
+                    etPorcentaje.setText(String.format("%.4f", porc));
+
+                } else {
+                    etPorcentaje.setText(String.format("%.0f", porc));
+                }
+                
+                inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+                dialog.dismiss();
+                return true;
+
+            } else
+                return false;
+        });
+    }
+
     @Override
     public void onDestroy() {
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -181,8 +334,32 @@ public class MainFragment extends Fragment {
         return true;
     };
 
-    View.OnLongClickListener onLongClickListenerApalancamiento = view -> {
+    View.OnLongClickListener oLClickListenerApalancamiento = view -> {
         crearDialogApalancamiento();
+        return true;
+    };
+
+    View.OnLongClickListener oLClickListenerTamano = view -> {
+        if (!tTamanoC.getText().toString().equals("TP"))
+            crearDialogTamano();
+        return true;
+    };
+
+    View.OnLongClickListener oLClickListenerTamanoConversion = view -> {
+        if (!tTamanoC.getText().toString().equals("TPC"))
+            crearDialogTamanoConversion();
+        return true;
+    };
+
+    View.OnLongClickListener oLClickListenerMargen = view -> {
+        if (!tMargen.getText().toString().equals("Margen"))
+            crearDialogMargen();
+        return true;
+    };
+
+    View.OnLongClickListener oLClickListenerMargenConversion = view -> {
+        if (!tMargenC.getText().toString().equals("MargenC"))
+        crearDialogTamanoMargenConversion();
         return true;
     };
 
