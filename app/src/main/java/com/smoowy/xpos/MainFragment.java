@@ -32,7 +32,7 @@ public class MainFragment extends Fragment {
     TextView tTamano, tLote, tTamanoC, tLoteC,
             tTituloCantidad, tTituloPorcentaje, tTituloConversion, tTituloTamano, tMargen, tMargenC,
             tSeguro, tSeguroC;
-    double cantidad, porcentaje, referencia, tamanoPosicion,
+    double cantidad, porcentajeEntero, referencia, tamanoPosicion,
             lote, tamanoPosicionC, loteC, margen, margenC, necesario, necesarioC,
             redondeoRef = 1000, ajusteRefRespaldo;
     int apalancamiento;
@@ -61,10 +61,10 @@ public class MainFragment extends Fragment {
         etPorcentaje.addTextChangedListener(textWatcher);
         etReferencia.addTextChangedListener(textWatcher);
         tTamano = view.findViewById(R.id.t_posicion_tamano);
-        tTamano.setOnLongClickListener(oLClickListenerTamano);
+        tTamano.setOnClickListener(oLClickListenerTamano);
         tLote = view.findViewById(R.id.t_posicion_lote);
         tTamanoC = view.findViewById(R.id.t_posicion_tamano_conversion);
-        tTamanoC.setOnLongClickListener(oLClickListenerTamanoConversion);
+        tTamanoC.setOnClickListener(oLClickListenerTamanoConversion);
         tLoteC = view.findViewById(R.id.t_posicion_lote_conversion);
         tTituloCantidad = view.findViewById(R.id.t_titulo_cant);
         tTituloPorcentaje = view.findViewById(R.id.t_titulo_porcen);
@@ -77,9 +77,9 @@ public class MainFragment extends Fragment {
         tSeguro = view.findViewById(R.id.t_seguro);
         tSeguroC = view.findViewById(R.id.t_seguroC);
         tMargen = view.findViewById(R.id.t_margen);
-        tMargen.setOnLongClickListener(oLClickListenerMargen);
+        tMargen.setOnClickListener(oLClickListenerMargen);
         tMargenC = view.findViewById(R.id.t_margenC);
-        tMargenC.setOnLongClickListener(oLClickListenerMargenConversion);
+        tMargenC.setOnClickListener(oLClickListenerMargenConversion);
         bApalancamiento = view.findViewById(R.id.b_apalancamiento);
         bApalancamiento.setOnClickListener(onClickListener);
         bApalancamiento.setOnLongClickListener(oLClickListenerApalancamiento);
@@ -176,8 +176,9 @@ public class MainFragment extends Fragment {
         etDialogReferencia.setOnKeyListener((view, i, keyEvent) -> {
 
             if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_ENTER) {
+                respaldoDeET();
                 double num = Double.parseDouble(etDialogReferencia.getText().toString());
-                num *= porcentaje / 100;
+                num *= porcentajeEntero / 100;
 
                 if (num % 1 > 0) {
                     etCantidadMostrador.setText(String.format("%.2f", num));
@@ -212,9 +213,10 @@ public class MainFragment extends Fragment {
         etDialogReferencia.setOnKeyListener((view, i, keyEvent) -> {
 
             if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_ENTER) {
+                respaldoDeET();
                 double num = Double.parseDouble(etDialogReferencia.getText().toString());
                 num *= referencia;
-                num *= porcentaje / 100;
+                num *= porcentajeEntero / 100;
 
                 if (num % 1 > 0) {
                     etCantidadMostrador.setText(String.format("%.2f", num));
@@ -233,6 +235,7 @@ public class MainFragment extends Fragment {
         });
     }
 
+    boolean esCantidadEnDialogMargen = true;
 
     private void crearDialogMargen() {
         dialog = new Dialog(getActivity(), R.style.MyDialogStyle);
@@ -241,26 +244,50 @@ public class MainFragment extends Fragment {
         etDialogReferencia = dialog.findViewById(R.id.et_dialog_ref);
         etDialogReferencia.setText(String.format("%.2f", margen));
         tDialogTitulo = dialog.findViewById(R.id.t_dialog_titulo);
-        tDialogTitulo.setText("Margen");
+        if (esCantidadEnDialogMargen) {
+            tDialogTitulo.setText("Margen");
+        } else {
+            tDialogTitulo.setText("Margen %");
+        }
+        tDialogTitulo.setOnClickListener(view -> {
+            esCantidadEnDialogMargen = !esCantidadEnDialogMargen;
+            if (esCantidadEnDialogMargen) {
+                tDialogTitulo.setText("Margen");
+            } else {
+                tDialogTitulo.setText("Margen %");
+            }
+        });
         inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
         etDialogReferencia.setOnKeyListener((view, i, keyEvent) -> {
 
             if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_ENTER) {
-
-
+                respaldoDeET();
                 double num = Double.parseDouble(etDialogReferencia.getText().toString());
                 num *= apalancamiento;
-                double porc = cantidad / num;
-                porc *= 100;
 
+                if (esCantidadEnDialogMargen) {
 
-                if (porc % 1 > 0) {
-                    etPorcentaje.setText(String.format("%.4f", porc));
+                    num *= porcentajeEntero / 100;
+
+                    if (num % 1 > 0) {
+                        etCantidadMostrador.setText(String.format("%.2f", num));
+                        etCantidad.setText(String.format("%.4f", num));
+
+                    } else {
+                        etCantidadMostrador.setText(String.format("%.0f", num));
+                    }
 
                 } else {
-                    etPorcentaje.setText(String.format("%.0f", porc));
-                }
+                    double porcEntero = cantidad / num;
+                    porcEntero *= 100;
 
+                    if (porcEntero % 1 > 0) {
+                        etPorcentaje.setText(String.format("%.4f", porcEntero));
+
+                    } else {
+                        etPorcentaje.setText(String.format("%.0f", porcEntero));
+                    }
+                }
 
                 inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
                 dialog.dismiss();
@@ -279,27 +306,54 @@ public class MainFragment extends Fragment {
         etDialogReferencia = dialog.findViewById(R.id.et_dialog_ref);
         etDialogReferencia.setText(String.format("%.2f", margenC));
         tDialogTitulo = dialog.findViewById(R.id.t_dialog_titulo);
-        tDialogTitulo.setText("MC");
+        if (esCantidadEnDialogMargen) {
+            tDialogTitulo.setText("MC");
+        } else {
+            tDialogTitulo.setText("MC %");
+        }
+
+        tDialogTitulo.setOnClickListener(view -> {
+            esCantidadEnDialogMargen = !esCantidadEnDialogMargen;
+            if (esCantidadEnDialogMargen) {
+                tDialogTitulo.setText("MC");
+            } else {
+                tDialogTitulo.setText("MC %");
+            }
+        });
         inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
         etDialogReferencia.setOnKeyListener((view, i, keyEvent) -> {
 
             if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_ENTER) {
-
-
+                respaldoDeET();
                 double num = Double.parseDouble(etDialogReferencia.getText().toString());
                 num *= apalancamiento;
                 num *= referencia;
-                double porc = cantidad / num;
-                porc *= 100;
 
 
-                if (porc % 1 > 0) {
-                    etPorcentaje.setText(String.format("%.4f", porc));
+                if (esCantidadEnDialogMargen) {
+                    num *= porcentajeEntero / 100;
+
+                    if (num % 1 > 0) {
+                        etCantidadMostrador.setText(String.format("%.2f", num));
+                        etCantidad.setText(String.format("%.4f", num));
+
+                    } else {
+                        etCantidadMostrador.setText(String.format("%.0f", num));
+                    }
 
                 } else {
-                    etPorcentaje.setText(String.format("%.0f", porc));
+                    double porcEntero = cantidad / num;
+                    porcEntero *= 100;
+
+
+                    if (porcEntero % 1 > 0) {
+                        etPorcentaje.setText(String.format("%.4f", porcEntero));
+
+                    } else {
+                        etPorcentaje.setText(String.format("%.0f", porcEntero));
+                    }
                 }
-                
+
                 inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
                 dialog.dismiss();
                 return true;
@@ -315,7 +369,7 @@ public class MainFragment extends Fragment {
         editor.putInt("tipoApalancamiento", tipoApalancamiento);
         editor.putBoolean("hayDecimales", hayDecimales);
         editor.putString("cantidad", etCantidad.getText().toString());
-        editor.putString("porcentaje", etPorcentaje.getText().toString());
+        editor.putString("porcentajeEntero", etPorcentaje.getText().toString());
         editor.putString("referencia", etReferencia.getText().toString());
         editor.putString("redondeoRef", String.valueOf(redondeoRef));
         editor.putInt("apalancamiento", apalancamiento);
@@ -339,28 +393,24 @@ public class MainFragment extends Fragment {
         return true;
     };
 
-    View.OnLongClickListener oLClickListenerTamano = view -> {
+    View.OnClickListener oLClickListenerTamano = view -> {
         if (!tTamanoC.getText().toString().equals("TP"))
             crearDialogTamano();
-        return true;
     };
 
-    View.OnLongClickListener oLClickListenerTamanoConversion = view -> {
+    View.OnClickListener oLClickListenerTamanoConversion = view -> {
         if (!tTamanoC.getText().toString().equals("TPC"))
             crearDialogTamanoConversion();
-        return true;
     };
 
-    View.OnLongClickListener oLClickListenerMargen = view -> {
+    View.OnClickListener oLClickListenerMargen = view -> {
         if (!tMargen.getText().toString().equals("Margen"))
             crearDialogMargen();
-        return true;
     };
 
-    View.OnLongClickListener oLClickListenerMargenConversion = view -> {
-        if (!tMargenC.getText().toString().equals("MargenC"))
-        crearDialogTamanoMargenConversion();
-        return true;
+    View.OnClickListener oLClickListenerMargenConversion = view -> {
+        if (!tMargenC.getText().toString().equals("MC"))
+            crearDialogTamanoMargenConversion();
     };
 
 
@@ -368,30 +418,28 @@ public class MainFragment extends Fragment {
 
         switch (view.getId()) {
             case R.id.t_titulo_cant:
+                respaldoDeET();
                 etCantidadMostrador.getText().clear();
                 yaRedondeo = false;
                 break;
 
             case R.id.t_titulo_porcen:
+                respaldoDeET();
                 etPorcentaje.getText().clear();
                 yaRedondeo = false;
                 break;
 
             case R.id.t_titulo_convers:
+                respaldoDeET();
                 etReferencia.getText().clear();
                 yaRedondeo = false;
                 break;
 
             case R.id.b_limpiar_claro: {
-                resCantidad = etCantidad.getText().toString();
-                resCantidadMostrador = etCantidadMostrador.getText().toString();
-                resPorcentaje = etPorcentaje.getText().toString();
-                resReferencia = etReferencia.getText().toString();
-                resYaRedondeo = yaRedondeo;
+                respaldoDeET();
                 etCantidadMostrador.getText().clear();
                 etPorcentaje.getText().clear();
                 etReferencia.getText().clear();
-                ajusteRefRespaldo = redondeoRef;
                 redondeoRef = 1000;
                 tTamano.setText("TP");
                 tLote.setText("Lotes");
@@ -402,7 +450,6 @@ public class MainFragment extends Fragment {
                 tSeguro.setText("Seguro");
                 tSeguroC.setText("SC");
                 yaRedondeo = false;
-                seAplanoLimpiar = true;
                 break;
             }
 
@@ -486,6 +533,16 @@ public class MainFragment extends Fragment {
 
     };
 
+    private void respaldoDeET() {
+        seAplanoLimpiar = true;
+        resCantidad = etCantidad.getText().toString();
+        resCantidadMostrador = etCantidadMostrador.getText().toString();
+        resPorcentaje = etPorcentaje.getText().toString();
+        resReferencia = etReferencia.getText().toString();
+        resYaRedondeo = yaRedondeo;
+        ajusteRefRespaldo = redondeoRef;
+    }
+
     private void ajusteRedondeo(boolean esAscendente) {
         double restante, restanteFinal, num,
                 tamanoPosicioncAjustada, tamanoPosicionAjustada;
@@ -529,7 +586,7 @@ public class MainFragment extends Fragment {
             }
 
             num *= referencia;
-            num *= (porcentaje / 100);
+            num *= (porcentajeEntero / 100);
 
             if (num % 1 > 0) {
                 etCantidadMostrador.setText(String.format("%.2f", num));
@@ -575,7 +632,7 @@ public class MainFragment extends Fragment {
             }
 
 
-            num *= (porcentaje / 100);
+            num *= (porcentajeEntero / 100);
 
             if (num % 1 > 0) {
                 etCantidadMostrador.setText(String.format("%.2f", num));
@@ -658,8 +715,8 @@ public class MainFragment extends Fragment {
 
             ) {
                 cantidad = Double.parseDouble(etCantidad.getText().toString());
-                porcentaje = Double.parseDouble(etPorcentaje.getText().toString());
-                tamanoPosicion = cantidad / (porcentaje / 100);
+                porcentajeEntero = Double.parseDouble(etPorcentaje.getText().toString());
+                tamanoPosicion = cantidad / (porcentajeEntero / 100);
 
 
                 if (!etReferencia.getText().toString().isEmpty() &&
@@ -757,8 +814,8 @@ public class MainFragment extends Fragment {
             }
         }
 
-        if (sharedPreferences.contains("porcentaje"))
-            etPorcentaje.setText(sharedPreferences.getString("porcentaje", ""));
+        if (sharedPreferences.contains("porcentajeEntero"))
+            etPorcentaje.setText(sharedPreferences.getString("porcentajeEntero", ""));
         if (sharedPreferences.contains("referencia"))
             etReferencia.setText(sharedPreferences.getString("referencia", ""));
         if (sharedPreferences.contains("redondeoRef"))
