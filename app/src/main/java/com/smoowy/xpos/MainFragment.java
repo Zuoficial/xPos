@@ -34,13 +34,13 @@ public class MainFragment extends Fragment {
             tSeguro, tSeguroC;
     double cantidad, porcentajeEntero, referencia, tamanoPosicion,
             lote, tamanoPosicionC, loteC, margen, margenC, necesario, necesarioC,
-            redondeoRef = 1000, ajusteRefRespaldo;
+            redondeoRef = 1000, ajusteRefRespaldo, resPrecioXDialogPos, resPorcentajeXDialogPos;
     int apalancamiento;
     int tipoApalancamiento = 4;
     boolean hayDecimales, yaRedondeo, resYaRedondeo, seAplanoLimpiar;
     ClipboardManager clipboard;
     Button bApalancamiento, bLimpiarClaro, bRedondeoDescendente,
-            bRedondeoAscendente, bRegresarClaro, bRegresarRedondeo;
+            bRedondeoAscendente, bRegresarClaro, bPos;
     SharedPreferences sharedPreferences;
     String resCantidad, resCantidadMostrador, resPorcentaje, resReferencia;
     String resCantidadRedo, resPorcentajeRedo, resReferenciaRedo;
@@ -95,8 +95,8 @@ public class MainFragment extends Fragment {
         bRedondeoAscendente.setOnLongClickListener(oLClickListenerRedondeoAscendente);
         bRegresarClaro = view.findViewById(R.id.b_regresar_claro);
         bRegresarClaro.setOnClickListener(onClickListener);
-        bRegresarRedondeo = view.findViewById(R.id.b_regresar_redondeo);
-        bRegresarRedondeo.setOnClickListener(onClickListener);
+        bPos = view.findViewById(R.id.b_pos);
+        bPos.setOnClickListener(onClickListener);
         checadaSharedPreference();
         cambioApalancamiento();
         return view;
@@ -243,7 +243,7 @@ public class MainFragment extends Fragment {
         dialog.setContentView(R.layout.dialog);
         dialog.show();
         etDialogReferencia = dialog.findViewById(R.id.et_dialog_ref);
-        etDialogReferencia.setText(String.format("%.4f", tamanoPosicion/100000));
+        etDialogReferencia.setText(String.format("%.4f", tamanoPosicion / 100000));
         tDialogTitulo = dialog.findViewById(R.id.t_dialog_titulo);
         tDialogTitulo.setText("Lotes");
         inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
@@ -277,7 +277,7 @@ public class MainFragment extends Fragment {
         dialog.setContentView(R.layout.dialog);
         dialog.show();
         etDialogReferencia = dialog.findViewById(R.id.et_dialog_ref);
-        etDialogReferencia.setText(String.format("%.4f", tamanoPosicionC/100000));
+        etDialogReferencia.setText(String.format("%.4f", tamanoPosicionC / 100000));
         tDialogTitulo = dialog.findViewById(R.id.t_dialog_titulo);
         tDialogTitulo.setText("LC");
         inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
@@ -436,6 +436,138 @@ public class MainFragment extends Fragment {
         });
     }
 
+    EditText etPrecioDialogPos, etPorcentajeDialogPos, etPrecisionDialogPos;
+    TextView tPrecioDialogPos, tPorcentajeDialogPos, tSuperiorDialogPos, tInferiorDialogPos;
+    double precioDialogPos, porcentajeDialogPos, superiorDialogPos, inferiorDialogPos;
+    Button bLimpiarDialogPos, bRegresarDialogPos, bSalirDialogPos;
+    String formatoDialgoPos, resPrecioDialogPos, resPorcentajeDialogPos;
+
+    private void crearDialogPos() {
+        dialog = new Dialog(getActivity(), R.style.MyDialogStyle);
+        dialog.setContentView(R.layout.dialog_pos);
+        dialog.show();
+        etPrecioDialogPos = dialog.findViewById(R.id.et_precio_dialog_pos);
+        etPrecioDialogPos.addTextChangedListener(textWatcherDialogPos);
+        etPorcentajeDialogPos = dialog.findViewById(R.id.et_porcentaje_dialog_pos);
+        etPorcentajeDialogPos.addTextChangedListener(textWatcherDialogPos);
+        tPrecioDialogPos = dialog.findViewById(R.id.t_titulo_precio_dialog_pos);
+        tPrecioDialogPos.setOnClickListener(clickListenerDialogPos);
+        tPorcentajeDialogPos = dialog.findViewById(R.id.t_titulo_porcen_dialog_pos);
+        tPorcentajeDialogPos.setOnClickListener(clickListenerDialogPos);
+        tSuperiorDialogPos = dialog.findViewById(R.id.t_superior_dialog_pos);
+        tSuperiorDialogPos.setOnClickListener(clickListenerDialogPos);
+        tInferiorDialogPos = dialog.findViewById(R.id.t_inferior_dialog_pos);
+        tInferiorDialogPos.setOnClickListener(clickListenerDialogPos);
+        bLimpiarDialogPos = dialog.findViewById(R.id.b_limpiar_dialog_pos);
+        bLimpiarDialogPos.setOnClickListener(clickListenerDialogPos);
+        bRegresarDialogPos = dialog.findViewById(R.id.b_regresar_dialog_pos);
+        bRegresarDialogPos.setOnClickListener(clickListenerDialogPos);
+        bSalirDialogPos = dialog.findViewById(R.id.b_salir_dialog_pos);
+        bSalirDialogPos.setOnClickListener(clickListenerDialogPos);
+        etPrecisionDialogPos = dialog.findViewById(R.id.et_precision_dialog_pos);
+        etPrecisionDialogPos.addTextChangedListener(textWatcherDialogPos);
+
+        if (precioDialogPos != 0) {
+            etPrecioDialogPos.setText(String.valueOf(precioDialogPos));
+            etPorcentajeDialogPos.setText(String.valueOf(porcentajeDialogPos * 100));
+        }
+
+
+        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+    }
+
+    TextWatcher textWatcherDialogPos = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        }
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            if (!etPrecioDialogPos.getText().toString().isEmpty() &&
+                    !etPrecioDialogPos.getText().toString().equals(".") &&
+                    !etPorcentajeDialogPos.getText().toString().isEmpty() &&
+                    !etPorcentajeDialogPos.getText().toString().equals(".")) {
+
+                precioDialogPos = Double.valueOf(etPrecioDialogPos.getText().toString());
+                porcentajeDialogPos = Double.valueOf(etPorcentajeDialogPos.getText().toString());
+                porcentajeDialogPos /= 100;
+
+                superiorDialogPos = precioDialogPos * (1 + porcentajeDialogPos);
+                inferiorDialogPos = precioDialogPos * (1 - porcentajeDialogPos);
+
+                if (etPrecisionDialogPos.getText().toString().isEmpty())
+                    formatoDialgoPos = "%,.5f";
+                else {
+                    formatoDialgoPos = "%,." + etPrecisionDialogPos.getText().toString() + "f";
+                }
+
+
+                tSuperiorDialogPos.setText(String.format(formatoDialgoPos, superiorDialogPos));
+                tInferiorDialogPos.setText(String.format(formatoDialgoPos, inferiorDialogPos));
+
+            } else {
+                tSuperiorDialogPos.setText("");
+                tInferiorDialogPos.setText("");
+            }
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+
+        }
+    };
+
+    View.OnClickListener clickListenerDialogPos = view -> {
+
+        switch (view.getId()) {
+            case R.id.t_titulo_precio_dialog_pos: {
+                etPrecioDialogPos.getText().clear();
+                break;
+            }
+            case R.id.t_titulo_porcen_dialog_pos: {
+                etPorcentajeDialogPos.getText().clear();
+                break;
+            }
+            case R.id.b_limpiar_dialog_pos: {
+                resPrecioDialogPos = etPrecioDialogPos.getText().toString();
+                resPorcentajeDialogPos = etPorcentajeDialogPos.getText().toString();
+                etPrecioDialogPos.getText().clear();
+                etPorcentajeDialogPos.getText().clear();
+                precioDialogPos = 0;
+                porcentajeDialogPos = 0;
+
+                //todo checar que todavia sigue guardando lainfo 
+                break;
+            }
+
+            case R.id.b_regresar_dialog_pos: {
+                etPrecioDialogPos.setText(resPrecioDialogPos);
+                etPorcentajeDialogPos.setText(resPrecioDialogPos);
+                break;
+            }
+
+            case R.id.t_superior_dialog_pos: {
+                copyToast(tSuperiorDialogPos.getText().toString()
+                        .replace(",", ""));
+                break;
+            }
+
+            case R.id.t_inferior_dialog_pos: {
+                copyToast(tInferiorDialogPos.getText().toString()
+                        .replace(",", ""));
+                break;
+            }
+
+            case R.id.b_salir_dialog_pos: {
+                dialog.dismiss();
+                break;
+            }
+        }
+
+    };
+
+
     @Override
     public void onDestroy() {
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -446,6 +578,8 @@ public class MainFragment extends Fragment {
         editor.putString("referencia", etReferencia.getText().toString());
         editor.putString("redondeoRef", String.valueOf(redondeoRef));
         editor.putInt("apalancamiento", apalancamiento);
+        editor.putString("precioDialogPos", String.valueOf(precioDialogPos));
+        editor.putString("porcentajeDialogPos", String.valueOf(porcentajeDialogPos));
         editor.apply();
         super.onDestroy();
     }
@@ -533,6 +667,10 @@ public class MainFragment extends Fragment {
                 tSeguro.setText("Seguro");
                 tSeguroC.setText("SC");
                 yaRedondeo = false;
+                resPrecioXDialogPos = precioDialogPos;
+                resPorcentajeXDialogPos = porcentajeDialogPos;
+                precioDialogPos = 0;
+                porcentajeDialogPos = 0;
                 break;
             }
 
@@ -549,6 +687,8 @@ public class MainFragment extends Fragment {
                     etReferencia.setText(resReferencia);
                     redondeoRef = ajusteRefRespaldo;
                     yaRedondeo = resYaRedondeo;
+                    precioDialogPos = resPrecioXDialogPos;
+                    porcentajeDialogPos = resPorcentajeXDialogPos;
                     seAplanoLimpiar = false;
                 }
                 break;
@@ -599,16 +739,8 @@ public class MainFragment extends Fragment {
                 ajusteRedondeo(true);
                 break;
 
-            case R.id.b_regresar_redondeo:
-                if (resCantidadRedo == null)
-                    break;
-
-                etCantidadMostrador.setText(String.format("%.2f", Double.valueOf(resCantidad)));
-                etCantidad.setText(resCantidadRedo);
-                etPorcentaje.setText(resPorcentajeRedo);
-                etReferencia.setText(resReferenciaRedo);
-                if (yaRedondeo)
-                    yaRedondeo = false;
+            case R.id.b_pos:
+                crearDialogPos();
                 break;
 
 
@@ -905,14 +1037,18 @@ public class MainFragment extends Fragment {
             redondeoRef = Double.parseDouble(sharedPreferences.getString("redondeoRef", "1000"));
         if (sharedPreferences.contains("apalancamiento"))
             apalancamiento = sharedPreferences.getInt("apalancamiento", 100);
+        if (sharedPreferences.contains("precioDialogPos"))
+            precioDialogPos = Double.valueOf(sharedPreferences.getString("precioDialogPos", "0"));
+        if (sharedPreferences.contains("porcentajeDialogPos"))
+            porcentajeDialogPos = Double.valueOf(sharedPreferences.getString("porcentajeDialogPos", "0"));
     }
 
 
-    private void copyToast(ClipboardManager clipboard, CharSequence text) {
+    private void copyToast(CharSequence text) {
 
         ClipData clip = ClipData.newPlainText("Precio", text.toString());
         clipboard.setPrimaryClip(clip);
-        Toast.makeText(getContext(), "Referencia grabada: " + text.toString(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), "Precio grabada: " + text.toString(), Toast.LENGTH_SHORT).show();
     }
 
 
