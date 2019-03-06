@@ -6,6 +6,7 @@ import android.arch.lifecycle.Lifecycle;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -40,7 +41,7 @@ public class MainFragment extends Fragment {
     boolean hayDecimales, yaRedondeo, resYaRedondeo, seAplanoLimpiar;
     ClipboardManager clipboard;
     Button bApalancamiento, bLimpiarClaro, bRedondeoDescendente,
-            bRedondeoAscendente, bRegresarClaro, bPos;
+            bRedondeoAscendente, bRegresarClaro, bPR, bXT;
     SharedPreferences sharedPreferences;
     String resCantidad, resCantidadMostrador, resPorcentaje, resReferencia;
     String resCantidadRedo, resPorcentajeRedo, resReferenciaRedo;
@@ -61,13 +62,13 @@ public class MainFragment extends Fragment {
         etPorcentaje.addTextChangedListener(textWatcher);
         etReferencia.addTextChangedListener(textWatcher);
         tTamano = view.findViewById(R.id.t_posicion_tamano);
-        tTamano.setOnClickListener(clickListenerTamano);
+        tTamano.setOnClickListener(clickListenerPosicion);
         tLote = view.findViewById(R.id.t_posicion_lote);
-        tLote.setOnClickListener(clickListenerLotes);
+        tLote.setOnClickListener(clickListenerPosicion);
         tTamanoC = view.findViewById(R.id.t_posicion_tamano_conversion);
-        tTamanoC.setOnClickListener(clickListenerTamanoConversion);
+        tTamanoC.setOnClickListener(clickListenerPosicion);
         tLoteC = view.findViewById(R.id.t_posicion_lote_conversion);
-        tLoteC.setOnClickListener(clickListenerLotesConversion);
+        tLoteC.setOnClickListener(clickListenerPosicion);
         tTituloCantidad = view.findViewById(R.id.t_titulo_cant);
         tTituloPorcentaje = view.findViewById(R.id.t_titulo_porcen);
         tTituloConversion = view.findViewById(R.id.t_titulo_convers);
@@ -79,24 +80,26 @@ public class MainFragment extends Fragment {
         tSeguro = view.findViewById(R.id.t_seguro);
         tSeguroC = view.findViewById(R.id.t_seguroC);
         tMargen = view.findViewById(R.id.t_margen);
-        tMargen.setOnClickListener(clickListenerMargen);
+        tMargen.setOnClickListener(clickListenerPosicion);
         tMargenC = view.findViewById(R.id.t_margenC);
-        tMargenC.setOnClickListener(clickListenerMargenConversion);
+        tMargenC.setOnClickListener(clickListenerPosicion);
         bApalancamiento = view.findViewById(R.id.b_apalancamiento);
         bApalancamiento.setOnClickListener(onClickListener);
-        bApalancamiento.setOnLongClickListener(oLClickListenerApalancamiento);
+        bApalancamiento.setOnLongClickListener(onLongClickListener);
         bLimpiarClaro = view.findViewById(R.id.b_limpiar_claro);
         bLimpiarClaro.setOnClickListener(onClickListener);
         bRedondeoDescendente = view.findViewById(R.id.b_redondeo_descendente);
         bRedondeoDescendente.setOnClickListener(onClickListener);
-        bRedondeoDescendente.setOnLongClickListener(oLClickListenerRedondeoDescendente);
+        bRedondeoDescendente.setOnLongClickListener(onLongClickListener);
         bRedondeoAscendente = view.findViewById(R.id.b_redondeo_ascendente);
         bRedondeoAscendente.setOnClickListener(onClickListener);
-        bRedondeoAscendente.setOnLongClickListener(oLClickListenerRedondeoAscendente);
+        bRedondeoAscendente.setOnLongClickListener(onLongClickListener);
         bRegresarClaro = view.findViewById(R.id.b_regresar_claro);
         bRegresarClaro.setOnClickListener(onClickListener);
-        bPos = view.findViewById(R.id.b_pos);
-        bPos.setOnClickListener(onClickListener);
+        bPR = view.findViewById(R.id.b_pr);
+        bPR.setOnClickListener(onClickListener);
+        bXT = view.findViewById(R.id.b_xt);
+        bXT.setOnClickListener(onClickListener);
         checadaSharedPreference();
         cambioApalancamiento();
         return view;
@@ -441,6 +444,7 @@ public class MainFragment extends Fragment {
     double precioDialogPos, porcentajeDialogPos, superiorDialogPos, inferiorDialogPos;
     Button bLimpiarDialogPos, bRegresarDialogPos, bSalirDialogPos;
     String formatoDialgoPos, resPrecioDialogPos, resPorcentajeDialogPos;
+    boolean seLimpioDIalogPos, resSeLimpiDialogoPos;
 
     private void crearDialogPos() {
         dialog = new Dialog(getActivity(), R.style.MyDialogStyle);
@@ -467,7 +471,7 @@ public class MainFragment extends Fragment {
         etPrecisionDialogPos = dialog.findViewById(R.id.et_precision_dialog_pos);
         etPrecisionDialogPos.addTextChangedListener(textWatcherDialogPos);
 
-        if (precioDialogPos != 0) {
+        if (!seLimpioDIalogPos) {
             etPrecioDialogPos.setText(String.valueOf(precioDialogPos));
             etPorcentajeDialogPos.setText(String.valueOf(porcentajeDialogPos * 100));
         }
@@ -488,6 +492,9 @@ public class MainFragment extends Fragment {
                     !etPorcentajeDialogPos.getText().toString().isEmpty() &&
                     !etPorcentajeDialogPos.getText().toString().equals(".")) {
 
+                if (seLimpioDIalogPos)
+                    seLimpioDIalogPos = false;
+
                 precioDialogPos = Double.valueOf(etPrecioDialogPos.getText().toString());
                 porcentajeDialogPos = Double.valueOf(etPorcentajeDialogPos.getText().toString());
                 porcentajeDialogPos /= 100;
@@ -506,8 +513,8 @@ public class MainFragment extends Fragment {
                 tInferiorDialogPos.setText(String.format(formatoDialgoPos, inferiorDialogPos));
 
             } else {
-                tSuperiorDialogPos.setText("");
-                tInferiorDialogPos.setText("");
+                tSuperiorDialogPos.setText("0.00");
+                tInferiorDialogPos.setText("0.00");
             }
 
         }
@@ -534,10 +541,7 @@ public class MainFragment extends Fragment {
                 resPorcentajeDialogPos = etPorcentajeDialogPos.getText().toString();
                 etPrecioDialogPos.getText().clear();
                 etPorcentajeDialogPos.getText().clear();
-                precioDialogPos = 0;
-                porcentajeDialogPos = 0;
-
-                //todo checar que todavia sigue guardando lainfo 
+                seLimpioDIalogPos = true;
                 break;
             }
 
@@ -568,72 +572,99 @@ public class MainFragment extends Fragment {
     };
 
 
-    @Override
-    public void onDestroy() {
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putInt("tipoApalancamiento", tipoApalancamiento);
-        editor.putBoolean("hayDecimales", hayDecimales);
-        editor.putString("cantidad", etCantidad.getText().toString());
-        editor.putString("porcentajeEntero", etPorcentaje.getText().toString());
-        editor.putString("referencia", etReferencia.getText().toString());
-        editor.putString("redondeoRef", String.valueOf(redondeoRef));
-        editor.putInt("apalancamiento", apalancamiento);
-        editor.putString("precioDialogPos", String.valueOf(precioDialogPos));
-        editor.putString("porcentajeDialogPos", String.valueOf(porcentajeDialogPos));
-        editor.apply();
-        super.onDestroy();
-    }
+    View.OnLongClickListener onLongClickListener = view -> {
+        switch (view.getId()) {
+            case R.id.b_redondeo_ascendente:
+                crearDialogRedondeo(true);
+                break;
+            case R.id.b_redondeo_descendente:
+                crearDialogRedondeo(false);
+                break;
+            case R.id.b_apalancamiento:
+                crearDialogApalancamiento();
+                break;
 
-
-    View.OnLongClickListener oLClickListenerRedondeoDescendente = view -> {
-        crearDialogRedondeo(false);
+        }
         return true;
     };
 
-    View.OnLongClickListener oLClickListenerRedondeoAscendente = view -> {
-        crearDialogRedondeo(true);
-        return true;
-    };
+    View.OnClickListener clickListenerPosicion = view -> {
+        switch (view.getId()) {
 
-    View.OnLongClickListener oLClickListenerApalancamiento = view -> {
-        crearDialogApalancamiento();
-        return true;
-    };
+            case R.id.t_posicion_tamano:
+                if (!tTamano.getText().toString().equals("TP"))
+                    crearDialogTamano();
+                break;
 
-    View.OnClickListener clickListenerTamano = view -> {
-        if (!tTamanoC.getText().toString().equals("TP"))
-            crearDialogTamano();
-    };
+            case R.id.t_posicion_tamano_conversion:
+                if (!tTamanoC.getText().toString().equals("TPC"))
+                    crearDialogTamanoConversion();
+                break;
 
-    View.OnClickListener clickListenerTamanoConversion = view -> {
-        if (!tTamanoC.getText().toString().equals("TPC"))
-            crearDialogTamanoConversion();
+            case R.id.t_posicion_lote:
+                if (!tTamanoC.getText().toString().equals("TP"))
+                    crearDialogLotes();
+                break;
+            case R.id.t_posicion_lote_conversion:
+                if (!tTamanoC.getText().toString().equals("TPC"))
+                    crearDialogLotesConversion();
+                break;
+            case R.id.t_margen:
+                if (!tTamano.getText().toString().equals("TP"))
+                    crearDialogMargen();
+                break;
+            case R.id.t_margenC:
+                if (!tTamanoC.getText().toString().equals("TPC"))
+                    crearDialogTamanoMargenConversion();
+                break;
+        }
     };
-
-    View.OnClickListener clickListenerLotes = view -> {
-        if (!tTamanoC.getText().toString().equals("TP"))
-            crearDialogLotes();
-    };
-
-    View.OnClickListener clickListenerLotesConversion = view -> {
-        if (!tTamanoC.getText().toString().equals("TPC"))
-            crearDialogLotesConversion();
-    };
-
-    View.OnClickListener clickListenerMargen = view -> {
-        if (!tMargen.getText().toString().equals("Margen"))
-            crearDialogMargen();
-    };
-
-    View.OnClickListener clickListenerMargenConversion = view -> {
-        if (!tMargenC.getText().toString().equals("MC"))
-            crearDialogTamanoMargenConversion();
-    };
-
 
     View.OnClickListener onClickListener = view -> {
 
         switch (view.getId()) {
+            case R.id.b_regresar_claro:
+
+                if (seAplanoLimpiar) {
+
+                    if (resCantidad == null)
+                        break;
+
+                    etCantidadMostrador.setText(String.format("%.2f", Double.valueOf(resCantidad)));
+                    etCantidad.setText(resCantidad);
+                    etPorcentaje.setText(resPorcentaje);
+                    etReferencia.setText(resReferencia);
+                    redondeoRef = ajusteRefRespaldo;
+                    yaRedondeo = resYaRedondeo;
+                    precioDialogPos = resPrecioXDialogPos;
+                    porcentajeDialogPos = resPorcentajeXDialogPos;
+                    seLimpioDIalogPos = resSeLimpiDialogoPos;
+                    seAplanoLimpiar = false;
+                }
+                break;
+
+            case R.id.b_limpiar_claro:
+                respaldoDeET();
+                etCantidadMostrador.getText().clear();
+                etPorcentaje.getText().clear();
+                etReferencia.getText().clear();
+                redondeoRef = 1000;
+                tTamano.setText("TP");
+                tLote.setText("Lotes");
+                tTamanoC.setText("TPC");
+                tLoteC.setText("LC");
+                tMargen.setText("Margen");
+                tMargenC.setText("MC");
+                tSeguro.setText("Seguro");
+                tSeguroC.setText("SC");
+                yaRedondeo = false;
+                resPrecioXDialogPos = precioDialogPos;
+                resPorcentajeXDialogPos = porcentajeDialogPos;
+                resSeLimpiDialogoPos = seLimpioDIalogPos;
+                seLimpioDIalogPos = true;
+                break;
+
+
             case R.id.t_titulo_cant:
                 respaldoDeET();
                 etCantidadMostrador.getText().clear();
@@ -652,64 +683,7 @@ public class MainFragment extends Fragment {
                 yaRedondeo = false;
                 break;
 
-            case R.id.b_limpiar_claro: {
-                respaldoDeET();
-                etCantidadMostrador.getText().clear();
-                etPorcentaje.getText().clear();
-                etReferencia.getText().clear();
-                redondeoRef = 1000;
-                tTamano.setText("TP");
-                tLote.setText("Lotes");
-                tTamanoC.setText("TPC");
-                tLoteC.setText("LC");
-                tMargen.setText("Margen");
-                tMargenC.setText("MC");
-                tSeguro.setText("Seguro");
-                tSeguroC.setText("SC");
-                yaRedondeo = false;
-                resPrecioXDialogPos = precioDialogPos;
-                resPorcentajeXDialogPos = porcentajeDialogPos;
-                precioDialogPos = 0;
-                porcentajeDialogPos = 0;
-                break;
-            }
-
-            case R.id.b_regresar_claro: {
-
-                if (seAplanoLimpiar) {
-
-                    if (resCantidad == null)
-                        break;
-
-                    etCantidadMostrador.setText(String.format("%.2f", Double.valueOf(resCantidad)));
-                    etCantidad.setText(resCantidad);
-                    etPorcentaje.setText(resPorcentaje);
-                    etReferencia.setText(resReferencia);
-                    redondeoRef = ajusteRefRespaldo;
-                    yaRedondeo = resYaRedondeo;
-                    precioDialogPos = resPrecioXDialogPos;
-                    porcentajeDialogPos = resPorcentajeXDialogPos;
-                    seAplanoLimpiar = false;
-                }
-                break;
-
-            }
-
-
-            case R.id.b_apalancamiento: {
-
-                tipoApalancamiento += 1;
-
-                if (tipoApalancamiento > 4)
-                    tipoApalancamiento = 1;
-
-                cambioApalancamiento();
-                break;
-
-
-            }
-
-            case R.id.t_titulo_tamano: {
+            case R.id.t_titulo_tamano:
                 hayDecimales = !hayDecimales;
 
 
@@ -729,7 +703,27 @@ public class MainFragment extends Fragment {
                 }
                 break;
 
-            }
+            case R.id.b_xt:
+                Intent i = getActivity().getPackageManager().
+                        getLaunchIntentForPackage("com.smoowy.xTrade");
+                startActivity(i);
+                break;
+
+            case R.id.b_pr:
+                crearDialogPos();
+                break;
+
+            case R.id.b_apalancamiento:
+
+                tipoApalancamiento += 1;
+
+                if (tipoApalancamiento > 4)
+                    tipoApalancamiento = 1;
+
+                cambioApalancamiento();
+                break;
+
+
             case R.id.b_redondeo_descendente:
                 ajusteRedondeo(false);
                 break;
@@ -738,12 +732,6 @@ public class MainFragment extends Fragment {
             case R.id.b_redondeo_ascendente:
                 ajusteRedondeo(true);
                 break;
-
-            case R.id.b_pos:
-                crearDialogPos();
-                break;
-
-
         }
 
     };
@@ -762,9 +750,7 @@ public class MainFragment extends Fragment {
         double restante, restanteFinal, num,
                 tamanoPosicioncAjustada, tamanoPosicionAjustada;
 
-        resCantidadRedo = etCantidad.getText().toString();
-        resPorcentajeRedo = etPorcentaje.getText().toString();
-        resReferenciaRedo = etReferencia.getText().toString();
+        respaldoDeET();
 
         if (!tTamanoC.getText().toString().equals("TPC")) {
 
@@ -1012,6 +998,23 @@ public class MainFragment extends Fragment {
         }
     };
 
+    @Override
+    public void onDestroy() {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt("tipoApalancamiento", tipoApalancamiento);
+        editor.putBoolean("hayDecimales", hayDecimales);
+        editor.putString("cantidad", etCantidad.getText().toString());
+        editor.putString("porcentajeEntero", etPorcentaje.getText().toString());
+        editor.putString("referencia", etReferencia.getText().toString());
+        editor.putString("redondeoRef", String.valueOf(redondeoRef));
+        editor.putInt("apalancamiento", apalancamiento);
+        editor.putString("precioDialogPos", String.valueOf(precioDialogPos));
+        editor.putString("porcentajeDialogPos", String.valueOf(porcentajeDialogPos));
+        editor.putBoolean("seLimpioDIalogPos", seLimpioDIalogPos);
+        editor.apply();
+        super.onDestroy();
+    }
+
     private void checadaSharedPreference() {
         sharedPreferences = getActivity().getSharedPreferences("xPos", Context.MODE_PRIVATE);
         if (sharedPreferences.contains("tipoApalancamiento"))
@@ -1041,6 +1044,8 @@ public class MainFragment extends Fragment {
             precioDialogPos = Double.valueOf(sharedPreferences.getString("precioDialogPos", "0"));
         if (sharedPreferences.contains("porcentajeDialogPos"))
             porcentajeDialogPos = Double.valueOf(sharedPreferences.getString("porcentajeDialogPos", "0"));
+        if (sharedPreferences.contains("seLimpioDIalogPos"))
+            seLimpioDIalogPos = sharedPreferences.getBoolean("seLimpioDIalogPos", false);
     }
 
 

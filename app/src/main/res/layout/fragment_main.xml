@@ -256,20 +256,32 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <Button
+        android:id="@+id/b_xt"
+        android:layout_width="80dp"
+        android:layout_height="58dp"
+        android:layout_marginStart="6dp"
+        android:background="@android:color/transparent"
+        android:text="xt"
+        android:textColor="@android:color/white"
+        android:textSize="30dp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/b_pr"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
 
     <Button
-        android:id="@+id/b_pos"
-        android:layout_width="136dp"
+        android:id="@+id/b_pr"
+        android:layout_width="80dp"
         android:layout_height="58dp"
-        android:text="Po"
+        android:text="Pr"
         android:textSize="30dp"
-        android:layout_marginStart="15dp"
+        android:layout_marginStart="60dp"
         android:layout_marginBottom="16dp"
         android:textColor="@android:color/white"
         android:background="@android:color/transparent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-
 
 
     <Button
