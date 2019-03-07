@@ -312,49 +312,172 @@ public class MainFragment extends Fragment {
 
 
     boolean esCantidadEnDialogMargen = true;
+    EditText etCantidadDialogMargen, etPorcentajeDialogMargen, etPrecisionDialogMargen;
+    TextView tMargenDialogMargen, tTituloDialogMargen,
+            tTituloCantidadDialogMargen, tTituloPorcentajeDialogMargen;
+    Button bLimpiarDialogMargen, bRegresarDialogMargen, bSalirDialogMargen;
+    String resCantidadDialogMargin, resPorcentajeDialogMargin, formatoDialogMargen;
+    double numDialogMargen;
+    boolean seAplanoLimpiarDialogMargen, esDialogMargenConversion;
 
-    private void crearDialogMargen() {
+    private void crearDialogMargen(boolean esDialogMargenConversion) {
         dialog = new Dialog(getActivity(), R.style.MyDialogStyle);
-        dialog.setContentView(R.layout.dialog);
+        dialog.setContentView(R.layout.dialog_margen);
         dialog.show();
-        etDialogReferencia = dialog.findViewById(R.id.et_dialog_ref);
-        etDialogReferencia.setText(String.format("%.2f", margen));
-        tDialogTitulo = dialog.findViewById(R.id.t_dialog_titulo);
-        if (esCantidadEnDialogMargen) {
-            tDialogTitulo.setText("Margen");
-        } else {
-            tDialogTitulo.setText("Margen %");
-        }
-        tDialogTitulo.setOnClickListener(view -> {
-            esCantidadEnDialogMargen = !esCantidadEnDialogMargen;
-            if (esCantidadEnDialogMargen) {
-                tDialogTitulo.setText("Margen");
-            } else {
-                tDialogTitulo.setText("Margen %");
-            }
-        });
-        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-        etDialogReferencia.setOnKeyListener((view, i, keyEvent) -> {
+        etCantidadDialogMargen = dialog.findViewById(R.id.et_cantidad_dialog_margen);
+        etPorcentajeDialogMargen = dialog.findViewById(R.id.et_porcentaje_dialog_margen);
+        etPrecisionDialogMargen = dialog.findViewById(R.id.et_precision_dialog_margen);
+        tTituloDialogMargen = dialog.findViewById(R.id.t_titulo_margen_dialog_margen);
+        tMargenDialogMargen = dialog.findViewById(R.id.t_margen_dialog_margen);
+        tTituloCantidadDialogMargen = dialog.findViewById(R.id.t_titulo_cantidad_dialog_margen);
+        tTituloPorcentajeDialogMargen = dialog.findViewById(R.id.t_titulo_porcen_dialog_margen);
+        bLimpiarDialogMargen = dialog.findViewById(R.id.b_limpiar_dialog_margen);
+        bRegresarDialogMargen = dialog.findViewById(R.id.b_regresar_dialog_margen);
+        bSalirDialogMargen = dialog.findViewById(R.id.b_salir_dialog_margen);
 
-            if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_ENTER) {
+        if (!esDialogMargenConversion) {
+
+            etCantidadDialogMargen.setText(String.format("%.2f", margen));
+            tMargenDialogMargen.setText(String.format("%.2f", margen));
+
+            if (esCantidadEnDialogMargen) {
+                tTituloDialogMargen.setText("Margen");
+            } else {
+                tTituloDialogMargen.setText("Margen %");
+            }
+            tTituloDialogMargen.setOnClickListener(view -> {
+                esCantidadEnDialogMargen = !esCantidadEnDialogMargen;
+                if (esCantidadEnDialogMargen) {
+                    tTituloDialogMargen.setText("Margen");
+                } else {
+                    tTituloDialogMargen.setText("Margen %");
+                }
+            });
+        } else {
+
+            etCantidadDialogMargen.setText(String.format("%.2f", margenC));
+            tMargenDialogMargen.setText(String.format("%.2f", margenC));
+
+            if (esCantidadEnDialogMargen) {
+                tTituloDialogMargen.setText("MC");
+            } else {
+                tTituloDialogMargen.setText("MC %");
+            }
+            tTituloDialogMargen.setOnClickListener(view -> {
+                esCantidadEnDialogMargen = !esCantidadEnDialogMargen;
+                if (esCantidadEnDialogMargen) {
+                    tTituloDialogMargen.setText("MC");
+                } else {
+                    tTituloDialogMargen.setText("MC %");
+                }
+            });
+        }
+
+
+        bLimpiarDialogMargen.setOnClickListener(clickListenerDialogMargen);
+        bRegresarDialogMargen.setOnClickListener(clickListenerDialogMargen);
+
+        if (!esDialogMargenConversion)
+        bSalirDialogMargen.setOnClickListener(clickListenerDialogMargen);
+        else
+            bSalirDialogMargen.setOnClickListener(clickListenerDialogMargenConversionBotonSalir);
+        etCantidadDialogMargen.addTextChangedListener(textWatcherDialogMargen);
+        etPorcentajeDialogMargen.addTextChangedListener(textWatcherDialogMargen);
+        etPrecisionDialogMargen.addTextChangedListener(textWatcherDialogMargen);
+        tTituloCantidadDialogMargen.setOnClickListener(clickListenerDialogMargen);
+        tTituloPorcentajeDialogMargen.setOnClickListener(clickListenerDialogMargen);
+        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+
+    }
+
+    TextWatcher textWatcherDialogMargen = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            if (seAplanoLimpiarDialogMargen &&
+                    etCantidadDialogMargen.getText().toString().isEmpty())
+                return;
+
+            if (!etCantidadDialogMargen.getText().toString().isEmpty() &&
+                    !etCantidadDialogMargen.getText().toString().equals(".") &&
+                    !etPorcentajeDialogMargen.getText().toString().isEmpty() &&
+                    !etPorcentajeDialogMargen.getText().toString().equals(".")) {
+
+                seAplanoLimpiarDialogMargen = !seAplanoLimpiarDialogMargen;
+
+                if (etPrecisionDialogMargen.getText().toString().isEmpty())
+                    formatoDialogMargen = "%,.2f";
+                else {
+                    formatoDialogMargen = "%,." + etPrecisionDialogMargen.getText().toString() + "f";
+                }
+
+
+                double cantidadDialogMargen, porcentajeDialogMargen;
+
+                cantidadDialogMargen = Double.parseDouble(etCantidadDialogMargen.getText().toString());
+                porcentajeDialogMargen = Double.parseDouble(etPorcentajeDialogMargen.getText().toString());
+                porcentajeDialogMargen /= 100;
+                numDialogMargen = cantidadDialogMargen * porcentajeDialogMargen;
+
+                if (numDialogMargen % 1 > 0)
+                    tMargenDialogMargen.setText(String.format(formatoDialogMargen, numDialogMargen));
+                else
+                    tMargenDialogMargen.setText(String.format("%,.0f", numDialogMargen));
+
+            } else {
+                tMargenDialogMargen.setText(etCantidadDialogMargen.getText().toString());
+                numDialogMargen = Double.valueOf(etCantidadDialogMargen.getText().toString());
+            }
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+
+        }
+    };
+
+
+    View.OnClickListener clickListenerDialogMargen = view -> {
+        switch (view.getId()) {
+            case R.id.b_limpiar_dialog_margen:
+                seAplanoLimpiarDialogMargen = true;
+                resCantidadDialogMargin = etCantidadDialogMargen.getText().toString();
+                resPorcentajeDialogMargin = etPorcentajeDialogMargen.getText().toString();
+                etCantidadDialogMargen.getText().clear();
+                etPorcentajeDialogMargen.getText().clear();
+                tMargenDialogMargen.setText("0.00");
+                numDialogMargen = 0;
+                break;
+            case R.id.b_regresar_dialog_margen:
+                etCantidadDialogMargen.setText(resCantidadDialogMargin);
+                etPorcentajeDialogMargen.setText(resPorcentajeDialogMargin);
+                break;
+            case R.id.b_salir_dialog_margen:
+
                 respaldoDeET();
-                double num = Double.parseDouble(etDialogReferencia.getText().toString());
-                num *= apalancamiento;
+                numDialogMargen = Double.parseDouble(tMargenDialogMargen.
+                        getText().toString().replace(",", ""));
+                numDialogMargen *= apalancamiento;
 
                 if (esCantidadEnDialogMargen) {
 
-                    num *= porcentajeEntero / 100;
+                    numDialogMargen *= porcentajeEntero / 100;
 
-                    if (num % 1 > 0) {
-                        etCantidadMostrador.setText(String.format("%.2f", num));
-                        etCantidad.setText(String.format("%.4f", num));
+                    if (numDialogMargen % 1 > 0) {
+                        etCantidadMostrador.setText(String.format("%.2f", numDialogMargen));
+                        etCantidad.setText(String.format("%.4f", numDialogMargen));
 
                     } else {
-                        etCantidadMostrador.setText(String.format("%.0f", num));
+                        etCantidadMostrador.setText(String.format("%.0f", numDialogMargen));
                     }
 
                 } else {
-                    double porcEntero = cantidad / num;
+                    double porcEntero = cantidad / numDialogMargen;
                     porcEntero *= 100;
 
                     if (porcEntero % 1 > 0) {
@@ -367,77 +490,52 @@ public class MainFragment extends Fragment {
 
                 inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
                 dialog.dismiss();
-                return true;
+                break;
 
-            } else
-                return false;
-        });
-    }
+            case R.id.t_titulo_cantidad_dialog_margen:
+                etCantidadDialogMargen.getText().clear();
+                break;
+            case R.id.t_titulo_porcen_dialog_margen:
+                etPorcentajeDialogMargen.getText().clear();
+                break;
+        }
+    };
 
+    View.OnClickListener clickListenerDialogMargenConversionBotonSalir = view -> {
+        respaldoDeET();
+        numDialogMargen = Double.parseDouble(tMargenDialogMargen.
+                getText().toString().replace(",", ""));
+        numDialogMargen *= apalancamiento;
 
-    private void crearDialogTamanoMargenConversion() {
-        dialog = new Dialog(getActivity(), R.style.MyDialogStyle);
-        dialog.setContentView(R.layout.dialog);
-        dialog.show();
-        etDialogReferencia = dialog.findViewById(R.id.et_dialog_ref);
-        etDialogReferencia.setText(String.format("%.2f", margenC));
-        tDialogTitulo = dialog.findViewById(R.id.t_dialog_titulo);
+        numDialogMargen *= referencia;
+
         if (esCantidadEnDialogMargen) {
-            tDialogTitulo.setText("MC");
+
+            numDialogMargen *= porcentajeEntero / 100;
+
+            if (numDialogMargen % 1 > 0) {
+                etCantidadMostrador.setText(String.format("%.2f", numDialogMargen));
+                etCantidad.setText(String.format("%.4f", numDialogMargen));
+
+            } else {
+                etCantidadMostrador.setText(String.format("%.0f", numDialogMargen));
+            }
+
         } else {
-            tDialogTitulo.setText("MC %");
+            double porcEntero = cantidad / numDialogMargen;
+            porcEntero *= 100;
+
+            if (porcEntero % 1 > 0) {
+                etPorcentaje.setText(String.format("%.4f", porcEntero));
+
+            } else {
+                etPorcentaje.setText(String.format("%.0f", porcEntero));
+            }
         }
 
-        tDialogTitulo.setOnClickListener(view -> {
-            esCantidadEnDialogMargen = !esCantidadEnDialogMargen;
-            if (esCantidadEnDialogMargen) {
-                tDialogTitulo.setText("MC");
-            } else {
-                tDialogTitulo.setText("MC %");
-            }
-        });
-        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-        etDialogReferencia.setOnKeyListener((view, i, keyEvent) -> {
-
-            if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_ENTER) {
-                respaldoDeET();
-                double num = Double.parseDouble(etDialogReferencia.getText().toString());
-                num *= apalancamiento;
-                num *= referencia;
-
-
-                if (esCantidadEnDialogMargen) {
-                    num *= porcentajeEntero / 100;
-
-                    if (num % 1 > 0) {
-                        etCantidadMostrador.setText(String.format("%.2f", num));
-                        etCantidad.setText(String.format("%.4f", num));
-
-                    } else {
-                        etCantidadMostrador.setText(String.format("%.0f", num));
-                    }
-
-                } else {
-                    double porcEntero = cantidad / num;
-                    porcEntero *= 100;
-
-
-                    if (porcEntero % 1 > 0) {
-                        etPorcentaje.setText(String.format("%.4f", porcEntero));
-
-                    } else {
-                        etPorcentaje.setText(String.format("%.0f", porcEntero));
-                    }
-                }
-
-                inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-                dialog.dismiss();
-                return true;
-
-            } else
-                return false;
-        });
-    }
+        inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+        dialog.dismiss();
+    };
 
     EditText etPrecioDialogPos, etPorcentajeDialogPos, etPrecisionDialogPos;
     TextView tPrecioDialogPos, tPorcentajeDialogPos, tSuperiorDialogPos, tInferiorDialogPos;
@@ -611,11 +709,11 @@ public class MainFragment extends Fragment {
                 break;
             case R.id.t_margen:
                 if (!tTamano.getText().toString().equals("TP"))
-                    crearDialogMargen();
+                    crearDialogMargen(false);
                 break;
             case R.id.t_margenC:
                 if (!tTamanoC.getText().toString().equals("TPC"))
-                    crearDialogTamanoMargenConversion();
+                    crearDialogMargen(true);
                 break;
         }
     };
