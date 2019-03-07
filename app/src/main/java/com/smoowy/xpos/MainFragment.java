@@ -194,6 +194,7 @@ public class MainFragment extends Fragment {
                 }
 
                 inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+                yaRedondeo = false;
                 dialog.dismiss();
                 return true;
 
@@ -232,6 +233,7 @@ public class MainFragment extends Fragment {
                 }
 
                 inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+                yaRedondeo = false;
                 dialog.dismiss();
                 return true;
 
@@ -267,6 +269,7 @@ public class MainFragment extends Fragment {
                 }
 
                 inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+                yaRedondeo = false;
                 dialog.dismiss();
                 return true;
 
@@ -302,6 +305,7 @@ public class MainFragment extends Fragment {
                 }
 
                 inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+                yaRedondeo = false;
                 dialog.dismiss();
                 return true;
 
@@ -489,6 +493,7 @@ public class MainFragment extends Fragment {
                 }
 
                 inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+                yaRedondeo = false;
                 dialog.dismiss();
                 break;
 
@@ -534,6 +539,7 @@ public class MainFragment extends Fragment {
         }
 
         inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+        yaRedondeo = false;
         dialog.dismiss();
     };
 
@@ -900,32 +906,31 @@ public class MainFragment extends Fragment {
             if (!yaRedondeo) {
 
                 if (hayDecimales)
-                    tamanoPosicioncAjustada = tamanoPosicion;
+                    tamanoPosicionAjustada = tamanoPosicion;
                 else
-                    tamanoPosicioncAjustada = Math.round(tamanoPosicion);
+                    tamanoPosicionAjustada = Math.round(tamanoPosicion);
 
 
-                restante = tamanoPosicioncAjustada % redondeoRef;
+                restante = tamanoPosicionAjustada % redondeoRef;
                 restanteFinal = redondeoRef - restante;
 
                 if (esAscendente)
-                    num = tamanoPosicioncAjustada + restanteFinal;
+                    num = tamanoPosicionAjustada + restanteFinal;
                 else
-                    num = tamanoPosicioncAjustada - restante;
+                    num = tamanoPosicionAjustada - restante;
 
             } else {
 
-                tamanoPosicioncAjustada = tamanoPosicion;
+                tamanoPosicionAjustada = tamanoPosicion;
 
 
                 if (esAscendente)
-                    num = tamanoPosicioncAjustada + redondeoRef;
+                    num = tamanoPosicionAjustada + redondeoRef;
 
                 else {
-                    num = tamanoPosicioncAjustada - redondeoRef;
+                    num = tamanoPosicionAjustada - redondeoRef;
                 }
             }
-
 
             num *= (porcentajeEntero / 100);
 
@@ -1051,6 +1056,9 @@ public class MainFragment extends Fragment {
                 tLote.setText(String.format("%.4f", lote));
                 tMargen.setText(String.format("%,.2f", margen));
                 tSeguro.setText(String.format("%,.2f", necesario));
+
+                if (yaRedondeo)
+                    yaRedondeo = false;
 
 
             } else {
