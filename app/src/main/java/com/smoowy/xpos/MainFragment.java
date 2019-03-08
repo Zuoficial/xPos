@@ -716,10 +716,25 @@ public class MainFragment extends Fragment {
             case R.id.t_margen:
                 if (!tTamano.getText().toString().equals("TP"))
                     crearDialogMargen(false);
+                else {
+                    if (!etPorcentaje.getText().toString().isEmpty() &&
+                            etCantidadMostrador.getText().toString().isEmpty()) {
+                        etCantidadMostrador.setText("0");
+                        crearDialogMargen(false);
+                    }
+                }
                 break;
             case R.id.t_margenC:
                 if (!tTamanoC.getText().toString().equals("TPC"))
                     crearDialogMargen(true);
+                else {
+                    if (!etPorcentaje.getText().toString().isEmpty() &&
+                            etCantidadMostrador.getText().toString().isEmpty() &&
+                            !etReferencia.getText().toString().isEmpty()) {
+                        etCantidadMostrador.setText("0");
+                        crearDialogMargen(true);
+                    }
+                }
                 break;
         }
     };
