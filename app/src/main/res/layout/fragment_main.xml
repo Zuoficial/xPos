@@ -14,9 +14,9 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:background="@android:color/transparent"
+        android:focusable="false"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
 
 
     <Button
@@ -26,6 +26,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:background="@android:color/transparent"
+        android:focusable="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -34,8 +35,9 @@
         android:id="@+id/t_titulo_cant"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Cantidad a arriesgar"
         android:layout_marginTop="4dp"
+        android:focusable="false"
+        android:text="Cantidad a arriesgar"
         android:textColor="@android:color/white"
         android:textSize="20dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -80,6 +82,7 @@
         android:id="@+id/t_titulo_porcen"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:focusable="false"
         android:text="Porcentaje"
         android:textColor="@android:color/white"
         android:textSize="20dp"
@@ -107,6 +110,7 @@
         android:id="@+id/t_titulo_convers"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:focusable="false"
         android:text="Referencia de conversion"
         android:textColor="@android:color/white"
         android:textSize="20dp"
@@ -135,6 +139,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
+        android:focusable="false"
         android:text="Tamaño posicion"
         android:textColor="@android:color/white"
         android:textSize="22dp"
@@ -148,9 +153,10 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginBottom="10dp"
-        android:text="TP"
-        android:maxLength="11"
+        android:focusable="false"
         android:gravity="center"
+        android:maxLength="11"
+        android:text="TP"
         android:textAlignment="center"
         android:textColor="@android:color/white"
         android:textSize="30dp"
@@ -164,6 +170,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginBottom="8dp"
+        android:focusable="false"
         android:gravity="center"
         android:text="Lotes"
         android:textAlignment="center"
@@ -178,11 +185,12 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginBottom="128dp"
+        android:focusable="false"
+        android:gravity="center"
         android:text="Margen"
+        android:textAlignment="center"
         android:textColor="@android:color/white"
         android:textSize="30dp"
-        android:gravity="center"
-        android:textAlignment="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -192,11 +200,11 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginBottom="72dp"
+        android:gravity="center"
         android:text="Seguro"
+        android:textAlignment="center"
         android:textColor="@android:color/white"
         android:textSize="30dp"
-        android:gravity="center"
-        android:textAlignment="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -206,6 +214,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="10dp"
+        android:focusable="false"
         android:maxLength="11"
         android:text="TPC"
         android:textAlignment="center"
@@ -215,14 +224,13 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
 
-
-
     <TextView
         android:id="@+id/t_posicion_lote_conversion"
         android:layout_width="170dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="8dp"
+        android:focusable="false"
         android:gravity="center"
         android:text="LC"
         android:textAlignment="center"
@@ -237,11 +245,12 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="128dp"
+        android:focusable="false"
+        android:gravity="center"
         android:text="MC"
+        android:textAlignment="center"
         android:textColor="@android:color/white"
         android:textSize="30dp"
-        android:textAlignment="center"
-        android:gravity="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -251,11 +260,11 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="72dp"
+        android:gravity="center"
         android:text="SC"
+        android:textAlignment="center"
         android:textColor="@android:color/white"
         android:textSize="30dp"
-        android:textAlignment="center"
-        android:gravity="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -265,6 +274,7 @@
         android:layout_height="58dp"
         android:layout_marginBottom="16dp"
         android:background="@android:color/transparent"
+        android:focusable="false"
         android:text="xt"
         android:textColor="@android:color/white"
         android:textSize="30dp"
@@ -274,16 +284,16 @@
         app:layout_constraintStart_toStartOf="parent" />
 
 
-
     <Button
         android:id="@+id/b_pr"
         android:layout_width="80dp"
         android:layout_height="58dp"
-        android:text="Pr"
-        android:textSize="30dp"
         android:layout_marginBottom="16dp"
-        android:textColor="@android:color/white"
         android:background="@android:color/transparent"
+        android:focusable="false"
+        android:text="Pr"
+        android:textColor="@android:color/white"
+        android:textSize="30dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.22"
@@ -298,6 +308,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="16dp"
         android:background="@android:color/transparent"
+        android:focusable="false"
         android:text="100X"
         android:textAlignment="center"
         android:textAllCaps="false"
@@ -309,22 +320,23 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-    android:id="@+id/b_redondeo_descendente"
-    android:layout_width="wrap_content"
-    android:layout_height="55dp"
-    android:layout_marginStart="8dp"
-    android:layout_marginBottom="16dp"
-    android:background="@android:color/transparent"
-    android:gravity="center"
-    android:textAllCaps="false"
-    android:text="RD"
-    android:textAlignment="center"
-    android:textColor="@android:color/white"
-    android:textSize="30dp"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintHorizontal_bias="0.80"
-    app:layout_constraintStart_toStartOf="parent" />
+        android:id="@+id/b_redondeo_descendente"
+        android:layout_width="wrap_content"
+        android:layout_height="55dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="16dp"
+        android:background="@android:color/transparent"
+        android:focusable="false"
+        android:gravity="center"
+        android:text="RD"
+        android:textAlignment="center"
+        android:textAllCaps="false"
+        android:textColor="@android:color/white"
+        android:textSize="30dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.80"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/b_redondeo_ascendente"
@@ -333,6 +345,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginBottom="16dp"
         android:background="@android:color/transparent"
+        android:focusable="false"
         android:gravity="center"
         android:text="RA"
         android:textAlignment="center"
