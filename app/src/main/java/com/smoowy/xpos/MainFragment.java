@@ -1106,12 +1106,16 @@ public class MainFragment extends Fragment {
 
             if (!etCantidad.getText().toString().isEmpty() &&
                     !etCantidad.getText().toString().equals(".") &&
-                    !etPorcentaje.getText().toString().isEmpty() &&
                     !etPorcentaje.getText().toString().equals(".")
 
             ) {
+
+
                 cantidad = Double.parseDouble(etCantidad.getText().toString());
-                porcentajeEntero = Double.parseDouble(etPorcentaje.getText().toString());
+                if (etPorcentaje.getText().toString().isEmpty())
+                    porcentajeEntero = 1;
+                else
+                    porcentajeEntero = Double.parseDouble(etPorcentaje.getText().toString());
                 tamanoPosicion = cantidad / (porcentajeEntero / 100);
 
 
@@ -1254,5 +1258,9 @@ public class MainFragment extends Fragment {
         Toast.makeText(getContext(), "Precio grabada: " + text.toString(), Toast.LENGTH_SHORT).show();
     }
 
-
+    @Override
+    public void onPause() {
+        inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+        super.onPause();
+    }
 }
