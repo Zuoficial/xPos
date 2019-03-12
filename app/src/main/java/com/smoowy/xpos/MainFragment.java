@@ -35,10 +35,11 @@ public class MainFragment extends Fragment {
             tSeguro, tSeguroC;
     double cantidad, porcentajeEntero, referencia, tamanoPosicion,
             lote, tamanoPosicionC, loteC, margen, margenC, necesario, necesarioC,
-            redondeoRef = 1000, ajusteRefRespaldo, resPrecioXDialogPos, resPorcentajeXDialogPos;
+            redondeoRef = 1000, ajusteRefRespaldo, resPrecioXDialogPos,
+            resPorcentajeXDialogPos;
     int apalancamiento;
     int tipoApalancamiento = 4;
-    boolean hayDecimales, yaRedondeo, resYaRedondeo, seAplanoLimpiar;
+    boolean hayDecimales, yaRedondeo, resYaRedondeo, seAplanoLimpiar, resHayDatosDialogReferencia;
     ClipboardManager clipboard;
     Button bApalancamiento, bLimpiarClaro, bRedondeoDescendente,
             bRedondeoAscendente, bRegresarClaro, bPR, bXT;
@@ -416,7 +417,7 @@ public class MainFragment extends Fragment {
 
             if (!etReferencia.getText().toString().isEmpty()) {
 
-                double cantidad = Double.parseDouble(etCantidad.getText().toString());
+                double cantidad = Double.parseDouble(etReferencia.getText().toString());
 
                 etCantidadDialogMargen.setText(String.format("%.2f", cantidad));
                 tMargenDialogMargen.setText(String.format("%.2f", cantidad));
@@ -446,8 +447,13 @@ public class MainFragment extends Fragment {
             bSalirDialogMargen.setOnClickListener(clickListenerDialogMargen);
         else if (tipoDialog == esDialogMargenConversion)
             bSalirDialogMargen.setOnClickListener(clickListenerDialogMargenConversionBotonSalir);
-        else if (tipoDialog == esDialogReferencia)
+        else if (tipoDialog == esDialogReferencia) {
             bSalirDialogMargen.setOnClickListener(clickListenerDialogReferenciaBotonSalir);
+            if (hayDatosDialogReferencia) {
+                etCantidadDialogMargen.setText(precioDialogReferencia);
+                etPorcentajeDialogMargen.setText(cantidadDialogReferencia);
+            }
+        }
         inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
 
     }
@@ -642,7 +648,10 @@ public class MainFragment extends Fragment {
         dialog.dismiss();
     };
 
+    String precioDialogReferencia, cantidadDialogReferencia;
+    boolean hayDatosDialogReferencia;
     View.OnClickListener clickListenerDialogReferenciaBotonSalir = view -> {
+
         if (!etCantidadDialogMargen.getText().toString().isEmpty() &&
                 !etCantidadDialogMargen.getText().toString().equals(".")) {
             respaldoDeET();
@@ -650,13 +659,31 @@ public class MainFragment extends Fragment {
                     getText().toString().replace(",", ""));
 
             if (numDialogMargen % 1 > 0) {
-                etReferencia.setText(String.format(formatoDialogMargen, numDialogMargen));
+
+                if (etPrecisionDialogMargen.getText().toString().isEmpty())
+                    etReferencia.setText(String.format("%.2f", numDialogMargen));
+                else
+                    etReferencia.setText(String.format("%." + etPrecisionDialogMargen.getText().toString()
+                            + "f", numDialogMargen));
 
             } else {
                 etReferencia.setText(String.format("%.0f", numDialogMargen));
             }
 
             yaRedondeo = false;
+
+            if (!etCantidadDialogMargen.getText().toString().isEmpty())
+                precioDialogReferencia = etCantidadDialogMargen.getText().toString();
+            else
+                precioDialogReferencia = "";
+
+            if (!etPorcentajeDialogMargen.getText().toString().isEmpty())
+                cantidadDialogReferencia = etPorcentajeDialogMargen.getText().toString();
+            else
+                cantidadDialogReferencia = "";
+
+            hayDatosDialogReferencia = !precioDialogReferencia.isEmpty();
+
         }
         inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
         dialog.dismiss();
@@ -869,7 +896,8 @@ public class MainFragment extends Fragment {
                     if (resCantidad == null)
                         break;
 
-                    etCantidadMostrador.setText(String.format("%.2f", Double.valueOf(resCantidad)));
+                    if (!resCantidad.equals(""))
+                        etCantidadMostrador.setText(String.format("%.2f", Double.valueOf(resCantidad)));
                     etCantidad.setText(resCantidad);
                     etPorcentaje.setText(resPorcentaje);
                     etReferencia.setText(resReferencia);
@@ -878,6 +906,7 @@ public class MainFragment extends Fragment {
                     precioDialogPos = resPrecioXDialogPos;
                     porcentajeDialogPos = resPorcentajeXDialogPos;
                     seLimpioDIalogPos = resSeLimpiDialogoPos;
+                    hayDatosDialogReferencia = resHayDatosDialogReferencia;
                     seAplanoLimpiar = false;
                 }
                 break;
@@ -900,6 +929,7 @@ public class MainFragment extends Fragment {
                 resPrecioXDialogPos = precioDialogPos;
                 resPorcentajeXDialogPos = porcentajeDialogPos;
                 resSeLimpiDialogoPos = seLimpioDIalogPos;
+                hayDatosDialogReferencia = false;
                 seLimpioDIalogPos = true;
                 break;
 
@@ -920,6 +950,7 @@ public class MainFragment extends Fragment {
                 respaldoDeET();
                 etReferencia.getText().clear();
                 yaRedondeo = false;
+                hayDatosDialogReferencia = false;
                 break;
 
             case R.id.t_titulo_tamano:
@@ -982,6 +1013,7 @@ public class MainFragment extends Fragment {
         resPorcentaje = etPorcentaje.getText().toString();
         resReferencia = etReferencia.getText().toString();
         resYaRedondeo = yaRedondeo;
+        resHayDatosDialogReferencia = hayDatosDialogReferencia;
         ajusteRefRespaldo = redondeoRef;
     }
 
@@ -1253,6 +1285,9 @@ public class MainFragment extends Fragment {
         editor.putString("precioDialogPos", String.valueOf(precioDialogPos));
         editor.putString("porcentajeDialogPos", String.valueOf(porcentajeDialogPos));
         editor.putBoolean("seLimpioDIalogPos", seLimpioDIalogPos);
+        editor.putString("precioDialogReferencia", precioDialogReferencia);
+        editor.putString("cantidadDialogReferencia", cantidadDialogReferencia);
+        editor.putBoolean("hayDatosDialogReferencia", hayDatosDialogReferencia);
         editor.apply();
         super.onDestroy();
     }
@@ -1273,7 +1308,6 @@ public class MainFragment extends Fragment {
                 etCantidad.setText(String.format("%.4f", Double.valueOf(valor)));
             }
         }
-
         if (sharedPreferences.contains("porcentajeEntero"))
             etPorcentaje.setText(sharedPreferences.getString("porcentajeEntero", ""));
         if (sharedPreferences.contains("referencia"))
@@ -1288,6 +1322,12 @@ public class MainFragment extends Fragment {
             porcentajeDialogPos = Double.valueOf(sharedPreferences.getString("porcentajeDialogPos", "0"));
         if (sharedPreferences.contains("seLimpioDIalogPos"))
             seLimpioDIalogPos = sharedPreferences.getBoolean("seLimpioDIalogPos", false);
+        if (sharedPreferences.contains("hayDatosDialogReferencia")) {
+            hayDatosDialogReferencia = sharedPreferences.getBoolean("hayDatosDialogReferencia", false);
+            cantidadDialogReferencia = sharedPreferences.getString("cantidadDialogReferencia", "");
+            precioDialogReferencia = sharedPreferences.getString("precioDialogReferencia", "");
+        }
+
     }
 
 
