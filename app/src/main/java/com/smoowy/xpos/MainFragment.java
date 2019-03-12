@@ -520,7 +520,6 @@ public class MainFragment extends Fragment {
         }
     };
 
-
     View.OnClickListener clickListenerDialogMargen = view -> {
         switch (view.getId()) {
             case R.id.b_limpiar_dialog_margen:
@@ -843,20 +842,15 @@ public class MainFragment extends Fragment {
                 if (!tTamano.getText().toString().equals("TP"))
                     crearDialogPrecioPorcentaje(esDialogMargen);
                 else {
-                    if (!etPorcentaje.getText().toString().isEmpty() &&
-                            etCantidadMostrador.getText().toString().isEmpty()) {
-                        etCantidadMostrador.setText("0");
-                        crearDialogPrecioPorcentaje(esDialogMargen);
-                    }
+                    etCantidadMostrador.setText("0");
+                    crearDialogPrecioPorcentaje(esDialogMargen);
                 }
                 break;
             case R.id.t_margenC:
                 if (!tTamanoC.getText().toString().equals("TPC"))
                     crearDialogPrecioPorcentaje(esDialogMargenConversion);
                 else {
-                    if (!etPorcentaje.getText().toString().isEmpty() &&
-                            etCantidadMostrador.getText().toString().isEmpty() &&
-                            !etReferencia.getText().toString().isEmpty()) {
+                    if (!etReferencia.getText().toString().isEmpty()) {
                         etCantidadMostrador.setText("0");
                         crearDialogPrecioPorcentaje(esDialogMargenConversion);
                     }
