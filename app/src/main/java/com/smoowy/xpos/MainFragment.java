@@ -855,9 +855,13 @@ public class MainFragment extends Fragment {
     View.OnLongClickListener onLongClickListener = view -> {
         switch (view.getId()) {
             case R.id.b_redondeo_ascendente:
+                if (etCantidadMostrador.getText().toString().isEmpty())
+                    etCantidadMostrador.setText("0");
                 crearDialogRedondeo(true);
                 break;
             case R.id.b_redondeo_descendente:
+                if (etCantidadMostrador.getText().toString().isEmpty())
+                    etCantidadMostrador.setText("0");
                 crearDialogRedondeo(false);
                 break;
             case R.id.b_apalancamiento:
@@ -1028,11 +1032,15 @@ public class MainFragment extends Fragment {
 
 
             case R.id.b_redondeo_descendente:
+                if (etCantidadMostrador.getText().toString().isEmpty())
+                    etCantidadMostrador.setText("0");
                 ajusteRedondeo(false);
                 break;
 
 
             case R.id.b_redondeo_ascendente:
+                if (etCantidadMostrador.getText().toString().isEmpty())
+                    etCantidadMostrador.setText("0");
                 ajusteRedondeo(true);
                 break;
         }
