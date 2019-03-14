@@ -40,7 +40,7 @@ public class MainFragment extends Fragment {
     int apalancamiento;
     int tipoApalancamiento = 4;
     boolean hayDecimales, yaRedondeo, resYaRedondeo, seAplanoLimpiar,
-            resHayDatosDialogReferencia, resHayDatosDialogCantidad;
+            resHayDatosDialogReferencia, resHayDatosDialogCantidad, hayDecimalesDoble;
     ClipboardManager clipboard;
     Button bApalancamiento, bLimpiarClaro, bRedondeoDescendente,
             bRedondeoAscendente, bRegresarClaro, bPR, bXT;
@@ -80,6 +80,7 @@ public class MainFragment extends Fragment {
         tTituloReferencia.setOnClickListener(onClickListener);
         tTituloReferencia.setOnLongClickListener(onLongClickListener);
         tTituloTamano.setOnClickListener(onClickListener);
+        tTituloTamano.setOnLongClickListener(onLongClickListener);
         tSeguro = view.findViewById(R.id.t_seguro);
         tSeguroC = view.findViewById(R.id.t_seguroC);
         tMargen = view.findViewById(R.id.t_margen);
@@ -180,7 +181,7 @@ public class MainFragment extends Fragment {
         dialog.setContentView(R.layout.dialog);
         dialog.show();
         etDialogReferencia = dialog.findViewById(R.id.et_dialog_ref);
-        if (hayDecimales)
+        if (hayDecimalesDoble)
             etDialogReferencia.setText(String.format("%.2f", tamanoPosicion));
         else
             etDialogReferencia.setText(String.format("%.0f", tamanoPosicion));
@@ -874,50 +875,88 @@ public class MainFragment extends Fragment {
                 crearDialogPrecioPorcentaje(esDialogReferencia);
                 break;
 
+            case R.id.t_titulo_tamano:
+
+                hayDecimales = !hayDecimales;
+
+                hayDecimalesDoble = hayDecimales;
+
+
+                if (!tTamanoC.getText().toString().equals("TPC")) {
+                    if (!hayDecimales) {
+                        tTamanoC.setText(String.format("%,.0f", tamanoPosicionC));
+                    } else {
+                        tTamanoC.setText(String.format("%,.2f", tamanoPosicionC));
+                    }
+                }
+
+                if (!tTamano.getText().toString().equals("TP")) {
+                    if (!hayDecimales) {
+                        tTamano.setText(String.format("%,.0f", tamanoPosicion));
+                    } else {
+                        tTamano.setText(String.format("%,.2f", tamanoPosicion));
+                    }
+                }
+
+                break;
+
         }
         return true;
     };
 
     View.OnClickListener clickListenerPosicion = view -> {
+
+
         switch (view.getId()) {
 
             case R.id.t_posicion_tamano:
-                if (!tTamano.getText().toString().equals("TP"))
-                    crearDialogTamano();
+                if (etCantidadMostrador.getText().toString().isEmpty())
+                    etCantidadMostrador.setText("0");
+                crearDialogTamano();
                 break;
 
             case R.id.t_posicion_tamano_conversion:
+
+                if (!etReferencia.getText().toString().isEmpty() &&
+                        etCantidadMostrador.getText().toString().isEmpty())
+                    etCantidadMostrador.setText("0");
+
                 if (!tTamanoC.getText().toString().equals("TPC"))
                     crearDialogTamanoConversion();
+
                 break;
 
             case R.id.t_posicion_lote:
-                if (!tTamano.getText().toString().equals("TP"))
-                    crearDialogLotes();
+                if (etCantidadMostrador.getText().toString().isEmpty())
+                    etCantidadMostrador.setText("0");
+                crearDialogLotes();
                 break;
+
             case R.id.t_posicion_lote_conversion:
+                if (!etReferencia.getText().toString().isEmpty() &&
+                        etCantidadMostrador.getText().toString().isEmpty())
+                    etCantidadMostrador.setText("0");
+
                 if (!tTamanoC.getText().toString().equals("TPC"))
                     crearDialogLotesConversion();
                 break;
+
             case R.id.t_margen:
-                if (!tTamano.getText().toString().equals("TP"))
-                    crearDialogPrecioPorcentaje(esDialogMargen);
-                else {
+                if (etCantidadMostrador.getText().toString().isEmpty())
                     etCantidadMostrador.setText("0");
-                    crearDialogPrecioPorcentaje(esDialogMargen);
-                }
+                crearDialogPrecioPorcentaje(esDialogMargen);
                 break;
+
             case R.id.t_margenC:
+                if (!etReferencia.getText().toString().isEmpty() &&
+                        etCantidadMostrador.getText().toString().isEmpty())
+                    etCantidadMostrador.setText("0");
+
                 if (!tTamanoC.getText().toString().equals("TPC"))
                     crearDialogPrecioPorcentaje(esDialogMargenConversion);
-                else {
-                    if (!etReferencia.getText().toString().isEmpty()) {
-                        etCantidadMostrador.setText("0");
-                        crearDialogPrecioPorcentaje(esDialogMargenConversion);
-                    }
-                }
                 break;
         }
+
     };
 
     View.OnClickListener onClickListener = view -> {
@@ -991,7 +1030,9 @@ public class MainFragment extends Fragment {
                 break;
 
             case R.id.t_titulo_tamano:
+
                 hayDecimales = !hayDecimales;
+                hayDecimalesDoble = false;
 
 
                 if (!tTamanoC.getText().toString().equals("TPC")) {
@@ -1002,11 +1043,7 @@ public class MainFragment extends Fragment {
                 }
 
                 if (!tTamano.getText().toString().equals("TP")) {
-                    if (!hayDecimales)
-                        tTamano.setText(String.format("%,.0f", tamanoPosicion));
-                    else
-                        tTamano.setText(String.format("%,.2f", tamanoPosicion));
-
+                    tTamano.setText(String.format("%,.0f", tamanoPosicion));
                 }
                 break;
 
@@ -1114,7 +1151,7 @@ public class MainFragment extends Fragment {
 
             if (!yaRedondeo) {
 
-                if (hayDecimales)
+                if (hayDecimalesDoble)
                     tamanoPosicionAjustada = tamanoPosicion;
                 else
                     tamanoPosicionAjustada = Math.round(tamanoPosicion);
@@ -1262,10 +1299,14 @@ public class MainFragment extends Fragment {
                 lote = tamanoPosicion / 100000;
                 margen = tamanoPosicion / apalancamiento;
                 necesario = margen + cantidad;
-                if (!hayDecimales)
+
+
+                if (!hayDecimalesDoble)
                     tTamano.setText(String.format("%,.0f", tamanoPosicion));
                 else
                     tTamano.setText(String.format("%,.2f", tamanoPosicion));
+
+
                 tLote.setText(String.format("%.4f", lote));
                 tMargen.setText(String.format("%,.2f", margen));
                 tSeguro.setText(String.format("%,.2f", necesario));
@@ -1330,9 +1371,10 @@ public class MainFragment extends Fragment {
         editor.putString("precioDialogReferencia", precioDialogReferencia);
         editor.putString("cantidadDialogReferencia", cantidadDialogReferencia);
         editor.putBoolean("hayDatosDialogReferencia", hayDatosDialogReferencia);
-        editor.putString("cantidadDialogCantidad",cantidadDialogCantidad);
-        editor.putString("porcentajeDialogCantidad",porcentajeDialogCantidad);
-        editor.putBoolean("hayDatosDialogCantidad",hayDatosDialogCantidad);
+        editor.putString("cantidadDialogCantidad", cantidadDialogCantidad);
+        editor.putString("porcentajeDialogCantidad", porcentajeDialogCantidad);
+        editor.putBoolean("hayDatosDialogCantidad", hayDatosDialogCantidad);
+        editor.putBoolean("hayDecimalesDoble", hayDecimalesDoble);
         editor.apply();
         super.onDestroy();
     }
@@ -1341,8 +1383,10 @@ public class MainFragment extends Fragment {
         sharedPreferences = getActivity().getSharedPreferences("xPos", Context.MODE_PRIVATE);
         if (sharedPreferences.contains("tipoApalancamiento"))
             tipoApalancamiento = sharedPreferences.getInt("tipoApalancamiento", 1);
-        if (sharedPreferences.contains("hayDecimales"))
+        if (sharedPreferences.contains("hayDecimales")) {
             hayDecimales = sharedPreferences.getBoolean("hayDecimales", false);
+            hayDecimalesDoble = sharedPreferences.getBoolean("hayDecimalesDoble", false);
+        }
         if (sharedPreferences.contains("cantidad")) {
 
             if (sharedPreferences.getString("cantidad", "").isEmpty()) {
@@ -1374,9 +1418,9 @@ public class MainFragment extends Fragment {
             precioDialogReferencia = sharedPreferences.getString("precioDialogReferencia", "");
         }
         if (sharedPreferences.contains("hayDatosDialogCantidad")) {
-            hayDatosDialogCantidad = sharedPreferences.getBoolean("hayDatosDialogCantidad",false);
-            cantidadDialogCantidad = sharedPreferences.getString("cantidadDialogCantidad","");
-            porcentajeDialogCantidad = sharedPreferences.getString("porcentajeDialogCantidad","");
+            hayDatosDialogCantidad = sharedPreferences.getBoolean("hayDatosDialogCantidad", false);
+            cantidadDialogCantidad = sharedPreferences.getString("cantidadDialogCantidad", "");
+            porcentajeDialogCantidad = sharedPreferences.getString("porcentajeDialogCantidad", "");
         }
 
     }
