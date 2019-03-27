@@ -106,8 +106,16 @@ public class MainFragment extends Fragment {
         bXT.setOnClickListener(onClickListener);
         checadaSharedPreference();
         cambioApalancamiento();
-        return view;
+        etCantidadMostrador.setOnKeyListener((view1, i, keyEvent) -> {
 
+            if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_K) {
+                etCantidadMostrador.setText(etCantidadMostrador.getText() + "000");
+                return true;
+
+            } else
+                return false;
+        });
+        return view;
     }
 
     Dialog dialog;
@@ -128,6 +136,11 @@ public class MainFragment extends Fragment {
 
         inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
         etDialogReferencia.setOnKeyListener((view, i, keyEvent) -> {
+
+            if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_K) {
+                etDialogReferencia.setText(etDialogReferencia.getText() + "000");
+            }
+
 
             if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_ENTER) {
                 if (!etDialogReferencia.getText().toString().isEmpty() &&
@@ -190,6 +203,10 @@ public class MainFragment extends Fragment {
         inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
         etDialogReferencia.setOnKeyListener((view, i, keyEvent) -> {
 
+            if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_K) {
+                etDialogReferencia.setText(etDialogReferencia.getText() + "000");
+            }
+
             if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_ENTER) {
 
                 if (!etDialogReferencia.getText().toString().isEmpty() &&
@@ -230,6 +247,10 @@ public class MainFragment extends Fragment {
         tDialogTitulo.setText("TPC");
         inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
         etDialogReferencia.setOnKeyListener((view, i, keyEvent) -> {
+
+            if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_K) {
+                etDialogReferencia.setText(etDialogReferencia.getText() + "000");
+            }
 
             if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_ENTER) {
                 if (!etDialogReferencia.getText().toString().isEmpty() &&
@@ -362,6 +383,16 @@ public class MainFragment extends Fragment {
         bLimpiarDialogMargen = dialog.findViewById(R.id.b_limpiar_dialog_margen);
         bRegresarDialogMargen = dialog.findViewById(R.id.b_regresar_dialog_margen);
         bSalirDialogMargen = dialog.findViewById(R.id.b_salir_dialog_margen);
+
+        etCantidadDialogMargen.setOnKeyListener((view1, i, keyEvent) -> {
+
+            if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_K) {
+                etCantidadDialogMargen.setText(etCantidadDialogMargen.getText() + "000");
+                return true;
+
+            } else
+                return false;
+        });
 
         if (tipoDialog == esDialogCantidad) {
 
