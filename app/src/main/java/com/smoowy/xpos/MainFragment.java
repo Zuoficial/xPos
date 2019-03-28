@@ -108,7 +108,7 @@ public class MainFragment extends Fragment {
         cambioApalancamiento();
         etCantidadMostrador.setOnKeyListener((view1, i, keyEvent) -> {
 
-            if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_K) {
+            if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_NUMPAD_ADD) {
                 etCantidadMostrador.setText(etCantidadMostrador.getText() + "000");
                 return true;
 
@@ -137,7 +137,7 @@ public class MainFragment extends Fragment {
         inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
         etDialogReferencia.setOnKeyListener((view, i, keyEvent) -> {
 
-            if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_K) {
+            if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_NUMPAD_ADD) {
                 etDialogReferencia.setText(etDialogReferencia.getText() + "000");
             }
 
@@ -199,11 +199,30 @@ public class MainFragment extends Fragment {
         else
             etDialogReferencia.setText(String.format("%.0f", tamanoPosicion));
         tDialogTitulo = dialog.findViewById(R.id.t_dialog_titulo);
-        tDialogTitulo.setText("TP");
+
+        if (esCantidadEnDialogMargen) {
+            tDialogTitulo.setText("TP");
+        } else {
+            tDialogTitulo.setText("TP %");
+        }
+
+        tDialogTitulo.setOnClickListener(view -> {
+            esCantidadEnDialogMargen = !esCantidadEnDialogMargen;
+            if (esCantidadEnDialogMargen) {
+                tDialogTitulo.setText("TP");
+            } else {
+                tDialogTitulo.setText("TP %");
+            }
+        });
+        tDialogTitulo.setOnLongClickListener(view -> {
+            etDialogReferencia.getText().clear();
+            return true;
+        });
+
         inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
         etDialogReferencia.setOnKeyListener((view, i, keyEvent) -> {
 
-            if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_K) {
+            if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_NUMPAD_ADD) {
                 etDialogReferencia.setText(etDialogReferencia.getText() + "000");
             }
 
@@ -212,16 +231,31 @@ public class MainFragment extends Fragment {
                 if (!etDialogReferencia.getText().toString().isEmpty() &&
                         !etDialogReferencia.getText().toString().equals(".")) {
                     respaldoDeET();
-                    double num = Double.parseDouble(etDialogReferencia.getText().toString());
-                    num *= porcentajeEntero / 100;
 
-                    if (num % 1 > 0) {
-                        etCantidadMostrador.setText(String.format("%.2f", num));
-                        etCantidad.setText(String.format("%.4f", num));
+                    if (esCantidadEnDialogMargen) {
+                        double num = Double.parseDouble(etDialogReferencia.getText().toString());
+                        num *= porcentajeEntero / 100;
 
+                        if (num % 1 > 0) {
+                            etCantidadMostrador.setText(String.format("%.2f", num));
+                            etCantidad.setText(String.format("%.4f", num));
+
+                        } else {
+                            etCantidadMostrador.setText(String.format("%.0f", num));
+                        }
                     } else {
-                        etCantidadMostrador.setText(String.format("%.0f", num));
+                        double num = Double.parseDouble(etDialogReferencia.getText().toString());
+                        double numRef = Double.parseDouble(etCantidad.getText().toString());
+                        double porcen = (numRef / num) * 100;
+
+                        if (porcen % 1 > 0) {
+                            etPorcentaje.setText(String.format("%.4f", porcen));
+
+                        } else {
+                            etPorcentaje.setText(String.format("%.0f", porcen));
+                        }
                     }
+
                     yaRedondeo = false;
                 }
                 inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
@@ -231,6 +265,7 @@ public class MainFragment extends Fragment {
             } else
                 return false;
         });
+
     }
 
 
@@ -244,11 +279,29 @@ public class MainFragment extends Fragment {
         else
             etDialogReferencia.setText(String.format("%.0f", tamanoPosicionC));
         tDialogTitulo = dialog.findViewById(R.id.t_dialog_titulo);
-        tDialogTitulo.setText("TPC");
+        if (esCantidadEnDialogMargen) {
+            tDialogTitulo.setText("TPC");
+        } else {
+            tDialogTitulo.setText("TPC %");
+        }
+
+        tDialogTitulo.setOnClickListener(view -> {
+            esCantidadEnDialogMargen = !esCantidadEnDialogMargen;
+            if (esCantidadEnDialogMargen) {
+                tDialogTitulo.setText("TPC");
+            } else {
+                tDialogTitulo.setText("TPC %");
+            }
+        });
+        tDialogTitulo.setOnLongClickListener(view -> {
+            etDialogReferencia.getText().clear();
+            return true;
+        });
+
         inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
         etDialogReferencia.setOnKeyListener((view, i, keyEvent) -> {
 
-            if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_K) {
+            if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_NUMPAD_ADD) {
                 etDialogReferencia.setText(etDialogReferencia.getText() + "000");
             }
 
@@ -256,17 +309,34 @@ public class MainFragment extends Fragment {
                 if (!etDialogReferencia.getText().toString().isEmpty() &&
                         !etDialogReferencia.getText().toString().equals(".")) {
                     respaldoDeET();
-                    double num = Double.parseDouble(etDialogReferencia.getText().toString());
-                    num *= referencia;
-                    num *= porcentajeEntero / 100;
 
-                    if (num % 1 > 0) {
-                        etCantidadMostrador.setText(String.format("%.2f", num));
-                        etCantidad.setText(String.format("%.4f", num));
+                    if (esCantidadEnDialogMargen) {
+                        double num = Double.parseDouble(etDialogReferencia.getText().toString());
+                        num *= referencia;
+                        num *= porcentajeEntero / 100;
 
+                        if (num % 1 > 0) {
+                            etCantidadMostrador.setText(String.format("%.2f", num));
+                            etCantidad.setText(String.format("%.4f", num));
+
+                        } else {
+                            etCantidadMostrador.setText(String.format("%.0f", num));
+                        }
                     } else {
-                        etCantidadMostrador.setText(String.format("%.0f", num));
+                        double num = Double.parseDouble(etDialogReferencia.getText().toString());
+                        num *= referencia;
+                        double numRef = Double.parseDouble(etCantidad.getText().toString());
+                        double porcen = (numRef / num) * 100;
+
+                        if (porcen % 1 > 0) {
+                            etPorcentaje.setText(String.format("%.4f", porcen));
+
+                        } else {
+                            etPorcentaje.setText(String.format("%.0f", porcen));
+                        }
                     }
+
+
                     yaRedondeo = false;
                 }
                 inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
@@ -286,7 +356,24 @@ public class MainFragment extends Fragment {
         etDialogReferencia = dialog.findViewById(R.id.et_dialog_ref);
         etDialogReferencia.setText(String.format("%.4f", tamanoPosicion / 100000));
         tDialogTitulo = dialog.findViewById(R.id.t_dialog_titulo);
-        tDialogTitulo.setText("Lotes");
+        if (esCantidadEnDialogMargen) {
+            tDialogTitulo.setText("Lotes");
+        } else {
+            tDialogTitulo.setText("Lotes %");
+        }
+
+        tDialogTitulo.setOnClickListener(view -> {
+            esCantidadEnDialogMargen = !esCantidadEnDialogMargen;
+            if (esCantidadEnDialogMargen) {
+                tDialogTitulo.setText("Lotes");
+            } else {
+                tDialogTitulo.setText("Lotes %");
+            }
+        });
+        tDialogTitulo.setOnLongClickListener(view -> {
+            etDialogReferencia.getText().clear();
+            return true;
+        });
         inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
         etDialogReferencia.setOnKeyListener((view, i, keyEvent) -> {
 
@@ -294,17 +381,34 @@ public class MainFragment extends Fragment {
                 if (!etDialogReferencia.getText().toString().isEmpty() &&
                         !etDialogReferencia.getText().toString().equals(".")) {
                     respaldoDeET();
-                    double num = Double.parseDouble(etDialogReferencia.getText().toString());
-                    num *= 100000;
-                    num *= porcentajeEntero / 100;
 
-                    if (num % 1 > 0) {
-                        etCantidadMostrador.setText(String.format("%.2f", num));
-                        etCantidad.setText(String.format("%.4f", num));
+                    if (esCantidadEnDialogMargen) {
+                        double num = Double.parseDouble(etDialogReferencia.getText().toString());
+                        num *= 100000;
+                        num *= porcentajeEntero / 100;
 
+                        if (num % 1 > 0) {
+                            etCantidadMostrador.setText(String.format("%.2f", num));
+                            etCantidad.setText(String.format("%.4f", num));
+
+                        } else {
+                            etCantidadMostrador.setText(String.format("%.0f", num));
+                        }
                     } else {
-                        etCantidadMostrador.setText(String.format("%.0f", num));
+                        double num = Double.parseDouble(etDialogReferencia.getText().toString());
+                        num *= 100000;
+                        double numRef = Double.parseDouble(etCantidad.getText().toString());
+                        double porcen = (numRef / num) * 100;
+
+                        if (porcen % 1 > 0) {
+                            etPorcentaje.setText(String.format("%.4f", porcen));
+
+                        } else {
+                            etPorcentaje.setText(String.format("%.0f", porcen));
+                        }
+
                     }
+
                     yaRedondeo = false;
                 }
                 inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
@@ -323,7 +427,24 @@ public class MainFragment extends Fragment {
         etDialogReferencia = dialog.findViewById(R.id.et_dialog_ref);
         etDialogReferencia.setText(String.format("%.4f", tamanoPosicionC / 100000));
         tDialogTitulo = dialog.findViewById(R.id.t_dialog_titulo);
-        tDialogTitulo.setText("LC");
+        if (esCantidadEnDialogMargen) {
+            tDialogTitulo.setText("LC");
+        } else {
+            tDialogTitulo.setText("LC %");
+        }
+
+        tDialogTitulo.setOnClickListener(view -> {
+            esCantidadEnDialogMargen = !esCantidadEnDialogMargen;
+            if (esCantidadEnDialogMargen) {
+                tDialogTitulo.setText("LC");
+            } else {
+                tDialogTitulo.setText("LC %");
+            }
+        });
+        tDialogTitulo.setOnLongClickListener(view -> {
+            etDialogReferencia.getText().clear();
+            return true;
+        });
         inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
         etDialogReferencia.setOnKeyListener((view, i, keyEvent) -> {
 
@@ -331,18 +452,35 @@ public class MainFragment extends Fragment {
                 if (!etDialogReferencia.getText().toString().isEmpty() &&
                         !etDialogReferencia.getText().toString().equals(".")) {
                     respaldoDeET();
-                    double num = Double.parseDouble(etDialogReferencia.getText().toString());
-                    num *= 100000;
-                    num *= referencia;
-                    num *= porcentajeEntero / 100;
+                    if (esCantidadEnDialogMargen) {
+                        double num = Double.parseDouble(etDialogReferencia.getText().toString());
+                        num *= 100000;
+                        num *= referencia;
+                        num *= porcentajeEntero / 100;
 
-                    if (num % 1 > 0) {
-                        etCantidadMostrador.setText(String.format("%.2f", num));
-                        etCantidad.setText(String.format("%.4f", num));
+                        if (num % 1 > 0) {
+                            etCantidadMostrador.setText(String.format("%.2f", num));
+                            etCantidad.setText(String.format("%.4f", num));
 
+                        } else {
+                            etCantidadMostrador.setText(String.format("%.0f", num));
+                        }
                     } else {
-                        etCantidadMostrador.setText(String.format("%.0f", num));
+                        double num = Double.parseDouble(etDialogReferencia.getText().toString());
+                        num *= 100000;
+                        num *= referencia;
+                        double numRef = Double.parseDouble(etCantidad.getText().toString());
+                        double porcen = (numRef / num) * 100;
+
+                        if (porcen % 1 > 0) {
+                            etPorcentaje.setText(String.format("%.4f", porcen));
+
+                        } else {
+                            etPorcentaje.setText(String.format("%.0f", porcen));
+                        }
+
                     }
+
                     yaRedondeo = false;
                 }
                 inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
@@ -386,7 +524,7 @@ public class MainFragment extends Fragment {
 
         etCantidadDialogMargen.setOnKeyListener((view1, i, keyEvent) -> {
 
-            if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_K) {
+            if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_NUMPAD_ADD) {
                 etCantidadDialogMargen.setText(etCantidadDialogMargen.getText() + "000");
                 return true;
 
