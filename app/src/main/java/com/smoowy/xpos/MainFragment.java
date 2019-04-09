@@ -110,6 +110,7 @@ public class MainFragment extends Fragment {
 
             if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_NUMPAD_ADD) {
                 etCantidadMostrador.setText(etCantidadMostrador.getText() + "000");
+                etCantidadMostrador.setSelection(etCantidadMostrador.getText().length());
                 return true;
 
             } else
@@ -139,6 +140,7 @@ public class MainFragment extends Fragment {
 
             if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_NUMPAD_ADD) {
                 etDialogReferencia.setText(etDialogReferencia.getText() + "000");
+                etDialogReferencia.setSelection(etDialogReferencia.getText().length());
             }
 
 
@@ -224,6 +226,7 @@ public class MainFragment extends Fragment {
 
             if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_NUMPAD_ADD) {
                 etDialogReferencia.setText(etDialogReferencia.getText() + "000");
+                etDialogReferencia.setSelection(etDialogReferencia.getText().length());
             }
 
             if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_ENTER) {
@@ -303,6 +306,7 @@ public class MainFragment extends Fragment {
 
             if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_NUMPAD_ADD) {
                 etDialogReferencia.setText(etDialogReferencia.getText() + "000");
+                etDialogReferencia.setSelection(etDialogReferencia.getText().length());
             }
 
             if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_ENTER) {
@@ -526,6 +530,7 @@ public class MainFragment extends Fragment {
 
             if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_NUMPAD_ADD) {
                 etCantidadDialogMargen.setText(etCantidadDialogMargen.getText() + "000");
+                etCantidadDialogMargen.setSelection(etCantidadDialogMargen.getText().length());
                 return true;
 
             } else
@@ -535,6 +540,7 @@ public class MainFragment extends Fragment {
 
             if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_NUMPAD_ADD) {
                 etPorcentajeDialogMargen.setText(etPorcentajeDialogMargen.getText() + "000");
+                etPorcentajeDialogMargen.setSelection(etPorcentajeDialogMargen.getText().length());
                 return true;
 
             } else
