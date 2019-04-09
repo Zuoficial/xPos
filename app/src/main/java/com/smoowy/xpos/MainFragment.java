@@ -531,6 +531,15 @@ public class MainFragment extends Fragment {
             } else
                 return false;
         });
+        etPorcentajeDialogMargen.setOnKeyListener((view1, i, keyEvent) -> {
+
+            if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_NUMPAD_ADD) {
+                etPorcentajeDialogMargen.setText(etPorcentajeDialogMargen.getText() + "000");
+                return true;
+
+            } else
+                return false;
+        });
 
         if (tipoDialog == esDialogCantidad) {
 
