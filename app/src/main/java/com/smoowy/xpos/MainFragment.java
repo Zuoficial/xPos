@@ -106,17 +106,21 @@ public class MainFragment extends Fragment {
         bXT.setOnClickListener(onClickListener);
         checadaSharedPreference();
         cambioApalancamiento();
-        etCantidadMostrador.setOnKeyListener((view1, i, keyEvent) -> {
+        ponerKeyListener(etCantidadMostrador);
+        ponerKeyListener(etPorcentaje);
+        ponerKeyListener(etReferencia);
+        return view;
+    }
 
+    void ponerKeyListener(EditText editText) {
+        editText.setOnKeyListener((view, i, keyEvent) -> {
             if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_NUMPAD_ADD) {
-                etCantidadMostrador.setText(etCantidadMostrador.getText() + "000");
-                etCantidadMostrador.setSelection(etCantidadMostrador.getText().length());
+                editText.setText(editText.getText() + "000");
+                editText.setSelection(editText.getText().length());
                 return true;
-
             } else
                 return false;
         });
-        return view;
     }
 
     Dialog dialog;
