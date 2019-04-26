@@ -682,7 +682,6 @@ public class MainFragment extends Fragment {
                     etCantidadDialogMargen.getText().toString().isEmpty()) {
                 tMargenDialogMargen.setText("0.00");
                 return;
-
             }
 
             if (!etCantidadDialogMargen.getText().toString().isEmpty() &&
@@ -729,6 +728,10 @@ public class MainFragment extends Fragment {
                     numDialogMargen = Double.valueOf(etCantidadDialogMargen.getText().toString());
                 }
             }
+
+            if (etCantidadDialogMargen.getText().toString().isEmpty())
+            tMargenDialogMargen.setText("0.00");
+
         }
 
         @Override
