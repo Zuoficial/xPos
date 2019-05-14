@@ -730,7 +730,7 @@ public class MainFragment extends Fragment {
             }
 
             if (etCantidadDialogMargen.getText().toString().isEmpty())
-            tMargenDialogMargen.setText("0.00");
+                tMargenDialogMargen.setText("0.00");
 
         }
 
@@ -1501,8 +1501,10 @@ public class MainFragment extends Fragment {
 
                     if (!hayDatosDialogReferencia)
                         referencia = Double.parseDouble(etReferencia.getText().toString());
-                    else
-                        referencia = valorDialogReferencia;
+                    else {
+                        referencia = Double.valueOf(cantidadDialogReferencia) *
+                                Double.valueOf(etReferencia.getText().toString());
+                    }
                     tamanoPosicionC = tamanoPosicion / referencia;
                     loteC = tamanoPosicionC / 100000;
                     margenC = tamanoPosicionC / apalancamiento;
