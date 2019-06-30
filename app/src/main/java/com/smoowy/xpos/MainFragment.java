@@ -29,7 +29,7 @@ public class MainFragment extends Fragment {
     public MainFragment() {
     }
 
-    EditText etCantidad, etPorcentaje, etReferencia, etCantidadMostrador;
+    EditText etCantidad, etPorcentaje, etReferencia, etCantidadMostrador, etPrecision;
     TextView tTamano, tLote, tTamanoC, tLoteC,
             tTituloCantidad, tTituloPorcentaje, tTituloReferencia, tTituloTamano, tMargen, tMargenC,
             tSeguro, tSeguroC;
@@ -46,7 +46,7 @@ public class MainFragment extends Fragment {
     Button bApalancamiento, bLimpiarClaro, bRedondeoDescendente,
             bRedondeoAscendente, bRegresarClaro, bPR, bXT;
     SharedPreferences sharedPreferences;
-    String resCantidad, resCantidadMostrador, resPorcentaje, resReferencia;
+    String resCantidad, resCantidadMostrador, resPorcentaje, resReferencia, precision = "", resPrecision;
     InputMethodManager inputMethodManager;
 
     @Override
@@ -60,9 +60,11 @@ public class MainFragment extends Fragment {
         etCantidadMostrador.addTextChangedListener(textWatcherMostrador);
         etPorcentaje = view.findViewById(R.id.et_porcentaje);
         etReferencia = view.findViewById(R.id.et_referencia);
+        etPrecision = view.findViewById(R.id.et_precision);
         etCantidad.addTextChangedListener(textWatcher);
         etPorcentaje.addTextChangedListener(textWatcher);
         etReferencia.addTextChangedListener(textWatcher);
+        etPrecision.addTextChangedListener(textWatcherPrecision);
         tTamano = view.findViewById(R.id.t_posicion_tamano);
         tTamano.setOnClickListener(clickListenerPosicion);
         tLote = view.findViewById(R.id.t_posicion_lote);
@@ -356,6 +358,41 @@ public class MainFragment extends Fragment {
                 return false;
         });
     }
+
+    TextWatcher textWatcherPrecision = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+
+            if (!tTamanoC.getText().toString().equals("TPC")) {
+
+                if (!hayDecimales) {
+                    tTamanoC.setText(String.format("%,.0f", tamanoPosicionC));
+                } else {
+
+                    if (etPrecision.getText().toString().isEmpty())
+                        tTamanoC.setText(String.format("%,.2f", tamanoPosicionC));
+                    else {
+
+                        tTamanoC.setText(String.format("%,." +
+                                (precision = etPrecision.getText().toString()) +
+                                "f", tamanoPosicionC));
+                    }
+                }
+            }
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+
+        }
+    };
 
 
     private void crearDialogLotes() {
@@ -1091,12 +1128,27 @@ public class MainFragment extends Fragment {
 
                 hayDecimalesDoble = hayDecimales;
 
+                if (hayDecimales)
+                    etPrecision.setVisibility(View.VISIBLE);
+                else {
+                    etPrecision.setVisibility(View.GONE);
+                }
+
 
                 if (!tTamanoC.getText().toString().equals("TPC")) {
-                    if (!hayDecimales) {
+                    if (!hayDecimales)
                         tTamanoC.setText(String.format("%,.0f", tamanoPosicionC));
-                    } else {
-                        tTamanoC.setText(String.format("%,.2f", tamanoPosicionC));
+                    else {
+
+                        if (precision.isEmpty())
+                            tTamanoC.setText(String.format("%,.2f", tamanoPosicionC));
+                        else {
+
+                            tTamanoC.setText(String.format("%,." +
+                                    precision +
+                                    "f", tamanoPosicionC));
+                        }
+
                     }
                 }
 
@@ -1193,6 +1245,8 @@ public class MainFragment extends Fragment {
                     hayDatosDialogCantidad = resHayDatosDialogCantidad;
                     cantidadDialogReferencia = resCantidadDialogReferencia;
                     precioDialogReferencia = resPrecioDialogReferencia;
+                    precision = resPrecision;
+                    etPrecision.setText(precision);
                     seAplanoLimpiar = false;
                     checarTituloReferencia();
                 }
@@ -1203,6 +1257,8 @@ public class MainFragment extends Fragment {
                 etCantidadMostrador.getText().clear();
                 etPorcentaje.getText().clear();
                 etReferencia.getText().clear();
+                etPrecision.getText().clear();
+                precision = "";
                 redondeoRef = 1000;
                 tTamano.setText("TP");
                 tLote.setText("Lotes");
@@ -1251,12 +1307,26 @@ public class MainFragment extends Fragment {
                 hayDecimales = !hayDecimales;
                 hayDecimalesDoble = false;
 
+                if (hayDecimales)
+                    etPrecision.setVisibility(View.VISIBLE);
+                else {
+                    etPrecision.setVisibility(View.GONE);
+                }
 
                 if (!tTamanoC.getText().toString().equals("TPC")) {
                     if (!hayDecimales)
                         tTamanoC.setText(String.format("%,.0f", tamanoPosicionC));
-                    else
-                        tTamanoC.setText(String.format("%,.2f", tamanoPosicionC));
+                    else {
+
+                        if (precision.isEmpty())
+                            tTamanoC.setText(String.format("%,.2f", tamanoPosicionC));
+                        else {
+
+                            tTamanoC.setText(String.format("%,." +
+                                    precision +
+                                    "f", tamanoPosicionC));
+                        }
+                    }
                 }
 
                 if (!tTamano.getText().toString().equals("TP")) {
@@ -1320,6 +1390,7 @@ public class MainFragment extends Fragment {
         ajusteRefRespaldo = redondeoRef;
         resCantidadDialogReferencia = cantidadDialogReferencia;
         resPrecioDialogReferencia = precioDialogReferencia;
+        resPrecision = precision;
     }
 
     private void ajusteRedondeo(boolean esAscendente) {
@@ -1511,8 +1582,19 @@ public class MainFragment extends Fragment {
                     necesarioC = (cantidad / referencia) + margenC;
                     if (!hayDecimales)
                         tTamanoC.setText(String.format("%,.0f", tamanoPosicionC));
-                    else
-                        tTamanoC.setText(String.format("%,.2f", tamanoPosicionC));
+                    else {
+
+                        if (precision.isEmpty())
+                            tTamanoC.setText(String.format("%,.2f", tamanoPosicionC));
+                        else {
+
+                            tTamanoC.setText(String.format("%,." +
+                                    precision +
+                                    "f", tamanoPosicionC));
+                        }
+                    }
+
+
                     tLoteC.setText(String.format("%.4f", loteC));
                     tMargenC.setText(String.format("%,.2f", margenC));
                     tSeguroC.setText(String.format("%,.2f", necesarioC));
@@ -1607,6 +1689,7 @@ public class MainFragment extends Fragment {
         editor.putString("porcentajeDialogCantidad", porcentajeDialogCantidad);
         editor.putBoolean("hayDatosDialogCantidad", hayDatosDialogCantidad);
         editor.putBoolean("hayDecimalesDoble", hayDecimalesDoble);
+        editor.putString("precision", precision);
         editor.apply();
         super.onDestroy();
     }
@@ -1627,6 +1710,10 @@ public class MainFragment extends Fragment {
         if (sharedPreferences.contains("hayDecimales")) {
             hayDecimales = sharedPreferences.getBoolean("hayDecimales", false);
             hayDecimalesDoble = sharedPreferences.getBoolean("hayDecimalesDoble", false);
+            if (hayDecimales)
+                etPrecision.setVisibility(View.VISIBLE);
+            else
+                etPrecision.setVisibility(View.GONE);
         }
         if (sharedPreferences.contains("cantidad")) {
 
@@ -1652,6 +1739,10 @@ public class MainFragment extends Fragment {
             porcentajeDialogPos = Double.valueOf(sharedPreferences.getString("porcentajeDialogPos", "0"));
         if (sharedPreferences.contains("seLimpioDIalogPos"))
             seLimpioDIalogPos = sharedPreferences.getBoolean("seLimpioDIalogPos", false);
+        if (sharedPreferences.contains("precision")) {
+            precision = sharedPreferences.getString("precision", "");
+            etPrecision.setText(precision);
+        }
 
         checarTituloReferencia();
 
