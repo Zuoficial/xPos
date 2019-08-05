@@ -22,6 +22,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
+
 
 public class MainFragment extends Fragment {
 
@@ -107,7 +110,8 @@ public class MainFragment extends Fragment {
         bPR.setOnClickListener(onClickListener);
         bXT = view.findViewById(R.id.b_xt);
         bXT.setOnClickListener(onClickListener);
-        checadaSharedPreference();
+        //checadaSharedPreference();
+        accederDB();
         cambioApalancamiento();
         ponerKeyListener(etCantidadMostrador);
         ponerKeyListener(etPorcentaje);
@@ -1670,7 +1674,7 @@ public class MainFragment extends Fragment {
 
     @Override
     public void onDestroy() {
-        SharedPreferences.Editor editor = sharedPreferences.edit();
+        /*SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putInt("tipoApalancamiento", tipoApalancamiento);
         editor.putBoolean("hayDecimales", hayDecimales);
         editor.putString("cantidad", etCantidad.getText().toString());
@@ -1690,11 +1694,130 @@ public class MainFragment extends Fragment {
         editor.putBoolean("hayDatosDialogCantidad", hayDatosDialogCantidad);
         editor.putBoolean("hayDecimalesDoble", hayDecimalesDoble);
         editor.putString("precision", precision);
-        editor.apply();
+        editor.apply();*/
+        guardarDB();
         super.onDestroy();
     }
 
-    private void checadaSharedPreference() {
+
+    private void accederDB() {
+
+        Realm.init(getContext());
+        RealmConfiguration config = new RealmConfiguration.Builder()
+                .name("xpos.realm")
+                .schemaVersion(0)
+                .build();
+
+        Realm.setDefaultConfiguration(config);
+        realm = Realm.getDefaultInstance();
+        db = realm.where(Db.class).equalTo("id", idOperacion).findFirst();
+         /*if (db == null)
+            realm.executeTransaction(realm -> db = realm.createObject(Db.class, idOperacion));*/
+
+
+        if (db != null) {
+            realm.executeTransaction(realm -> {
+
+                if (db.getHayDatosDialogReferencia() != null)
+                    hayDatosDialogReferencia = db.getHayDatosDialogReferencia();
+
+                if (hayDatosDialogReferencia) {
+                    cantidadDialogReferencia = db.getCantidadDialogReferencia();
+                    precioDialogReferencia = db.getPrecioDialogReferencia();
+                    if (!db.getValorDialogReferencia().equals(""))
+                        valorDialogReferencia = Double.parseDouble(db.getValorDialogReferencia());
+                }
+
+                tipoApalancamiento = db.getTipoApalancamiento();
+
+                if (db.getHayDecimales() != null) {
+                    hayDecimales = db.getHayDecimales();
+                    hayDecimalesDoble = db.getHayDecimalesDoble();
+                    if (hayDecimales)
+                        etPrecision.setVisibility(View.VISIBLE);
+                    else
+                        etPrecision.setVisibility(View.GONE);
+                }
+
+                if (db.getCantidad() != null) {
+
+                    if (db.getCantidad().isEmpty()) {
+                        etCantidadMostrador.setText("");
+                    } else {
+                        double valor = Double.valueOf(db.getCantidad());
+                        etCantidadMostrador.setText(String.format("%.2f", Double.valueOf(valor)));
+                        etCantidad.setText(String.format("%.4f", Double.valueOf(valor)));
+                    }
+                }
+                etPorcentaje.setText(db.getPorcentajeEntero());
+                etReferencia.setText(db.getReferencia());
+                redondeoRef = Double.parseDouble(db.getRedondeoRef());
+                apalancamiento = db.getApalancamiento();
+                precioDialogPos = Double.parseDouble(db.getPrecioDialogPos());
+                porcentajeDialogPos = Double.parseDouble(db.getPorcentajeDialogPos());
+                seLimpioDIalogPos = db.getSeLimpioDIalogPos();
+                precision = db.getPrecision();
+                etPrecision.setText(precision);
+
+                checarTituloReferencia();
+
+                if (db.getHayDatosDialogCantidad() != null) {
+                    hayDatosDialogCantidad = db.getHayDatosDialogCantidad();
+                    cantidadDialogCantidad = db.getCantidadDialogCantidad();
+                    porcentajeDialogCantidad = db.getPorcentajeDialogCantidad();
+                }
+
+            });
+        }
+        realm.close();
+
+    }
+
+
+    Realm realm;
+    Db db;
+    int idOperacion = 0;
+
+    public void guardarDB() {
+        Realm.init(getContext());
+        RealmConfiguration config = new RealmConfiguration.Builder()
+                .name("xpos.realm")
+                .schemaVersion(0)
+                .build();
+
+        Realm.setDefaultConfiguration(config);
+        realm = Realm.getDefaultInstance();
+        db = realm.where(Db.class).equalTo("id", idOperacion).findFirst();
+        if (db == null)
+            realm.executeTransaction(realm -> db = realm.createObject(Db.class, idOperacion));
+        realm.executeTransaction(realm -> {
+
+            db.setTipoApalancamiento(tipoApalancamiento);
+            db.setHayDecimales(hayDecimales);
+            db.setCantidad(etCantidad.getText().toString());
+            db.setPorcentajeEntero(etPorcentaje.getText().toString());
+            db.setReferencia(etReferencia.getText().toString());
+            db.setRedondeoRef(String.valueOf(redondeoRef));
+            db.setApalancamiento(apalancamiento);
+            db.setPrecioDialogPos(String.valueOf(precioDialogPos));
+            db.setPorcentajeDialogPos(String.valueOf(porcentajeDialogPos));
+            db.setSeLimpioDIalogPos(seLimpioDIalogPos);
+            db.setPrecioDialogReferencia(precioDialogReferencia);
+            db.setCantidadDialogReferencia(cantidadDialogReferencia);
+            db.setHayDatosDialogReferencia(hayDatosDialogReferencia);
+            db.setValorDialogReferencia(String.valueOf(valorDialogReferencia));
+            db.setCantidadDialogCantidad(cantidadDialogCantidad);
+            db.setPorcentajeDialogCantidad(porcentajeDialogCantidad);
+            db.setHayDatosDialogCantidad(hayDatosDialogCantidad);
+            db.setHayDecimalesDoble(hayDecimalesDoble);
+            db.setPrecision(precision);
+        });
+        realm.close();
+    }
+
+
+
+  /*  private void checadaSharedPreference() {
         sharedPreferences = getActivity().getSharedPreferences("xPos", Context.MODE_PRIVATE);
         if (sharedPreferences.contains("hayDatosDialogReferencia")) {
             hayDatosDialogReferencia = sharedPreferences.getBoolean("hayDatosDialogReferencia", false);
@@ -1753,7 +1876,7 @@ public class MainFragment extends Fragment {
             porcentajeDialogCantidad = sharedPreferences.getString("porcentajeDialogCantidad", "");
         }
 
-    }
+    }*/
 
 
     private void copyToast(CharSequence text) {
