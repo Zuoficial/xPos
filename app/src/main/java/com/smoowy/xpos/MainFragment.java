@@ -43,11 +43,12 @@ public class MainFragment extends Fragment {
     String resCantidadDialogReferencia, resPrecioDialogReferencia;
     int apalancamiento;
     int tipoApalancamiento = 4;
+    int idOperacion;
     boolean hayDecimales, yaRedondeo, resYaRedondeo, seAplanoLimpiar,
             resHayDatosDialogReferencia, resHayDatosDialogCantidad, hayDecimalesDoble;
     ClipboardManager clipboard;
     Button bApalancamiento, bLimpiarClaro, bRedondeoDescendente,
-            bRedondeoAscendente, bRegresarClaro, bPR, bXT;
+            bRedondeoAscendente, bRegresarClaro, bPR, bXT, bId, bIdMenos, bIdMas, bBorrarTodo;
     SharedPreferences sharedPreferences;
     String resCantidad, resCantidadMostrador, resPorcentaje, resReferencia, precision = "", resPrecision;
     InputMethodManager inputMethodManager;
@@ -110,9 +111,17 @@ public class MainFragment extends Fragment {
         bPR.setOnClickListener(onClickListener);
         bXT = view.findViewById(R.id.b_xt);
         bXT.setOnClickListener(onClickListener);
-        //checadaSharedPreference();
+        bId = view.findViewById(R.id.b_id);
+        bIdMenos = view.findViewById(R.id.b_id_menos);
+        bIdMas = view.findViewById(R.id.b_id_mas);
+        bIdMenos.setOnClickListener(onClickListener);
+        bIdMas.setOnClickListener(onClickListener);
+        bBorrarTodo = view.findViewById(R.id.b_borrarTodo);
+        bBorrarTodo.setOnClickListener(onClickListener);
+        recuperarIdShared();
         accederDB();
         cambioApalancamiento();
+        bId.setText(String.valueOf(idOperacion));
         ponerKeyListener(etCantidadMostrador);
         ponerKeyListener(etPorcentaje);
         ponerKeyListener(etReferencia);
@@ -1371,9 +1380,55 @@ public class MainFragment extends Fragment {
                     etCantidadMostrador.setText("0");
                 ajusteRedondeo(true);
                 break;
+
+
+            case R.id.b_id_mas:
+                guardarDB();
+                idOperacion += 1;
+                bId.setText(String.valueOf(idOperacion));
+                accederDB();
+                cambioApalancamiento();
+                break;
+
+            case R.id.b_id_menos:
+                guardarDB();
+                idOperacion -= 1;
+                if (idOperacion < 1)
+                    idOperacion = 1;
+                bId.setText(String.valueOf(idOperacion));
+                accederDB();
+                cambioApalancamiento();
+                break;
+
+            case R.id.b_borrarTodo:
+                borrarTodoDb();
         }
 
     };
+
+    private void borrarTodoDb() {
+        Realm.init(getContext());
+        RealmConfiguration config = new RealmConfiguration.Builder()
+                .name("xpos.realm")
+                .schemaVersion(0)
+                .build();
+
+        Realm.setDefaultConfiguration(config);
+        realm = Realm.getDefaultInstance();
+        realm.executeTransaction(realm -> {
+            realm.deleteAll();
+        });
+        realm.close();
+        sharedPreferences = getActivity().getSharedPreferences("xPos", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt("idOperacion", 1);
+        editor.apply();
+
+        Intent i = getActivity().getIntent();
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(i);
+    }
 
     private void checarTituloReferencia() {
         if (hayDatosDialogReferencia)
@@ -1674,27 +1729,7 @@ public class MainFragment extends Fragment {
 
     @Override
     public void onDestroy() {
-        /*SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putInt("tipoApalancamiento", tipoApalancamiento);
-        editor.putBoolean("hayDecimales", hayDecimales);
-        editor.putString("cantidad", etCantidad.getText().toString());
-        editor.putString("porcentajeEntero", etPorcentaje.getText().toString());
-        editor.putString("referencia", etReferencia.getText().toString());
-        editor.putString("redondeoRef", String.valueOf(redondeoRef));
-        editor.putInt("apalancamiento", apalancamiento);
-        editor.putString("precioDialogPos", String.valueOf(precioDialogPos));
-        editor.putString("porcentajeDialogPos", String.valueOf(porcentajeDialogPos));
-        editor.putBoolean("seLimpioDIalogPos", seLimpioDIalogPos);
-        editor.putString("precioDialogReferencia", precioDialogReferencia);
-        editor.putString("cantidadDialogReferencia", cantidadDialogReferencia);
-        editor.putBoolean("hayDatosDialogReferencia", hayDatosDialogReferencia);
-        editor.putString("valorDialogReferencia", String.valueOf(valorDialogReferencia));
-        editor.putString("cantidadDialogCantidad", cantidadDialogCantidad);
-        editor.putString("porcentajeDialogCantidad", porcentajeDialogCantidad);
-        editor.putBoolean("hayDatosDialogCantidad", hayDatosDialogCantidad);
-        editor.putBoolean("hayDecimalesDoble", hayDecimalesDoble);
-        editor.putString("precision", precision);
-        editor.apply();*/
+        guardadoIdShared();
         guardarDB();
         super.onDestroy();
     }
@@ -1711,9 +1746,12 @@ public class MainFragment extends Fragment {
         Realm.setDefaultConfiguration(config);
         realm = Realm.getDefaultInstance();
         db = realm.where(Db.class).equalTo("id", idOperacion).findFirst();
-         /*if (db == null)
-            realm.executeTransaction(realm -> db = realm.createObject(Db.class, idOperacion));*/
 
+        if (db == null) {
+            realm.close();
+            bLimpiarClaro.performClick();
+            return;
+        }
 
         if (db != null) {
             realm.executeTransaction(realm -> {
@@ -1776,7 +1814,6 @@ public class MainFragment extends Fragment {
 
     Realm realm;
     Db db;
-    int idOperacion = 0;
 
     public void guardarDB() {
         Realm.init(getContext());
@@ -1815,68 +1852,21 @@ public class MainFragment extends Fragment {
         realm.close();
     }
 
-
-
-  /*  private void checadaSharedPreference() {
+    private void guardadoIdShared() {
         sharedPreferences = getActivity().getSharedPreferences("xPos", Context.MODE_PRIVATE);
-        if (sharedPreferences.contains("hayDatosDialogReferencia")) {
-            hayDatosDialogReferencia = sharedPreferences.getBoolean("hayDatosDialogReferencia", false);
-            cantidadDialogReferencia = sharedPreferences.getString("cantidadDialogReferencia", "");
-            precioDialogReferencia = sharedPreferences.getString("precioDialogReferencia", "");
-            if (!sharedPreferences.getString("valorDialogReferencia", "").equals("")) {
-                valorDialogReferencia = Double.parseDouble(sharedPreferences
-                        .getString("valorDialogReferencia", ""));
-            }
-        }
-        if (sharedPreferences.contains("tipoApalancamiento"))
-            tipoApalancamiento = sharedPreferences.getInt("tipoApalancamiento", 1);
-        if (sharedPreferences.contains("hayDecimales")) {
-            hayDecimales = sharedPreferences.getBoolean("hayDecimales", false);
-            hayDecimalesDoble = sharedPreferences.getBoolean("hayDecimalesDoble", false);
-            if (hayDecimales)
-                etPrecision.setVisibility(View.VISIBLE);
-            else
-                etPrecision.setVisibility(View.GONE);
-        }
-        if (sharedPreferences.contains("cantidad")) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt("idOperacion", idOperacion);
+        editor.apply();
+    }
 
-            if (sharedPreferences.getString("cantidad", "").isEmpty()) {
-                etCantidadMostrador.setText("");
-            } else {
-                double valor = Double.valueOf(sharedPreferences.getString("cantidad", ""));
-                etCantidadMostrador.setText(String.format("%.2f", Double.valueOf(valor)));
-                etCantidad.setText(String.format("%.4f", Double.valueOf(valor)));
-            }
-        }
-        if (sharedPreferences.contains("porcentajeEntero"))
-            etPorcentaje.setText(sharedPreferences.getString("porcentajeEntero", ""));
-        if (sharedPreferences.contains("referencia"))
-            etReferencia.setText(sharedPreferences.getString("referencia", ""));
-        if (sharedPreferences.contains("redondeoRef"))
-            redondeoRef = Double.parseDouble(sharedPreferences.getString("redondeoRef", "1000"));
-        if (sharedPreferences.contains("apalancamiento"))
-            apalancamiento = sharedPreferences.getInt("apalancamiento", 100);
-        if (sharedPreferences.contains("precioDialogPos"))
-            precioDialogPos = Double.valueOf(sharedPreferences.getString("precioDialogPos", "0"));
-        if (sharedPreferences.contains("porcentajeDialogPos"))
-            porcentajeDialogPos = Double.valueOf(sharedPreferences.getString("porcentajeDialogPos", "0"));
-        if (sharedPreferences.contains("seLimpioDIalogPos"))
-            seLimpioDIalogPos = sharedPreferences.getBoolean("seLimpioDIalogPos", false);
-        if (sharedPreferences.contains("precision")) {
-            precision = sharedPreferences.getString("precision", "");
-            etPrecision.setText(precision);
-        }
+    private void recuperarIdShared() {
+        sharedPreferences = getActivity().getSharedPreferences("xPos", Context.MODE_PRIVATE);
 
-        checarTituloReferencia();
-
-
-        if (sharedPreferences.contains("hayDatosDialogCantidad")) {
-            hayDatosDialogCantidad = sharedPreferences.getBoolean("hayDatosDialogCantidad", false);
-            cantidadDialogCantidad = sharedPreferences.getString("cantidadDialogCantidad", "");
-            porcentajeDialogCantidad = sharedPreferences.getString("porcentajeDialogCantidad", "");
-        }
-
-    }*/
+        if (sharedPreferences.contains("idOperacion"))
+            idOperacion = sharedPreferences.getInt("idOperacion", 1);
+        else
+            idOperacion = 1;
+    }
 
 
     private void copyToast(CharSequence text) {
