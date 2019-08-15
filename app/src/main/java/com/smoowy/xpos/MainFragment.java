@@ -220,6 +220,7 @@ public class MainFragment extends Fragment {
         dialog.setContentView(R.layout.dialog_margen);
         dialog.show();
 
+        dialog.findViewById(R.id.et_precision_dialog_margen).setVisibility(View.GONE);
         tTituloDialogTamano = dialog.findViewById(R.id.t_titulo_cantidad_dialog_margen);
         etDialogTamano = dialog.findViewById(R.id.et_cantidad_dialog_margen);
         etDialogTamano.addTextChangedListener(textWatcherDialogTamano);
