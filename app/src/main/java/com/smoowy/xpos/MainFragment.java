@@ -210,86 +210,168 @@ public class MainFragment extends Fragment {
         });
     }
 
+    TextView tTituloDialogTamano, tCantidadTituloDialogTamano, tValorTituloDialogTamano,
+            tValorDialogTamano;
+    EditText etDialogTamano, etCantidadDialogTamano;
+    Button bSalirDialogTamano,bLimpiarDialogTamano;
 
     private void crearDialogTamano() {
         dialog = new Dialog(getActivity(), R.style.MyDialogStyle);
-        dialog.setContentView(R.layout.dialog);
+        dialog.setContentView(R.layout.dialog_margen);
         dialog.show();
-        etDialogReferencia = dialog.findViewById(R.id.et_dialog_ref);
-        if (hayDecimalesDoble)
-            etDialogReferencia.setText(String.format("%.2f", tamanoPosicion));
-        else
-            etDialogReferencia.setText(String.format("%.0f", tamanoPosicion));
-        tDialogTitulo = dialog.findViewById(R.id.t_dialog_titulo);
 
-        if (esCantidadEnDialogMargen) {
-            tDialogTitulo.setText("TP");
+        tTituloDialogTamano = dialog.findViewById(R.id.t_titulo_cantidad_dialog_margen);
+        etDialogTamano = dialog.findViewById(R.id.et_cantidad_dialog_margen);
+        etDialogTamano.addTextChangedListener(textWatcherDialogTamano);
+        tCantidadTituloDialogTamano = dialog.findViewById(R.id.t_titulo_porcen_dialog_margen);
+        tCantidadTituloDialogTamano.setText("Cantidad");
+        etCantidadDialogTamano = dialog.findViewById(R.id.et_porcentaje_dialog_margen);
+        etCantidadDialogTamano.setHint("Cantidad");
+        etCantidadDialogTamano.addTextChangedListener(textWatcherDialogTamano);
+        tValorTituloDialogTamano = dialog.findViewById(R.id.t_titulo_margen_dialog_margen);
+        tValorTituloDialogTamano.setText("Valor");
+        tValorDialogTamano = dialog.findViewById(R.id.t_margen_dialog_margen);
+        View.OnClickListener clicklistenerDialogTamano = view -> {
+
+
+            switch(view.getId()) {
+
+                case R.id.b_salir_dialog_margen :
+                    if (!etDialogTamano.getText().toString().isEmpty() &&
+                            !etDialogTamano.getText().toString().equals(".")) {
+                        respaldoDeET();
+
+                        if (esCantidadEnDialogMargen) {
+                            double num = Double.parseDouble(tValorDialogTamano.getText().toString().replace(",", ""));
+                            num *= porcentajeEntero / 100;
+
+                            if (num % 1 > 0) {
+                                etCantidadMostrador.setText(String.format("%.2f", num));
+                                etCantidad.setText(String.format("%.4f", num));
+
+                            } else {
+                                etCantidadMostrador.setText(String.format("%.0f", num));
+                            }
+                        } else {
+                            double num = Double.parseDouble(tValorDialogTamano.getText().toString().replace(",", ""));
+                            double numRef = Double.parseDouble(etCantidad.getText().toString());
+                            double porcen = (numRef / num) * 100;
+
+                            if (porcen % 1 > 0) {
+                                etPorcentaje.setText(String.format("%.4f", porcen));
+
+                            } else {
+                                etPorcentaje.setText(String.format("%.0f", porcen));
+                            }
+                        }
+
+                        yaRedondeo = false;
+                    }
+                    inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+                    dialog.dismiss();
+                    break;
+
+                case R.id.b_limpiar_dialog_margen :
+                    etDialogTamano.setText("");
+                    etCantidadDialogTamano.setText("");
+                    tValorDialogTamano.setText("0.00");
+                    break;
+            }
+
+
+
+        };
+        bSalirDialogTamano = dialog.findViewById(R.id.b_salir_dialog_margen);
+        bSalirDialogTamano.setOnClickListener(clicklistenerDialogTamano);
+        bLimpiarDialogTamano= dialog.findViewById(R.id.b_limpiar_dialog_margen);
+        bLimpiarDialogTamano.setOnClickListener(clicklistenerDialogTamano);
+
+        if (hayDecimalesDoble) {
+            etDialogTamano.setText(String.format("%.2f", tamanoPosicion));
+            tValorDialogTamano.setText(String.format("%,.2f", tamanoPosicion));
         } else {
-            tDialogTitulo.setText("TP %");
+            etDialogTamano.setText(String.format("%.0f", tamanoPosicion));
+            tValorDialogTamano.setText(String.format("%,.0f", tamanoPosicion));
         }
 
-        tDialogTitulo.setOnClickListener(view -> {
+
+        if (esCantidadEnDialogMargen) {
+            tTituloDialogTamano.setText("TP");
+        } else {
+            tTituloDialogTamano.setText("TP %");
+        }
+
+        tTituloDialogTamano.setOnClickListener(view -> {
             esCantidadEnDialogMargen = !esCantidadEnDialogMargen;
             if (esCantidadEnDialogMargen) {
-                tDialogTitulo.setText("TP");
+                tTituloDialogTamano.setText("TP");
             } else {
-                tDialogTitulo.setText("TP %");
+                tTituloDialogTamano.setText("TP %");
             }
         });
-        tDialogTitulo.setOnLongClickListener(view -> {
-            etDialogReferencia.getText().clear();
+        tTituloDialogTamano.setOnLongClickListener(view -> {
+            etDialogTamano.getText().clear();
             return true;
         });
 
         inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-        etDialogReferencia.setOnKeyListener((view, i, keyEvent) -> {
+        etDialogTamano.setOnKeyListener((view, i, keyEvent) -> {
 
             if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_NUMPAD_ADD) {
-                etDialogReferencia.setText(etDialogReferencia.getText() + "000");
-                etDialogReferencia.setSelection(etDialogReferencia.getText().length());
+                etDialogTamano.setText(etDialogTamano.getText() + "000");
+                etDialogTamano.setSelection(etDialogTamano.getText().length());
             }
 
             if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_ENTER) {
-
-                if (!etDialogReferencia.getText().toString().isEmpty() &&
-                        !etDialogReferencia.getText().toString().equals(".")) {
-                    respaldoDeET();
-
-                    if (esCantidadEnDialogMargen) {
-                        double num = Double.parseDouble(etDialogReferencia.getText().toString());
-                        num *= porcentajeEntero / 100;
-
-                        if (num % 1 > 0) {
-                            etCantidadMostrador.setText(String.format("%.2f", num));
-                            etCantidad.setText(String.format("%.4f", num));
-
-                        } else {
-                            etCantidadMostrador.setText(String.format("%.0f", num));
-                        }
-                    } else {
-                        double num = Double.parseDouble(etDialogReferencia.getText().toString());
-                        double numRef = Double.parseDouble(etCantidad.getText().toString());
-                        double porcen = (numRef / num) * 100;
-
-                        if (porcen % 1 > 0) {
-                            etPorcentaje.setText(String.format("%.4f", porcen));
-
-                        } else {
-                            etPorcentaje.setText(String.format("%.0f", porcen));
-                        }
-                    }
-
-                    yaRedondeo = false;
-                }
-                inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-                dialog.dismiss();
+                bSalirDialogTamano.performClick();
                 return true;
 
             } else
                 return false;
         });
 
+
     }
+
+    TextWatcher textWatcherDialogTamano = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            if (!etDialogTamano.getText().toString().isEmpty() &&
+                    !etCantidadDialogTamano.getText().toString().isEmpty()) {
+
+
+                double referencia = Double.parseDouble(etDialogTamano.getText().toString());
+                double cantidad = Double.parseDouble(etCantidadDialogTamano.getText().toString());
+
+                if (hayDecimalesDoble) {
+                    tValorDialogTamano.setText(String.format("%,.2f", (referencia * cantidad)));
+                } else {
+                    tValorDialogTamano.setText(String.format("%,.0f", (referencia * cantidad)));
+                }
+            } else if (!etDialogTamano.getText().toString().isEmpty() &&
+                    etCantidadDialogTamano.getText().toString().isEmpty()) {
+
+                if (hayDecimalesDoble) {
+                    tValorDialogTamano.setText(String.format("%,.2f", (Double.parseDouble(etDialogTamano.getText().toString()))));
+                } else {
+                    tValorDialogTamano.setText(String.format("%,.0f", (Double.parseDouble(etDialogTamano.getText().toString()))));
+                }
+            }
+
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+
+        }
+    };
 
 
     private void crearDialogTamanoConversion() {
