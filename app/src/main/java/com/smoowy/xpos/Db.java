@@ -28,6 +28,10 @@ public class Db extends RealmObject {
     Boolean hayDatosDialogCantidad;
     Boolean hayDecimalesDoble;
     String precision;
+    String precioDialogPorcentaje;
+    String largaDialogPorcentaje;
+    String cortaDialogPorcentaje;
+    Boolean seLimpioDialogPorcentaje;
 
     public int getTipoApalancamiento() {
         return tipoApalancamiento;
@@ -179,5 +183,36 @@ public class Db extends RealmObject {
 
     public void setPrecision(String precision) {
         this.precision = precision;
+    }
+
+    public String getPrecioDialogPorcentaje() {
+        return precioDialogPorcentaje;
+    }
+
+    public void setPrecioDialogPorcentaje(String precioDialogPorcentaje) {
+        this.precioDialogPorcentaje = precioDialogPorcentaje;
+    }
+
+    public String getLargaDialogPorcentaje() {
+        return largaDialogPorcentaje;
+    }
+
+    public void setLargaDialogPorcentaje(String largaDialogPorcentaje) {
+        this.largaDialogPorcentaje = largaDialogPorcentaje;
+    }
+
+    public String getCortaDialogPorcentaje() {
+        return cortaDialogPorcentaje;
+    }
+
+    public void setCortaDialogPorcentaje(String cortaDialogPorcentaje) {
+        this.cortaDialogPorcentaje = cortaDialogPorcentaje;
+    }
+    public Boolean getSeLimpioDialogPorcentaje() {
+        return seLimpioDialogPorcentaje;
+    }
+
+    public void setSeLimpioDialogPorcentaje(Boolean seLimpioDialogPorcentaje) {
+        this.seLimpioDialogPorcentaje = seLimpioDialogPorcentaje;
     }
 }

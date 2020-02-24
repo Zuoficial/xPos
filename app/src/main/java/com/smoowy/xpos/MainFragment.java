@@ -86,6 +86,7 @@ public class MainFragment extends Fragment {
         tTituloPorcentaje.setOnClickListener(onClickListener);
         tTituloReferencia.setOnClickListener(onClickListener);
         tTituloReferencia.setOnLongClickListener(onLongClickListener);
+        tTituloPorcentaje.setOnLongClickListener(onLongClickListener);
         tTituloTamano.setOnClickListener(onClickListener);
         tTituloTamano.setOnLongClickListener(onLongClickListener);
         tSeguro = view.findViewById(R.id.t_seguro);
@@ -213,7 +214,7 @@ public class MainFragment extends Fragment {
     TextView tTituloDialogTamano, tCantidadTituloDialogTamano, tValorTituloDialogTamano,
             tValorDialogTamano;
     EditText etDialogTamano, etCantidadDialogTamano;
-    Button bSalirDialogTamano,bLimpiarDialogTamano;
+    Button bSalirDialogTamano, bLimpiarDialogTamano;
 
     private void crearDialogTamano() {
         dialog = new Dialog(getActivity(), R.style.MyDialogStyle);
@@ -235,9 +236,9 @@ public class MainFragment extends Fragment {
         View.OnClickListener clicklistenerDialogTamano = view -> {
 
 
-            switch(view.getId()) {
+            switch (view.getId()) {
 
-                case R.id.b_salir_dialog_margen :
+                case R.id.b_salir_dialog_margen:
                     if (!etDialogTamano.getText().toString().isEmpty() &&
                             !etDialogTamano.getText().toString().equals(".")) {
                         respaldoDeET();
@@ -272,7 +273,7 @@ public class MainFragment extends Fragment {
                     dialog.dismiss();
                     break;
 
-                case R.id.b_limpiar_dialog_margen :
+                case R.id.b_limpiar_dialog_margen:
                     etDialogTamano.setText("");
                     etCantidadDialogTamano.setText("");
                     tValorDialogTamano.setText("0.00");
@@ -280,11 +281,10 @@ public class MainFragment extends Fragment {
             }
 
 
-
         };
         bSalirDialogTamano = dialog.findViewById(R.id.b_salir_dialog_margen);
         bSalirDialogTamano.setOnClickListener(clicklistenerDialogTamano);
-        bLimpiarDialogTamano= dialog.findViewById(R.id.b_limpiar_dialog_margen);
+        bLimpiarDialogTamano = dialog.findViewById(R.id.b_limpiar_dialog_margen);
         bLimpiarDialogTamano.setOnClickListener(clicklistenerDialogTamano);
 
         if (hayDecimalesDoble) {
@@ -1067,8 +1067,8 @@ public class MainFragment extends Fragment {
     TextView tPrecioDialogPos, tPorcentajeDialogPos, tSuperiorDialogPos, tInferiorDialogPos;
     double precioDialogPos, porcentajeDialogPos, superiorDialogPos, inferiorDialogPos;
     Button bLimpiarDialogPos, bRegresarDialogPos, bSalirDialogPos;
-    String formatoDialgoPos, resPrecioDialogPos, resPorcentajeDialogPos;
-    boolean seLimpioDIalogPos, resSeLimpiDialogoPos;
+    String formatoDialogPos, resPrecioDialogPos, resPorcentajeDialogPos;
+    boolean seLimpioDialogPos, resSeLimpiDialogoPos;
 
     private void crearDialogPos() {
         dialog = new Dialog(getActivity(), R.style.MyDialogStyle);
@@ -1095,7 +1095,7 @@ public class MainFragment extends Fragment {
         etPrecisionDialogPos = dialog.findViewById(R.id.et_precision_dialog_pos);
         etPrecisionDialogPos.addTextChangedListener(textWatcherDialogPos);
 
-        if (!seLimpioDIalogPos) {
+        if (!seLimpioDialogPos) {
             etPrecioDialogPos.setText(String.valueOf(precioDialogPos));
             etPorcentajeDialogPos.setText(String.valueOf(porcentajeDialogPos * 100));
         }
@@ -1116,8 +1116,8 @@ public class MainFragment extends Fragment {
                     !etPorcentajeDialogPos.getText().toString().isEmpty() &&
                     !etPorcentajeDialogPos.getText().toString().equals(".")) {
 
-                if (seLimpioDIalogPos)
-                    seLimpioDIalogPos = false;
+                if (seLimpioDialogPos)
+                    seLimpioDialogPos = false;
 
                 precioDialogPos = Double.valueOf(etPrecioDialogPos.getText().toString());
                 porcentajeDialogPos = Double.valueOf(etPorcentajeDialogPos.getText().toString());
@@ -1127,14 +1127,14 @@ public class MainFragment extends Fragment {
                 inferiorDialogPos = precioDialogPos * (1 - porcentajeDialogPos);
 
                 if (etPrecisionDialogPos.getText().toString().isEmpty())
-                    formatoDialgoPos = "%,.5f";
+                    formatoDialogPos = "%,.5f";
                 else {
-                    formatoDialgoPos = "%,." + etPrecisionDialogPos.getText().toString() + "f";
+                    formatoDialogPos = "%,." + etPrecisionDialogPos.getText().toString() + "f";
                 }
 
 
-                tSuperiorDialogPos.setText(String.format(formatoDialgoPos, superiorDialogPos));
-                tInferiorDialogPos.setText(String.format(formatoDialgoPos, inferiorDialogPos));
+                tSuperiorDialogPos.setText(String.format(formatoDialogPos, superiorDialogPos));
+                tInferiorDialogPos.setText(String.format(formatoDialogPos, inferiorDialogPos));
 
             } else {
                 tSuperiorDialogPos.setText("0.00");
@@ -1165,7 +1165,7 @@ public class MainFragment extends Fragment {
                 resPorcentajeDialogPos = etPorcentajeDialogPos.getText().toString();
                 etPrecioDialogPos.getText().clear();
                 etPorcentajeDialogPos.getText().clear();
-                seLimpioDIalogPos = true;
+                seLimpioDialogPos = true;
                 break;
             }
 
@@ -1196,6 +1196,175 @@ public class MainFragment extends Fragment {
     };
 
 
+    //TODO ajustando nueva funcion
+    EditText etPrecioDialogPorcentaje, etPrecisionDialogPorcentaje, etLargaDialogPorcentaje, etCortaDialogPorcentaje;
+    TextView tPrecioDialogPorcentaje, tPorcentajeDialogPorcentaje, tTituloLargaDialogPorcentaje, tTituloCortaDialogPorcentaje;
+    double precioDialogPorcentaje, porcentajeDialogPorcentaje, largaDialogPorcentaje, cortaDialogPorcentaje;
+    Button bLimpiarDialogPorcentaje, bRegresarDialogPorcentaje, bSalirDialogPorcentaje;
+    String formatoDialogPorcentaje, resPrecioDialogPorcentaje, resPorcentajeDialogPorcentaje;
+    boolean seLimpioDialogPorcentaje, resSeLimpiDialogoPorcentaje;
+
+    private void crearDialogPorcentaje() {
+        dialog = new Dialog(getActivity(), R.style.MyDialogStyle);
+        dialog.setContentView(R.layout.dialog_porcentaje);
+        dialog.show();
+        etPrecioDialogPorcentaje = dialog.findViewById(R.id.et_precio_dialog_porcentaje);
+        etPrecioDialogPorcentaje.addTextChangedListener(textWatcherDialogPorcentaje);
+        tPorcentajeDialogPorcentaje = dialog.findViewById(R.id.t_porcentaje_dialog_porcentaje);
+        tPrecioDialogPorcentaje = dialog.findViewById(R.id.t_titulo_precio_dialog_porcentaje);
+        tPrecioDialogPorcentaje.setOnClickListener(clickListenerDialogPorcentaje);
+        tTituloLargaDialogPorcentaje = dialog.findViewById(R.id.t_titulo_larga_dialog_porcentaje);
+        tTituloLargaDialogPorcentaje.setOnClickListener(clickListenerDialogPorcentaje);
+        etLargaDialogPorcentaje = dialog.findViewById(R.id.et_larga_dialog_porcentaje);
+        etLargaDialogPorcentaje.addTextChangedListener(textWatcherDialogPorcentaje);
+        tTituloCortaDialogPorcentaje = dialog.findViewById(R.id.t_titulo_corta_dialog_porcentaje);
+        tTituloCortaDialogPorcentaje.setOnClickListener(clickListenerDialogPorcentaje);
+        etCortaDialogPorcentaje = dialog.findViewById(R.id.et_corta_dialog_porcentaje);
+        etCortaDialogPorcentaje.addTextChangedListener(textWatcherDialogPorcentaje);
+        bLimpiarDialogPorcentaje = dialog.findViewById(R.id.b_limpiar_dialog_porcentaje);
+        bLimpiarDialogPorcentaje.setOnClickListener(clickListenerDialogPorcentaje);
+        bRegresarDialogPorcentaje = dialog.findViewById(R.id.b_regresar_dialog_porcentaje);
+        bRegresarDialogPorcentaje.setOnClickListener(clickListenerDialogPorcentaje);
+        bSalirDialogPorcentaje = dialog.findViewById(R.id.b_salir_dialog_porcentaje);
+        bSalirDialogPorcentaje.setOnClickListener(clickListenerDialogPorcentaje);
+        etPrecisionDialogPorcentaje = dialog.findViewById(R.id.et_precision_dialog_porcentaje);
+        //etPrecisionDialogPorcentaje.addTextChangedListener(textWatcherDialogPorcentaje);
+        etCortaDialogPorcentaje.setOnKeyListener((view, i, keyEvent) -> {
+            if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_ENTER) {
+                bSalirDialogPorcentaje.requestFocus();
+                return true;
+            } else
+                return false;
+        });
+
+        if (!seLimpioDialogPorcentaje) {
+            etPrecioDialogPorcentaje.setText(String.valueOf(precioDialogPorcentaje));
+            if (cortaDialogPorcentaje != 0)
+                etCortaDialogPorcentaje.setText(String.valueOf(cortaDialogPorcentaje));
+            if (largaDialogPorcentaje != 0)
+                etLargaDialogPorcentaje.setText(String.valueOf(largaDialogPorcentaje));
+        }
+
+
+        etPrecioDialogPorcentaje.requestFocus();
+        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+
+
+    }
+
+    View.OnClickListener clickListenerDialogPorcentaje = view -> {
+
+        switch (view.getId()) {
+            case R.id.t_titulo_precio_dialog_porcentaje:
+                etPrecioDialogPorcentaje.getText().clear();
+                tPorcentajeDialogPorcentaje.setText("Porcentaje");
+                etPrecioDialogPorcentaje.requestFocus();
+                break;
+            case R.id.t_titulo_larga_dialog_porcentaje:
+                etLargaDialogPorcentaje.getText().clear();
+                tPorcentajeDialogPorcentaje.setText("Porcentaje");
+                etLargaDialogPorcentaje.requestFocus();
+
+                break;
+            case R.id.t_titulo_corta_dialog_porcentaje:
+                etCortaDialogPorcentaje.getText().clear();
+                tPorcentajeDialogPorcentaje.setText("Porcentaje");
+                etCortaDialogPorcentaje.requestFocus();
+                break;
+            case R.id.b_salir_dialog_porcentaje:
+                etPorcentaje.setText(tPorcentajeDialogPorcentaje.getText().toString().replace("-", ""));
+                dialog.dismiss();
+
+                break;
+            case R.id.b_limpiar_dialog_porcentaje:
+                etPrecioDialogPorcentaje.getText().clear();
+                etLargaDialogPorcentaje.getText().clear();
+                etCortaDialogPorcentaje.getText().clear();
+                tPorcentajeDialogPorcentaje.setText("Porcentaje");
+                etLargaDialogPorcentaje.setVisibility(View.VISIBLE);
+                etCortaDialogPorcentaje.setVisibility(View.VISIBLE);
+                tTituloLargaDialogPorcentaje.setVisibility(View.VISIBLE);
+                tTituloCortaDialogPorcentaje.setVisibility(View.VISIBLE);
+                seLimpioDialogPorcentaje = true;
+                etPrecioDialogPorcentaje.requestFocus();
+                break;
+            case R.id.b_regresar_dialog_porcentaje:
+                break;
+
+        }
+
+
+    };
+
+
+    TextWatcher textWatcherDialogPorcentaje = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        }
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+
+            if (!etPrecioDialogPorcentaje.getText().toString().isEmpty() &&
+                    !etPrecioDialogPorcentaje.getText().toString().equals(".")) {
+
+                if (etPrecisionDialogPorcentaje.getText().toString().isEmpty())
+                    formatoDialogPorcentaje = "%,.5f";
+                else {
+                    formatoDialogPorcentaje = "%,." + etPrecisionDialogPorcentaje.getText().toString() + "f";
+                }
+
+                if (!etLargaDialogPorcentaje.getText().toString().isEmpty() &&
+                        !etLargaDialogPorcentaje.getText().toString().equals(".")) {
+
+                    if (seLimpioDialogPorcentaje)
+                        seLimpioDialogPorcentaje = false;
+
+                    precioDialogPorcentaje = Double.parseDouble(etPrecioDialogPorcentaje.getText().toString());
+                    largaDialogPorcentaje = Double.parseDouble(etLargaDialogPorcentaje.getText().toString());
+
+
+                    porcentajeDialogPorcentaje = largaDialogPorcentaje / precioDialogPorcentaje;
+                    porcentajeDialogPorcentaje -= 1;
+                    porcentajeDialogPorcentaje *= 100;
+                    tPorcentajeDialogPorcentaje.setText(String.format(formatoDialogPorcentaje, porcentajeDialogPorcentaje));
+                    cortaDialogPorcentaje = 0;
+                } else if (!etCortaDialogPorcentaje.getText().toString().isEmpty() &&
+                        !etCortaDialogPorcentaje.getText().toString().equals(".")
+
+                ) {
+
+                    if (seLimpioDialogPorcentaje)
+                        seLimpioDialogPorcentaje = false;
+
+
+                    precioDialogPorcentaje = Double.parseDouble(etPrecioDialogPorcentaje.getText().toString());
+                    cortaDialogPorcentaje = Double.parseDouble(etCortaDialogPorcentaje.getText().toString());
+
+                    porcentajeDialogPorcentaje = cortaDialogPorcentaje / precioDialogPorcentaje;
+                    porcentajeDialogPorcentaje -= 1;
+                    porcentajeDialogPorcentaje *= -1;
+                    porcentajeDialogPorcentaje *= 100;
+                    tPorcentajeDialogPorcentaje.setText(String.format(formatoDialogPorcentaje, porcentajeDialogPorcentaje));
+                    largaDialogPorcentaje = 0;
+
+                }
+            }
+
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+
+        }
+    };
+
+
+    //TODO AJUSTANDO LA FUNCION
+
+
     View.OnLongClickListener onLongClickListener = view -> {
         switch (view.getId()) {
             case R.id.b_redondeo_ascendente:
@@ -1213,6 +1382,10 @@ public class MainFragment extends Fragment {
                 break;
             case R.id.t_titulo_cant:
                 crearDialogPrecioPorcentaje(esDialogCantidad);
+                break;
+
+            case R.id.t_titulo_porcen:
+                crearDialogPorcentaje();
                 break;
             case R.id.t_titulo_referencia:
                 crearDialogPrecioPorcentaje(esDialogReferencia);
@@ -1336,7 +1509,7 @@ public class MainFragment extends Fragment {
                     yaRedondeo = resYaRedondeo;
                     precioDialogPos = resPrecioXDialogPos;
                     porcentajeDialogPos = resPorcentajeXDialogPos;
-                    seLimpioDIalogPos = resSeLimpiDialogoPos;
+                    seLimpioDialogPos = resSeLimpiDialogoPos;
                     hayDatosDialogReferencia = resHayDatosDialogReferencia;
                     hayDatosDialogCantidad = resHayDatosDialogCantidad;
                     cantidadDialogReferencia = resCantidadDialogReferencia;
@@ -1367,12 +1540,13 @@ public class MainFragment extends Fragment {
                 yaRedondeo = false;
                 resPrecioXDialogPos = precioDialogPos;
                 resPorcentajeXDialogPos = porcentajeDialogPos;
-                resSeLimpiDialogoPos = seLimpioDIalogPos;
+                resSeLimpiDialogoPos = seLimpioDialogPos;
                 cantidadDialogReferencia = "";
                 precioDialogReferencia = "";
                 hayDatosDialogReferencia = false;
                 hayDatosDialogCantidad = false;
-                seLimpioDIalogPos = true;
+                seLimpioDialogPos = true;
+                seLimpioDialogPorcentaje = true;
                 checarTituloReferencia();
                 break;
 
@@ -1469,6 +1643,7 @@ public class MainFragment extends Fragment {
                 guardarDB();
                 idOperacion += 1;
                 bId.setText(String.valueOf(idOperacion));
+                bLimpiarClaro.performClick();
                 accederDB();
                 cambioApalancamiento();
                 break;
@@ -1479,6 +1654,7 @@ public class MainFragment extends Fragment {
                 if (idOperacion < 1)
                     idOperacion = 1;
                 bId.setText(String.valueOf(idOperacion));
+                bLimpiarClaro.performClick();
                 accederDB();
                 cambioApalancamiento();
                 break;
@@ -1876,9 +2052,13 @@ public class MainFragment extends Fragment {
                 apalancamiento = db.getApalancamiento();
                 precioDialogPos = Double.parseDouble(db.getPrecioDialogPos());
                 porcentajeDialogPos = Double.parseDouble(db.getPorcentajeDialogPos());
-                seLimpioDIalogPos = db.getSeLimpioDIalogPos();
+                seLimpioDialogPos = db.getSeLimpioDIalogPos();
                 precision = db.getPrecision();
                 etPrecision.setText(precision);
+                precioDialogPorcentaje = Double.parseDouble(db.getPrecioDialogPorcentaje());
+                cortaDialogPorcentaje = Double.parseDouble(db.getCortaDialogPorcentaje());
+                largaDialogPorcentaje = Double.parseDouble(db.getLargaDialogPorcentaje());
+                seLimpioDialogPorcentaje = db.getSeLimpioDialogPorcentaje();
 
                 checarTituloReferencia();
 
@@ -1921,7 +2101,7 @@ public class MainFragment extends Fragment {
             db.setApalancamiento(apalancamiento);
             db.setPrecioDialogPos(String.valueOf(precioDialogPos));
             db.setPorcentajeDialogPos(String.valueOf(porcentajeDialogPos));
-            db.setSeLimpioDIalogPos(seLimpioDIalogPos);
+            db.setSeLimpioDIalogPos(seLimpioDialogPos);
             db.setPrecioDialogReferencia(precioDialogReferencia);
             db.setCantidadDialogReferencia(cantidadDialogReferencia);
             db.setHayDatosDialogReferencia(hayDatosDialogReferencia);
@@ -1931,6 +2111,10 @@ public class MainFragment extends Fragment {
             db.setHayDatosDialogCantidad(hayDatosDialogCantidad);
             db.setHayDecimalesDoble(hayDecimalesDoble);
             db.setPrecision(precision);
+            db.setPrecioDialogPorcentaje(String.valueOf(precioDialogPorcentaje));
+            db.setLargaDialogPorcentaje(String.valueOf(largaDialogPorcentaje));
+            db.setCortaDialogPorcentaje(String.valueOf(cortaDialogPorcentaje));
+            db.setSeLimpioDialogPorcentaje(seLimpioDialogPorcentaje);
         });
         realm.close();
     }
