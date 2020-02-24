@@ -1272,7 +1272,10 @@ public class MainFragment extends Fragment {
                 etCortaDialogPorcentaje.requestFocus();
                 break;
             case R.id.b_salir_dialog_porcentaje:
-                etPorcentaje.setText(tPorcentajeDialogPorcentaje.getText().toString().replace("-", ""));
+                if (!seLimpioDialogPorcentaje)
+                    etPorcentaje.setText(tPorcentajeDialogPorcentaje.getText().toString().replace("-", ""));
+                else
+                    etPorcentaje.setText("");
                 dialog.dismiss();
 
                 break;
