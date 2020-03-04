@@ -2,14 +2,14 @@ package com.smoowy.xpos;
 
 
 import android.app.Dialog;
-import android.arch.lifecycle.Lifecycle;
+import androidx.lifecycle.Lifecycle;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import androidx.fragment.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -156,6 +156,7 @@ public class MainFragment extends Fragment {
         else
             etDialogReferencia.setText(String.valueOf(redondeoRef));
 
+        etDialogReferencia.requestFocus();
         inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
         etDialogReferencia.setOnKeyListener((view, i, keyEvent) -> {
 
@@ -192,7 +193,6 @@ public class MainFragment extends Fragment {
         etDialogReferencia.setText(String.valueOf(apalancamiento));
         tDialogTitulo = dialog.findViewById(R.id.t_dialog_titulo);
         tDialogTitulo.setText("Leverage");
-        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
         etDialogReferencia.setOnKeyListener((view, i, keyEvent) -> {
 
             if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_ENTER) {
@@ -209,6 +209,10 @@ public class MainFragment extends Fragment {
             } else
                 return false;
         });
+
+        etDialogReferencia.requestFocus();
+        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+
     }
 
     TextView tTituloDialogTamano, tCantidadTituloDialogTamano, tValorTituloDialogTamano,
@@ -269,6 +273,7 @@ public class MainFragment extends Fragment {
 
                         yaRedondeo = false;
                     }
+
                     inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
                     dialog.dismiss();
                     break;
@@ -315,6 +320,7 @@ public class MainFragment extends Fragment {
             return true;
         });
 
+        etDialogTamano.requestFocus();
         inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
         etDialogTamano.setOnKeyListener((view, i, keyEvent) -> {
 
@@ -404,6 +410,7 @@ public class MainFragment extends Fragment {
             return true;
         });
 
+        etDialogReferencia.requestFocus();
         inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
         etDialogReferencia.setOnKeyListener((view, i, keyEvent) -> {
 
@@ -516,6 +523,7 @@ public class MainFragment extends Fragment {
             etDialogReferencia.getText().clear();
             return true;
         });
+        etDialogReferencia.requestFocus();
         inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
         etDialogReferencia.setOnKeyListener((view, i, keyEvent) -> {
 
@@ -587,6 +595,7 @@ public class MainFragment extends Fragment {
             etDialogReferencia.getText().clear();
             return true;
         });
+        etDialogReferencia.requestFocus();
         inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
         etDialogReferencia.setOnKeyListener((view, i, keyEvent) -> {
 
@@ -798,6 +807,7 @@ public class MainFragment extends Fragment {
                 etPorcentajeDialogMargen.setText(cantidadDialogReferencia);
             }
         }
+        etCantidadDialogMargen.requestFocus();
         inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
 
     }
@@ -1100,7 +1110,7 @@ public class MainFragment extends Fragment {
             etPorcentajeDialogPos.setText(String.valueOf(porcentajeDialogPos * 100));
         }
 
-
+        etPrecioDialogPos.requestFocus();
         inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
     }
 
