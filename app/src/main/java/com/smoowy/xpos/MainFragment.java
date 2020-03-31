@@ -2,14 +2,18 @@ package com.smoowy.xpos;
 
 
 import android.app.Dialog;
+
 import androidx.lifecycle.Lifecycle;
+
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+
 import androidx.fragment.app.Fragment;
+
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -35,17 +39,17 @@ public class MainFragment extends Fragment {
     EditText etCantidad, etPorcentaje, etReferencia, etCantidadMostrador, etPrecision;
     TextView tTamano, tLote, tTamanoC, tLoteC,
             tTituloCantidad, tTituloPorcentaje, tTituloReferencia, tTituloTamano, tMargen, tMargenC,
-            tSeguro, tSeguroC;
+            tSeguro, tSeguroC, tMantener, tCantidadMantener;
     double cantidad, porcentajeEntero, referencia, tamanoPosicion,
             lote, tamanoPosicionC, loteC, margen, margenC, necesario, necesarioC,
             redondeoRef = 1000, ajusteRefRespaldo, resPrecioXDialogPos,
-            resPorcentajeXDialogPos;
+            resPorcentajeXDialogPos,porcentajeMantenerGuardado;
     String resCantidadDialogReferencia, resPrecioDialogReferencia;
     int apalancamiento;
     int tipoApalancamiento = 4;
     int idOperacion;
     boolean hayDecimales, yaRedondeo, resYaRedondeo, seAplanoLimpiar,
-            resHayDatosDialogReferencia, resHayDatosDialogCantidad, hayDecimalesDoble;
+            resHayDatosDialogReferencia, resHayDatosDialogCantidad, hayDecimalesDoble, seAplanoMantener;
     ClipboardManager clipboard;
     Button bApalancamiento, bLimpiarClaro, bRedondeoDescendente,
             bRedondeoAscendente, bRegresarClaro, bPR, bXT, bId, bIdMenos, bIdMas, bBorrarTodo;
@@ -69,6 +73,8 @@ public class MainFragment extends Fragment {
         etPorcentaje.addTextChangedListener(textWatcher);
         etReferencia.addTextChangedListener(textWatcher);
         etPrecision.addTextChangedListener(textWatcherPrecision);
+        tMantener = view.findViewById(R.id.t_mantener);
+        tMantener.setOnClickListener(onClickListener);
         tTamano = view.findViewById(R.id.t_posicion_tamano);
         tTamano.setOnClickListener(clickListenerPosicion);
         tLote = view.findViewById(R.id.t_posicion_lote);
@@ -95,6 +101,7 @@ public class MainFragment extends Fragment {
         tMargen.setOnClickListener(clickListenerPosicion);
         tMargenC = view.findViewById(R.id.t_margenC);
         tMargenC.setOnClickListener(clickListenerPosicion);
+        tCantidadMantener = view.findViewById(R.id.t_cantidad_mostrador_mantener);
         bApalancamiento = view.findViewById(R.id.b_apalancamiento);
         bApalancamiento.setOnClickListener(onClickListener);
         bApalancamiento.setOnLongClickListener(onLongClickListener);
@@ -1561,6 +1568,10 @@ public class MainFragment extends Fragment {
                 seLimpioDialogPos = true;
                 seLimpioDialogPorcentaje = true;
                 checarTituloReferencia();
+                tMantener.setText("M");
+                seAplanoMantener = false;
+                etCantidadMostrador.setVisibility(View.VISIBLE);
+                tCantidadMantener.setVisibility(View.GONE);
                 break;
 
 
@@ -1674,6 +1685,40 @@ public class MainFragment extends Fragment {
 
             case R.id.b_borrarTodo:
                 borrarTodoDb();
+                break;
+
+            case R.id.t_mantener:
+
+                if (tTamano.getText().toString().equals("TP"))
+                    break;
+                seAplanoMantener = !seAplanoMantener;
+
+                if (seAplanoMantener) {
+                    tMantener.setText("A");
+                    etCantidadMostrador.setVisibility(View.GONE);
+                    tCantidadMantener.setVisibility(View.VISIBLE);
+
+                    if (!etPorcentaje.getText().toString().isEmpty() &&
+                            !etPorcentaje.getText().toString().equals(".")) {
+
+                        porcentajeMantenerGuardado = Double.parseDouble(etPorcentaje.getText().toString());
+                        double calculo = tamanoPosicion * porcentajeMantenerGuardado;
+                        tCantidadMantener.setText(String.format("%,.2f", calculo / 100));
+                    }
+                    etPorcentaje.requestFocus();
+
+
+                } else {
+                    tMantener.setText("M");
+                    etCantidadMostrador.setVisibility(View.VISIBLE);
+                    tCantidadMantener.setVisibility(View.GONE);
+                    etPorcentaje.setText(String.valueOf(porcentajeMantenerGuardado));
+
+
+                    etPorcentaje.requestFocus();
+                }
+                break;
+
         }
 
     };
@@ -1882,6 +1927,24 @@ public class MainFragment extends Fragment {
         @Override
         public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
+            if (seAplanoMantener) {
+
+                if (!etPorcentaje.getText().toString().isEmpty() &&
+                        !etPorcentaje.getText().toString().equals(".")) {
+
+                    double porcentaje = Double.parseDouble(etPorcentaje.getText().toString());
+                    double calculo = tamanoPosicion * porcentaje;
+
+                    tCantidadMantener.setText(String.format("%,.2f", calculo / 100));
+                    return;
+                }
+                else {
+                    tCantidadMantener.setText("0.00");
+                    return;
+                }
+
+            }
+
 
             if (!etCantidad.getText().toString().isEmpty() &&
                     !etCantidad.getText().toString().equals(".") &&
@@ -1889,10 +1952,10 @@ public class MainFragment extends Fragment {
 
             ) {
 
-
                 cantidad = Double.parseDouble(etCantidad.getText().toString());
-                if (etPorcentaje.getText().toString().isEmpty())
+                if (etPorcentaje.getText().toString().isEmpty()) {
                     porcentajeEntero = 1;
+                }
                 else
                     porcentajeEntero = Double.parseDouble(etPorcentaje.getText().toString());
                 tamanoPosicion = cantidad / (porcentajeEntero / 100);
@@ -1960,6 +2023,7 @@ public class MainFragment extends Fragment {
 
 
             } else {
+
 
                 if (!tTamano.getText().toString().equals("TP")) {
                     tTamano.setText("TP");
