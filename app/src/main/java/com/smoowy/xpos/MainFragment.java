@@ -1572,6 +1572,8 @@ public class MainFragment extends Fragment {
                 seAplanoMantener = false;
                 etCantidadMostrador.setVisibility(View.VISIBLE);
                 tCantidadMantener.setVisibility(View.GONE);
+                hayDecimales=false;
+                tTituloTamano.performClick();
                 break;
 
 
@@ -2083,6 +2085,8 @@ public class MainFragment extends Fragment {
         realm = Realm.getDefaultInstance();
         db = realm.where(Db.class).equalTo("id", idOperacion).findFirst();
 
+        //TODO checar bien si funciona el ajuste
+        //tTituloTamano.performClick();
         if (db == null) {
             realm.close();
             bLimpiarClaro.performClick();
