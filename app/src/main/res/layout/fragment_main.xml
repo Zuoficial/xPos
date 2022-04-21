@@ -143,7 +143,7 @@
     <TextView
         android:id="@+id/t_cantidad_mostrador_mantener"
         android:layout_width="wrap_content"
-        android:visibility="visible"
+        android:visibility="invisible"
         android:layout_height="wrap_content"
         android:selectAllOnFocus="true"
         android:textAlignment="center"
@@ -183,6 +183,22 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/t_titulo_porcen" />
+
+    <TextView
+        android:id="@+id/et_porcentaje_mantener"
+        android:layout_width="wrap_content"
+        android:layout_height="59dp"
+        android:visibility="invisible"
+        android:selectAllOnFocus="true"
+        android:textAlignment="center"
+        android:textColor="@android:color/white"
+        android:textSize="28dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/t_titulo_porcen" />
+
+
 
     <TextView
         android:id="@+id/t_titulo_referencia"
@@ -232,14 +248,14 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="M"
+        android:text="PO"
         android:textAlignment="center"
         android:textColor="@android:color/white"
         android:textColorHint="@android:color/white"
         android:textSize="22dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.13"
+        app:layout_constraintHorizontal_bias="0.05"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.47" />

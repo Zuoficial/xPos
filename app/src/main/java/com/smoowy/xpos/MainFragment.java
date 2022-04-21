@@ -39,17 +39,18 @@ public class MainFragment extends Fragment {
     EditText etCantidad, etPorcentaje, etReferencia, etCantidadMostrador, etPrecision;
     TextView tTamano, tLote, tTamanoC, tLoteC,
             tTituloCantidad, tTituloPorcentaje, tTituloReferencia, tTituloTamano, tMargen, tMargenC,
-            tSeguro, tSeguroC, tMantener, tCantidadMantener;
+            tSeguro, tSeguroC, tMantener, tCantidadMantener, tPorcentajeMantener;
     double cantidad, porcentajeEntero, referencia, tamanoPosicion,
             lote, tamanoPosicionC, loteC, margen, margenC, necesario, necesarioC,
             redondeoRef = 1000, ajusteRefRespaldo, resPrecioXDialogPos,
-            resPorcentajeXDialogPos,porcentajeMantenerGuardado;
+            resPorcentajeXDialogPos, cantidadMantenerGuardado, porcentajeMantenerGuardado;
     String resCantidadDialogReferencia, resPrecioDialogReferencia;
     int apalancamiento;
     int tipoApalancamiento = 4;
     int idOperacion;
+    int idBotonMantener;
     boolean hayDecimales, yaRedondeo, resYaRedondeo, seAplanoLimpiar,
-            resHayDatosDialogReferencia, resHayDatosDialogCantidad, hayDecimalesDoble, seAplanoMantener;
+            resHayDatosDialogReferencia, resHayDatosDialogCantidad, hayDecimalesDoble;
     ClipboardManager clipboard;
     Button bApalancamiento, bLimpiarClaro, bRedondeoDescendente,
             bRedondeoAscendente, bRegresarClaro, bPR, bXT, bId, bIdMenos, bIdMas, bBorrarTodo;
@@ -102,6 +103,7 @@ public class MainFragment extends Fragment {
         tMargenC = view.findViewById(R.id.t_margenC);
         tMargenC.setOnClickListener(clickListenerPosicion);
         tCantidadMantener = view.findViewById(R.id.t_cantidad_mostrador_mantener);
+        tPorcentajeMantener = view.findViewById(R.id.et_porcentaje_mantener);
         bApalancamiento = view.findViewById(R.id.b_apalancamiento);
         bApalancamiento.setOnClickListener(onClickListener);
         bApalancamiento.setOnLongClickListener(onLongClickListener);
@@ -1568,11 +1570,17 @@ public class MainFragment extends Fragment {
                 seLimpioDialogPos = true;
                 seLimpioDialogPorcentaje = true;
                 checarTituloReferencia();
-                tMantener.setText("M");
-                seAplanoMantener = false;
+                if (idBotonMantener != 0) {
+                    tMantener.setText("PO");
+                    idBotonMantener = 0;
+                    resCantidad = String.valueOf(cantidadMantenerGuardado);
+                    resPorcentaje = String.valueOf(porcentajeMantenerGuardado);
+                }
                 etCantidadMostrador.setVisibility(View.VISIBLE);
                 tCantidadMantener.setVisibility(View.GONE);
-                hayDecimales=false;
+                etPorcentaje.setVisibility(View.VISIBLE);
+                tPorcentajeMantener.setVisibility(View.GONE);
+                hayDecimales = false;
                 tTituloTamano.performClick();
                 break;
 
@@ -1693,33 +1701,50 @@ public class MainFragment extends Fragment {
 
                 if (tTamano.getText().toString().equals("TP"))
                     break;
-                seAplanoMantener = !seAplanoMantener;
 
-                if (seAplanoMantener) {
-                    tMantener.setText("A");
-                    etCantidadMostrador.setVisibility(View.GONE);
-                    tCantidadMantener.setVisibility(View.VISIBLE);
+                idBotonMantener += 1;
 
-                    if (!etPorcentaje.getText().toString().isEmpty() &&
-                            !etPorcentaje.getText().toString().equals(".")) {
+                if (idBotonMantener == 3)
+                    idBotonMantener = 0;
 
+                switch (idBotonMantener) {
+
+                    // Este es el modo normal
+                    case 0:
+                        tMantener.setText("PO");
+                        etCantidadMostrador.setVisibility(View.VISIBLE);
+                        tCantidadMantener.setVisibility(View.INVISIBLE);
+                        tPorcentajeMantener.setVisibility(View.INVISIBLE);
+                        etPorcentaje.setVisibility(View.VISIBLE);
+                        etCantidadMostrador.setText(String.valueOf(cantidadMantenerGuardado));
+                        etPorcentaje.setText(String.valueOf(porcentajeMantenerGuardado));
+                        etPorcentaje.requestFocus();
+                        break;
+
+                    // Este es el modo porcentaje; con una posicion fija, se cambia
+                    // el porcentaje para saber la cantidad a ganar.
+                    case 1:
+                        tMantener.setText("CA");
+                        etCantidadMostrador.setVisibility(View.INVISIBLE);
+                        tCantidadMantener.setVisibility(View.VISIBLE);
+                        cantidadMantenerGuardado = Double.parseDouble(etCantidadMostrador.getText().toString());
                         porcentajeMantenerGuardado = Double.parseDouble(etPorcentaje.getText().toString());
-                        double calculo = tamanoPosicion * porcentajeMantenerGuardado;
-                        tCantidadMantener.setText(String.format("%,.2f", calculo / 100));
-                    }
-                    etPorcentaje.requestFocus();
+                        etPorcentaje.getText().clear();
+                        etPorcentaje.requestFocus();
+                        break;
+                    // Este es el modo cantidad; con una posicion fija, se cambia la cantidad
+                    // en riesgo para saber cuanto porcentaje represento de la posicion.
+                    case 2:
 
-
-                } else {
-                    tMantener.setText("M");
-                    etCantidadMostrador.setVisibility(View.VISIBLE);
-                    tCantidadMantener.setVisibility(View.GONE);
-                    etPorcentaje.setText(String.valueOf(porcentajeMantenerGuardado));
-
-
-                    etPorcentaje.requestFocus();
+                        tMantener.setText("ES");
+                        etCantidadMostrador.setVisibility(View.VISIBLE);
+                        tCantidadMantener.setVisibility(View.INVISIBLE);
+                        tPorcentajeMantener.setVisibility(View.VISIBLE);
+                        etPorcentaje.setVisibility(View.INVISIBLE);
+                        etCantidadMostrador.getText().clear();
+                        etCantidadMostrador.requestFocus();
+                        break;
                 }
-                break;
 
         }
 
@@ -1929,23 +1954,42 @@ public class MainFragment extends Fragment {
         @Override
         public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-            if (seAplanoMantener) {
+            switch (idBotonMantener) {
 
-                if (!etPorcentaje.getText().toString().isEmpty() &&
-                        !etPorcentaje.getText().toString().equals(".")) {
-
-                    double porcentaje = Double.parseDouble(etPorcentaje.getText().toString());
-                    double calculo = tamanoPosicion * porcentaje;
-
-                    tCantidadMantener.setText(String.format("%,.2f", calculo / 100));
-                    return;
-                }
-                else {
+                case 0:
                     tCantidadMantener.setText("0.00");
-                    return;
-                }
+                    break;
 
+                case 1:
+                    if (!etPorcentaje.getText().toString().isEmpty() &&
+                            !etPorcentaje.getText().toString().equals(".")) {
+
+                        double porcentaje = Double.parseDouble(etPorcentaje.getText().toString());
+                        double calculo = tamanoPosicion * porcentaje;
+
+                        tCantidadMantener.setText(String.format("%,.2f", calculo / 100));
+                    } else {
+                        tCantidadMantener.setText("0.00");
+                    }
+                    break;
+
+                case 2:
+
+                    if (!etCantidad.getText().toString().isEmpty() &&
+                            !etCantidad.getText().toString().equals(".")) {
+
+                        double cantidadCalculo = Double.parseDouble(etCantidad.getText().toString());
+                        double calculo = cantidadCalculo / tamanoPosicion;
+                        tPorcentajeMantener.setText(String.format("%,.2f", calculo * 100));
+                    } else {
+                        tPorcentajeMantener.setText("0%");
+                    }
+
+                    break;
             }
+
+            if (idBotonMantener != 0)
+                return;
 
 
             if (!etCantidad.getText().toString().isEmpty() &&
@@ -1957,8 +2001,7 @@ public class MainFragment extends Fragment {
                 cantidad = Double.parseDouble(etCantidad.getText().toString());
                 if (etPorcentaje.getText().toString().isEmpty()) {
                     porcentajeEntero = 1;
-                }
-                else
+                } else
                     porcentajeEntero = Double.parseDouble(etPorcentaje.getText().toString());
                 tamanoPosicion = cantidad / (porcentajeEntero / 100);
 
