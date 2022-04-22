@@ -1727,8 +1727,14 @@ public class MainFragment extends Fragment {
                         tMantener.setText("CA");
                         etCantidadMostrador.setVisibility(View.INVISIBLE);
                         tCantidadMantener.setVisibility(View.VISIBLE);
-                        cantidadMantenerGuardado = Double.parseDouble(etCantidadMostrador.getText().toString());
-                        porcentajeMantenerGuardado = Double.parseDouble(etPorcentaje.getText().toString());
+                        if (!etCantidadMostrador.getText().toString().isEmpty() &&
+                                !etCantidadMostrador.getText().toString().equals(".")) {
+                            cantidadMantenerGuardado = Double.parseDouble(etCantidadMostrador.getText().toString());
+                        }
+                        if (!etPorcentaje.getText().toString().isEmpty() &&
+                                !etCantidadMostrador.getText().toString().equals(".")) {
+                            porcentajeMantenerGuardado = Double.parseDouble(etPorcentaje.getText().toString());
+                        }
                         etPorcentaje.getText().clear();
                         etPorcentaje.requestFocus();
                         break;
