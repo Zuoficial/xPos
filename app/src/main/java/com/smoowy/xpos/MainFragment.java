@@ -1082,11 +1082,12 @@ public class MainFragment extends Fragment {
         dialog.dismiss();
     };
 
-    EditText etPrecioDialogPos, etPorcentajeDialogPos, etPrecisionDialogPos;
+    EditText etPrecioDialogPos, etPorcentajeDialogPos, etPrecisionDialogPos, etPrecisionDialogPosM;
     TextView tPrecioDialogPos, tPorcentajeDialogPos, tSuperiorDialogPos, tInferiorDialogPos;
     double precioDialogPos, porcentajeDialogPos, superiorDialogPos, inferiorDialogPos;
     Button bLimpiarDialogPos, bRegresarDialogPos, bSalirDialogPos;
     String formatoDialogPos, resPrecioDialogPos, resPorcentajeDialogPos;
+    double formatoDialogPosM;
     boolean seLimpioDialogPos, resSeLimpiDialogoPos;
 
     private void crearDialogPos() {
@@ -1113,6 +1114,8 @@ public class MainFragment extends Fragment {
         bSalirDialogPos.setOnClickListener(clickListenerDialogPos);
         etPrecisionDialogPos = dialog.findViewById(R.id.et_precision_dialog_pos);
         etPrecisionDialogPos.addTextChangedListener(textWatcherDialogPos);
+        etPrecisionDialogPosM = dialog.findViewById(R.id.et_precision_dialog_pos_m);
+        etPrecisionDialogPosM.addTextChangedListener(textWatcherDialogPos);
 
         if (!seLimpioDialogPos) {
             etPrecioDialogPos.setText(String.valueOf(precioDialogPos));
@@ -1144,6 +1147,14 @@ public class MainFragment extends Fragment {
 
                 superiorDialogPos = precioDialogPos * (1 + porcentajeDialogPos);
                 inferiorDialogPos = precioDialogPos * (1 - porcentajeDialogPos);
+
+
+                if (!etPrecisionDialogPosM.getText().toString().isEmpty() || etPrecisionDialogPosM.getText().toString().equals(".")) {
+                    formatoDialogPosM = Double.parseDouble(etPrecisionDialogPosM.getText().toString());
+                    superiorDialogPos = precioDialogPos * (1 + (porcentajeDialogPos * formatoDialogPosM));
+                    inferiorDialogPos = precioDialogPos * (1 - (porcentajeDialogPos * formatoDialogPosM));
+                }
+
 
                 if (etPrecisionDialogPos.getText().toString().isEmpty())
                     formatoDialogPos = "%,.5f";
@@ -1190,7 +1201,7 @@ public class MainFragment extends Fragment {
 
             case R.id.b_regresar_dialog_pos: {
                 etPrecioDialogPos.setText(resPrecioDialogPos);
-                etPorcentajeDialogPos.setText(resPrecioDialogPos);
+                etPorcentajeDialogPos.setText(resPorcentajeDialogPos);
                 break;
             }
 
@@ -1937,13 +1948,13 @@ public class MainFragment extends Fragment {
         if (!tTamano.getText().toString().equals("TP")) {
 
             margen = tamanoPosicion / apalancamiento;
-            necesario = cantidad + margen;
+            necesario = cantidad + (margen * .50);
             tMargen.setText(String.format("%,.2f", margen));
             tSeguro.setText(String.format("%,.2f", necesario));
 
             if (!tTamanoC.getText().toString().equals("TPC")) {
                 margenC = tamanoPosicionC / apalancamiento;
-                necesarioC = (cantidad / referencia) + margenC;
+                necesarioC = (cantidad / referencia) + (margenC * .50);
                 tMargenC.setText(String.format("%,.2f", margenC));
                 tSeguroC.setText(String.format("%,.2f", necesarioC));
 
@@ -2024,7 +2035,7 @@ public class MainFragment extends Fragment {
                     tamanoPosicionC = tamanoPosicion / referencia;
                     loteC = tamanoPosicionC / 100000;
                     margenC = tamanoPosicionC / apalancamiento;
-                    necesarioC = (cantidad / referencia) + margenC;
+                    necesarioC = (cantidad / referencia) + (margenC * .50);
                     if (!hayDecimales)
                         tTamanoC.setText(String.format("%,.0f", tamanoPosicionC));
                     else {
@@ -2056,7 +2067,7 @@ public class MainFragment extends Fragment {
 
                 lote = tamanoPosicion / 100000;
                 margen = tamanoPosicion / apalancamiento;
-                necesario = margen + cantidad;
+                necesario = (margen * .50) + cantidad;
 
 
                 if (!hayDecimalesDoble)
