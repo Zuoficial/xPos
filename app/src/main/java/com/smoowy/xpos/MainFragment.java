@@ -1149,15 +1149,22 @@ public class MainFragment extends Fragment {
                 inferiorDialogPos = precioDialogPos * (1 - porcentajeDialogPos);
 
 
-                if (!etPrecisionDialogPosM.getText().toString().isEmpty() || etPrecisionDialogPosM.getText().toString().equals(".")) {
-                    formatoDialogPosM = Double.parseDouble(etPrecisionDialogPosM.getText().toString());
+                if (!etPrecisionDialogPosM.getText().toString().isEmpty()) {
+
+                    if (etPrecisionDialogPosM.getText().toString().equals(".")) {
+                        formatoDialogPosM = 1;
+                    } else {
+                        formatoDialogPosM = Double.parseDouble(etPrecisionDialogPosM.getText().toString());
+                    }
+
+
                     superiorDialogPos = precioDialogPos * (1 + (porcentajeDialogPos * formatoDialogPosM));
                     inferiorDialogPos = precioDialogPos * (1 - (porcentajeDialogPos * formatoDialogPosM));
                 }
 
 
                 if (etPrecisionDialogPos.getText().toString().isEmpty())
-                    formatoDialogPos = "%,.5f";
+                    formatoDialogPos = "%,.2f";
                 else {
                     formatoDialogPos = "%,." + etPrecisionDialogPos.getText().toString() + "f";
                 }
