@@ -1083,12 +1083,12 @@ public class MainFragment extends Fragment {
     };
 
     EditText etPrecioDialogPos, etPorcentajeDialogPos, etPrecisionDialogPos, etPrecisionDialogPosM;
-    TextView tPrecioDialogPos, tPorcentajeDialogPos, tSuperiorDialogPos, tInferiorDialogPos;
+    TextView tPrecioDialogPos, tPorcentajeDialogPos, tSuperiorDialogPos, tInferiorDialogPos, tActivadorMultiplicador;
     double precioDialogPos, porcentajeDialogPos, superiorDialogPos, inferiorDialogPos;
     Button bLimpiarDialogPos, bRegresarDialogPos, bSalirDialogPos;
     String formatoDialogPos, resPrecioDialogPos, resPorcentajeDialogPos;
     double formatoDialogPosM;
-    boolean seLimpioDialogPos, resSeLimpiDialogoPos;
+    boolean seLimpioDialogPos, resSeLimpiDialogoPos, hayMultiplicador;
 
     private void crearDialogPos() {
         dialog = new Dialog(getActivity(), R.style.MyDialogStyle);
@@ -1116,6 +1116,9 @@ public class MainFragment extends Fragment {
         etPrecisionDialogPos.addTextChangedListener(textWatcherDialogPos);
         etPrecisionDialogPosM = dialog.findViewById(R.id.et_precision_dialog_pos_m);
         etPrecisionDialogPosM.addTextChangedListener(textWatcherDialogPos);
+        etPrecisionDialogPosM.setVisibility(View.INVISIBLE);
+        tActivadorMultiplicador = dialog.findViewById(R.id.t_margen);
+        tActivadorMultiplicador.setOnClickListener(clickListenerDialogPos);
 
         if (!seLimpioDialogPos) {
             etPrecioDialogPos.setText(String.valueOf(precioDialogPos));
@@ -1149,17 +1152,18 @@ public class MainFragment extends Fragment {
                 inferiorDialogPos = precioDialogPos * (1 - porcentajeDialogPos);
 
 
-                if (!etPrecisionDialogPosM.getText().toString().isEmpty()) {
+                if (hayMultiplicador) {
+                    if (!etPrecisionDialogPosM.getText().toString().isEmpty()) {
 
-                    if (etPrecisionDialogPosM.getText().toString().equals(".")) {
-                        formatoDialogPosM = 1;
-                    } else {
-                        formatoDialogPosM = Double.parseDouble(etPrecisionDialogPosM.getText().toString());
+                        if (etPrecisionDialogPosM.getText().toString().equals(".")) {
+                            formatoDialogPosM = 2;
+                        } else {
+                            formatoDialogPosM = Double.parseDouble(etPrecisionDialogPosM.getText().toString());
+                        }
+                        superiorDialogPos = precioDialogPos * (1 + (porcentajeDialogPos * formatoDialogPosM));
+                        inferiorDialogPos = precioDialogPos * (1 - (porcentajeDialogPos * formatoDialogPosM));
                     }
 
-
-                    superiorDialogPos = precioDialogPos * (1 + (porcentajeDialogPos * formatoDialogPosM));
-                    inferiorDialogPos = precioDialogPos * (1 - (porcentajeDialogPos * formatoDialogPosM));
                 }
 
 
@@ -1226,6 +1230,22 @@ public class MainFragment extends Fragment {
 
             case R.id.b_salir_dialog_pos: {
                 dialog.dismiss();
+                break;
+            }
+
+            case R.id.t_margen: {
+
+                if (!hayMultiplicador) {
+                    hayMultiplicador = true;
+                    etPrecisionDialogPosM.setVisibility(View.VISIBLE);
+                    etPrecisionDialogPosM.setText("2");
+                } else {
+                    hayMultiplicador = false;
+                    etPrecisionDialogPosM.setVisibility(View.INVISIBLE);
+                    etPrecisionDialogPosM.setText("1");
+                }
+
+
                 break;
             }
         }
