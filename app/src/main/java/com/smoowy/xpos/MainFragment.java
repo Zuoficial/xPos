@@ -1149,7 +1149,7 @@ public class MainFragment extends Fragment {
                 porcentajeDialogPos /= 100;
 
                 superiorDialogPos = precioDialogPos * (1 + porcentajeDialogPos);
-                inferiorDialogPos = precioDialogPos * (1 - porcentajeDialogPos);
+                inferiorDialogPos = precioDialogPos / (1 + porcentajeDialogPos);
 
 
                 if (hayMultiplicador) {
@@ -1161,7 +1161,7 @@ public class MainFragment extends Fragment {
                             formatoDialogPosM = Double.parseDouble(etPrecisionDialogPosM.getText().toString());
                         }
                         superiorDialogPos = precioDialogPos * (1 + (porcentajeDialogPos * formatoDialogPosM));
-                        inferiorDialogPos = precioDialogPos * (1 - (porcentajeDialogPos * formatoDialogPosM));
+                        inferiorDialogPos = precioDialogPos / (1 + (porcentajeDialogPos * formatoDialogPosM));
                     }
 
                 }
@@ -1402,9 +1402,8 @@ public class MainFragment extends Fragment {
                     precioDialogPorcentaje = Double.parseDouble(etPrecioDialogPorcentaje.getText().toString());
                     cortaDialogPorcentaje = Double.parseDouble(etCortaDialogPorcentaje.getText().toString());
 
-                    porcentajeDialogPorcentaje = cortaDialogPorcentaje / precioDialogPorcentaje;
+                    porcentajeDialogPorcentaje = precioDialogPorcentaje / cortaDialogPorcentaje;
                     porcentajeDialogPorcentaje -= 1;
-                    porcentajeDialogPorcentaje *= -1;
                     porcentajeDialogPorcentaje *= 100;
                     tPorcentajeDialogPorcentaje.setText(String.format(formatoDialogPorcentaje, porcentajeDialogPorcentaje));
                     largaDialogPorcentaje = 0;
