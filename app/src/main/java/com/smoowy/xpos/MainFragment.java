@@ -1083,12 +1083,12 @@ public class MainFragment extends Fragment {
     };
 
     EditText etPrecioDialogPos, etPorcentajeDialogPos, etPrecisionDialogPos, etPrecisionDialogPosM;
-    TextView tPrecioDialogPos, tPorcentajeDialogPos, tSuperiorDialogPos, tInferiorDialogPos, tActivadorMultiplicador;
+    TextView tPrecioDialogPos, tPorcentajeDialogPos, tSuperiorDialogPos, tInferiorDialogPos, tActivadorMultiplicador,tActivadorMultiplicador2, tEsForexDialogPos;
     double precioDialogPos, porcentajeDialogPos, superiorDialogPos, inferiorDialogPos;
     Button bLimpiarDialogPos, bRegresarDialogPos, bSalirDialogPos;
     String formatoDialogPos, resPrecioDialogPos, resPorcentajeDialogPos;
     double formatoDialogPosM;
-    boolean seLimpioDialogPos, resSeLimpiDialogoPos, hayMultiplicador;
+    boolean seLimpioDialogPos, resSeLimpiDialogoPos, hayMultiplicador, esForexDialgoPOs;
 
     private void crearDialogPos() {
         dialog = new Dialog(getActivity(), R.style.MyDialogStyle);
@@ -1106,6 +1106,8 @@ public class MainFragment extends Fragment {
         tSuperiorDialogPos.setOnClickListener(clickListenerDialogPos);
         tInferiorDialogPos = dialog.findViewById(R.id.t_inferior_dialog_pos);
         tInferiorDialogPos.setOnClickListener(clickListenerDialogPos);
+        tEsForexDialogPos = dialog.findViewById(R.id.t_esforex_dialog_pos);
+        tEsForexDialogPos.setOnClickListener(clickListenerDialogPos);
         bLimpiarDialogPos = dialog.findViewById(R.id.b_limpiar_dialog_pos);
         bLimpiarDialogPos.setOnClickListener(clickListenerDialogPos);
         bRegresarDialogPos = dialog.findViewById(R.id.b_regresar_dialog_pos);
@@ -1119,6 +1121,8 @@ public class MainFragment extends Fragment {
         etPrecisionDialogPosM.setVisibility(View.INVISIBLE);
         tActivadorMultiplicador = dialog.findViewById(R.id.t_margen);
         tActivadorMultiplicador.setOnClickListener(clickListenerDialogPos);
+        tActivadorMultiplicador2 = dialog.findViewById(R.id.t_margenC);
+        tActivadorMultiplicador2.setOnClickListener(clickListenerDialogPos);
 
         if (!seLimpioDialogPos) {
             etPrecioDialogPos.setText(String.valueOf(precioDialogPos));
@@ -1148,8 +1152,14 @@ public class MainFragment extends Fragment {
                 porcentajeDialogPos = Double.valueOf(etPorcentajeDialogPos.getText().toString());
                 porcentajeDialogPos /= 100;
 
-                superiorDialogPos = precioDialogPos * (1 + porcentajeDialogPos);
-                inferiorDialogPos = precioDialogPos / (1 + porcentajeDialogPos);
+
+                if (esForexDialgoPOs) {
+                    superiorDialogPos = precioDialogPos * (1 + porcentajeDialogPos);
+                    inferiorDialogPos = precioDialogPos / (1 + porcentajeDialogPos);
+                } else {
+                    superiorDialogPos = precioDialogPos * (1 + porcentajeDialogPos);
+                    inferiorDialogPos = precioDialogPos * (1 - porcentajeDialogPos);
+                }
 
 
                 if (hayMultiplicador) {
@@ -1160,8 +1170,14 @@ public class MainFragment extends Fragment {
                         } else {
                             formatoDialogPosM = Double.parseDouble(etPrecisionDialogPosM.getText().toString());
                         }
-                        superiorDialogPos = precioDialogPos * (1 + (porcentajeDialogPos * formatoDialogPosM));
-                        inferiorDialogPos = precioDialogPos / (1 + (porcentajeDialogPos * formatoDialogPosM));
+
+                        if (esForexDialgoPOs) {
+                            superiorDialogPos = precioDialogPos * (1 + porcentajeDialogPos);
+                            inferiorDialogPos = precioDialogPos / (1 + porcentajeDialogPos);
+                        } else {
+                            superiorDialogPos = precioDialogPos * (1 + porcentajeDialogPos);
+                            inferiorDialogPos = precioDialogPos * (1 - porcentajeDialogPos);
+                        }
                     }
 
                 }
@@ -1233,6 +1249,25 @@ public class MainFragment extends Fragment {
                 break;
             }
 
+            case R.id.t_esforex_dialog_pos: {
+
+                if(esForexDialgoPOs) {
+                    tEsForexDialogPos.setText("N");
+                    esForexDialgoPOs = false;
+                    etPorcentajeDialogPos.setText(etPorcentajeDialogPos.getText());
+                }
+                else
+                {
+                    tEsForexDialogPos.setText("F");
+                    esForexDialgoPOs = true;
+                    etPorcentajeDialogPos.setText(etPorcentajeDialogPos.getText());
+                }
+
+                break;
+            }
+
+            case R.id.t_margenC:
+
             case R.id.t_margen: {
 
                 if (!hayMultiplicador) {
@@ -1244,10 +1279,10 @@ public class MainFragment extends Fragment {
                     etPrecisionDialogPosM.setVisibility(View.INVISIBLE);
                     etPrecisionDialogPosM.setText("1");
                 }
-
-
                 break;
             }
+
+
         }
 
     };
