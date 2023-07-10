@@ -1083,7 +1083,7 @@ public class MainFragment extends Fragment {
     };
 
     EditText etPrecioDialogPos, etPorcentajeDialogPos, etPrecisionDialogPos, etPrecisionDialogPosM;
-    TextView tPrecioDialogPos, tPorcentajeDialogPos, tSuperiorDialogPos, tInferiorDialogPos, tActivadorMultiplicador,tActivadorMultiplicador2, tEsForexDialogPos;
+    TextView tPrecioDialogPos, tPorcentajeDialogPos, tSuperiorDialogPos, tInferiorDialogPos, tActivadorMultiplicador, tActivadorMultiplicador2, tEsForexDialogPos;
     double precioDialogPos, porcentajeDialogPos, superiorDialogPos, inferiorDialogPos;
     Button bLimpiarDialogPos, bRegresarDialogPos, bSalirDialogPos;
     String formatoDialogPos, resPrecioDialogPos, resPorcentajeDialogPos, precisionNumeroDialogPos, resPrecisionNumeroDialogPos;
@@ -1129,12 +1129,11 @@ public class MainFragment extends Fragment {
             etPrecioDialogPos.setText(String.valueOf(precioDialogPos));
             etPorcentajeDialogPos.setText(String.valueOf(porcentajeDialogPos * 100));
 
-            if(esForexDialogPos)
+            if (esForexDialogPos)
                 tEsForexDialogPos.setText("N");
             else
                 tEsForexDialogPos.setText("F");
         }
-
 
 
         etPrecioDialogPos.requestFocus();
@@ -1242,7 +1241,7 @@ public class MainFragment extends Fragment {
                 etPrecioDialogPos.setText(resPrecioDialogPos);
                 etPorcentajeDialogPos.setText(resPorcentajeDialogPos);
                 etPrecisionDialogPos.setText(resPrecisionNumeroDialogPos);
-                if(esForexDialogPos)
+                if (esForexDialogPos)
                     tEsForexDialogPos.setText("N");
                 else
                     tEsForexDialogPos.setText("F");
@@ -1263,7 +1262,6 @@ public class MainFragment extends Fragment {
             }
 
             case R.id.b_salir_dialog_pos: {
-                //esForexDialogPos = false;
                 dialog.dismiss();
                 break;
             }
@@ -1272,12 +1270,10 @@ public class MainFragment extends Fragment {
 
                 esForexDialogPos = !esForexDialogPos;
 
-                if(esForexDialogPos) {
+                if (esForexDialogPos) {
                     tEsForexDialogPos.setText("N");
                     etPorcentajeDialogPos.setText(etPorcentajeDialogPos.getText());
-                }
-                else
-                {
+                } else {
                     tEsForexDialogPos.setText("F");
                     etPorcentajeDialogPos.setText(etPorcentajeDialogPos.getText());
                 }
@@ -1309,11 +1305,11 @@ public class MainFragment extends Fragment {
 
     //TODO ajustando nueva funcion
     EditText etPrecioDialogPorcentaje, etPrecisionDialogPorcentaje, etLargaDialogPorcentaje, etCortaDialogPorcentaje;
-    TextView tPrecioDialogPorcentaje, tPorcentajeDialogPorcentaje, tTituloLargaDialogPorcentaje, tTituloCortaDialogPorcentaje;
+    TextView tPrecioDialogPorcentaje, tPorcentajeDialogPorcentaje, tTituloLargaDialogPorcentaje, tTituloCortaDialogPorcentaje, tEsForexDialogPorcentaje;
     double precioDialogPorcentaje, porcentajeDialogPorcentaje, largaDialogPorcentaje, cortaDialogPorcentaje;
     Button bLimpiarDialogPorcentaje, bRegresarDialogPorcentaje, bSalirDialogPorcentaje;
     String formatoDialogPorcentaje, resPrecioDialogPorcentaje, resPorcentajeDialogPorcentaje;
-    boolean seLimpioDialogPorcentaje, resSeLimpiDialogoPorcentaje;
+    boolean seLimpioDialogPorcentaje, resSeLimpiDialogoPorcentaje, esFOrexDialogPorcentaje;
 
     private void crearDialogPorcentaje() {
         dialog = new Dialog(getActivity(), R.style.MyDialogStyle);
@@ -1330,6 +1326,8 @@ public class MainFragment extends Fragment {
         etLargaDialogPorcentaje.addTextChangedListener(textWatcherDialogPorcentaje);
         tTituloCortaDialogPorcentaje = dialog.findViewById(R.id.t_titulo_corta_dialog_porcentaje);
         tTituloCortaDialogPorcentaje.setOnClickListener(clickListenerDialogPorcentaje);
+        tEsForexDialogPorcentaje = dialog.findViewById(R.id.t_esforex_dialog_porcentaje);
+        tEsForexDialogPorcentaje.setOnClickListener(clickListenerDialogPorcentaje);
         etCortaDialogPorcentaje = dialog.findViewById(R.id.et_corta_dialog_porcentaje);
         etCortaDialogPorcentaje.addTextChangedListener(textWatcherDialogPorcentaje);
         bLimpiarDialogPorcentaje = dialog.findViewById(R.id.b_limpiar_dialog_porcentaje);
@@ -1405,6 +1403,25 @@ public class MainFragment extends Fragment {
             case R.id.b_regresar_dialog_porcentaje:
                 break;
 
+            case R.id.t_esforex_dialog_porcentaje: {
+
+                esFOrexDialogPorcentaje = !esFOrexDialogPorcentaje;
+                if (esFOrexDialogPorcentaje) {
+                    tEsForexDialogPorcentaje.setText("N");
+                    etLargaDialogPorcentaje.setText(etLargaDialogPorcentaje.getText().toString());
+                    etCortaDialogPorcentaje.setText(etCortaDialogPorcentaje.getText().toString());
+
+                } else {
+
+                    tEsForexDialogPorcentaje.setText("F");
+                    etLargaDialogPorcentaje.setText(etLargaDialogPorcentaje.getText().toString());
+                    etCortaDialogPorcentaje.setText(etCortaDialogPorcentaje.getText().toString());
+                }
+
+
+                break;
+            }
+
         }
 
 
@@ -1439,11 +1456,21 @@ public class MainFragment extends Fragment {
                     largaDialogPorcentaje = Double.parseDouble(etLargaDialogPorcentaje.getText().toString());
 
 
-                    porcentajeDialogPorcentaje = largaDialogPorcentaje / precioDialogPorcentaje;
-                    porcentajeDialogPorcentaje -= 1;
+                    if (!esFOrexDialogPorcentaje) {
+                        porcentajeDialogPorcentaje = largaDialogPorcentaje / precioDialogPorcentaje;
+                        porcentajeDialogPorcentaje -= 1;
+                    } else {
+                        porcentajeDialogPorcentaje = precioDialogPorcentaje / largaDialogPorcentaje;
+                        porcentajeDialogPorcentaje -= 1;
+                        porcentajeDialogPorcentaje *= -1;
+
+
+                    }
                     porcentajeDialogPorcentaje *= 100;
                     tPorcentajeDialogPorcentaje.setText(String.format(formatoDialogPorcentaje, porcentajeDialogPorcentaje));
                     cortaDialogPorcentaje = 0;
+
+
                 } else if (!etCortaDialogPorcentaje.getText().toString().isEmpty() &&
                         !etCortaDialogPorcentaje.getText().toString().equals(".")
 
@@ -1456,11 +1483,20 @@ public class MainFragment extends Fragment {
                     precioDialogPorcentaje = Double.parseDouble(etPrecioDialogPorcentaje.getText().toString());
                     cortaDialogPorcentaje = Double.parseDouble(etCortaDialogPorcentaje.getText().toString());
 
-                    porcentajeDialogPorcentaje = precioDialogPorcentaje / cortaDialogPorcentaje;
-                    porcentajeDialogPorcentaje -= 1;
+                    if (!esFOrexDialogPorcentaje) {
+
+                        porcentajeDialogPorcentaje = cortaDialogPorcentaje / precioDialogPorcentaje;
+                        porcentajeDialogPorcentaje -= 1;
+                        porcentajeDialogPorcentaje *= -1;
+
+                    } else {
+                        porcentajeDialogPorcentaje = precioDialogPorcentaje / cortaDialogPorcentaje;
+                        porcentajeDialogPorcentaje -= 1;
+                    }
                     porcentajeDialogPorcentaje *= 100;
                     tPorcentajeDialogPorcentaje.setText(String.format(formatoDialogPorcentaje, porcentajeDialogPorcentaje));
                     largaDialogPorcentaje = 0;
+
 
                 }
             }

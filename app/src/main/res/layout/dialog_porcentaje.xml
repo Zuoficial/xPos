@@ -199,6 +199,21 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <TextView
+                android:id="@+id/t_esforex_dialog_porcentaje"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="48dp"
+                android:layout_marginTop="10dp"
+                android:text="F"
+                android:inputType="numberDecimal"
+                android:maxLength="1"
+                android:textAlignment="center"
+                android:textColor="@android:color/white"
+                android:textSize="22dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
