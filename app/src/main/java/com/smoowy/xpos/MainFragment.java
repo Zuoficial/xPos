@@ -1086,9 +1086,9 @@ public class MainFragment extends Fragment {
     TextView tPrecioDialogPos, tPorcentajeDialogPos, tSuperiorDialogPos, tInferiorDialogPos, tActivadorMultiplicador,tActivadorMultiplicador2, tEsForexDialogPos;
     double precioDialogPos, porcentajeDialogPos, superiorDialogPos, inferiorDialogPos;
     Button bLimpiarDialogPos, bRegresarDialogPos, bSalirDialogPos;
-    String formatoDialogPos, resPrecioDialogPos, resPorcentajeDialogPos;
+    String formatoDialogPos, resPrecioDialogPos, resPorcentajeDialogPos, precisionNumeroDialogPos, resPrecisionNumeroDialogPos;
     double formatoDialogPosM;
-    boolean seLimpioDialogPos, resSeLimpiDialogoPos, hayMultiplicador, esForexDialgoPOs;
+    boolean seLimpioDialogPos, resSeLimpiDialogoPos, hayMultiplicador, esForexDialogPos;
 
     private void crearDialogPos() {
         dialog = new Dialog(getActivity(), R.style.MyDialogStyle);
@@ -1125,9 +1125,17 @@ public class MainFragment extends Fragment {
         tActivadorMultiplicador2.setOnClickListener(clickListenerDialogPos);
 
         if (!seLimpioDialogPos) {
+            etPrecisionDialogPos.setText(precisionNumeroDialogPos);
             etPrecioDialogPos.setText(String.valueOf(precioDialogPos));
             etPorcentajeDialogPos.setText(String.valueOf(porcentajeDialogPos * 100));
+
+            if(esForexDialogPos)
+                tEsForexDialogPos.setText("N");
+            else
+                tEsForexDialogPos.setText("F");
         }
+
+
 
         etPrecioDialogPos.requestFocus();
         inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
@@ -1153,8 +1161,8 @@ public class MainFragment extends Fragment {
                 porcentajeDialogPos /= 100;
 
 
-                if (esForexDialgoPOs) {
-                    superiorDialogPos = precioDialogPos * (1 + porcentajeDialogPos);
+                if (esForexDialogPos) {
+                    superiorDialogPos = precioDialogPos / (1 - porcentajeDialogPos);
                     inferiorDialogPos = precioDialogPos / (1 + porcentajeDialogPos);
                 } else {
                     superiorDialogPos = precioDialogPos * (1 + porcentajeDialogPos);
@@ -1171,8 +1179,8 @@ public class MainFragment extends Fragment {
                             formatoDialogPosM = Double.parseDouble(etPrecisionDialogPosM.getText().toString());
                         }
 
-                        if (esForexDialgoPOs) {
-                            superiorDialogPos = precioDialogPos * (1 + porcentajeDialogPos);
+                        if (esForexDialogPos) {
+                            superiorDialogPos = precioDialogPos / (1 - porcentajeDialogPos);
                             inferiorDialogPos = precioDialogPos / (1 + porcentajeDialogPos);
                         } else {
                             superiorDialogPos = precioDialogPos * (1 + porcentajeDialogPos);
@@ -1186,7 +1194,8 @@ public class MainFragment extends Fragment {
                 if (etPrecisionDialogPos.getText().toString().isEmpty())
                     formatoDialogPos = "%,.2f";
                 else {
-                    formatoDialogPos = "%,." + etPrecisionDialogPos.getText().toString() + "f";
+                    precisionNumeroDialogPos = etPrecisionDialogPos.getText().toString();
+                    formatoDialogPos = "%,." + precisionNumeroDialogPos + "f";
                 }
 
 
@@ -1220,8 +1229,11 @@ public class MainFragment extends Fragment {
             case R.id.b_limpiar_dialog_pos: {
                 resPrecioDialogPos = etPrecioDialogPos.getText().toString();
                 resPorcentajeDialogPos = etPorcentajeDialogPos.getText().toString();
+                resPrecisionNumeroDialogPos = precisionNumeroDialogPos;
+                etPrecisionDialogPos.getText().clear();
                 etPrecioDialogPos.getText().clear();
                 etPorcentajeDialogPos.getText().clear();
+                tEsForexDialogPos.setText("F");
                 seLimpioDialogPos = true;
                 break;
             }
@@ -1229,6 +1241,12 @@ public class MainFragment extends Fragment {
             case R.id.b_regresar_dialog_pos: {
                 etPrecioDialogPos.setText(resPrecioDialogPos);
                 etPorcentajeDialogPos.setText(resPorcentajeDialogPos);
+                etPrecisionDialogPos.setText(resPrecisionNumeroDialogPos);
+                if(esForexDialogPos)
+                    tEsForexDialogPos.setText("N");
+                else
+                    tEsForexDialogPos.setText("F");
+
                 break;
             }
 
@@ -1245,21 +1263,22 @@ public class MainFragment extends Fragment {
             }
 
             case R.id.b_salir_dialog_pos: {
+                //esForexDialogPos = false;
                 dialog.dismiss();
                 break;
             }
 
             case R.id.t_esforex_dialog_pos: {
 
-                if(esForexDialgoPOs) {
+                esForexDialogPos = !esForexDialogPos;
+
+                if(esForexDialogPos) {
                     tEsForexDialogPos.setText("N");
-                    esForexDialgoPOs = false;
                     etPorcentajeDialogPos.setText(etPorcentajeDialogPos.getText());
                 }
                 else
                 {
                     tEsForexDialogPos.setText("F");
-                    esForexDialgoPOs = true;
                     etPorcentajeDialogPos.setText(etPorcentajeDialogPos.getText());
                 }
 
@@ -2254,7 +2273,9 @@ public class MainFragment extends Fragment {
                 apalancamiento = db.getApalancamiento();
                 precioDialogPos = Double.parseDouble(db.getPrecioDialogPos());
                 porcentajeDialogPos = Double.parseDouble(db.getPorcentajeDialogPos());
+                precisionNumeroDialogPos = db.getPrecisionDialogPos();
                 seLimpioDialogPos = db.getSeLimpioDIalogPos();
+                esForexDialogPos = db.getEsForexDialogPos();
                 precision = db.getPrecision();
                 etPrecision.setText(precision);
                 precioDialogPorcentaje = Double.parseDouble(db.getPrecioDialogPorcentaje());
@@ -2303,7 +2324,9 @@ public class MainFragment extends Fragment {
             db.setApalancamiento(apalancamiento);
             db.setPrecioDialogPos(String.valueOf(precioDialogPos));
             db.setPorcentajeDialogPos(String.valueOf(porcentajeDialogPos));
+            db.setPrecisionDialogPos(precisionNumeroDialogPos);
             db.setSeLimpioDIalogPos(seLimpioDialogPos);
+            db.setEsForexDialogPos(esForexDialogPos);
             db.setPrecioDialogReferencia(precioDialogReferencia);
             db.setCantidadDialogReferencia(cantidadDialogReferencia);
             db.setHayDatosDialogReferencia(hayDatosDialogReferencia);

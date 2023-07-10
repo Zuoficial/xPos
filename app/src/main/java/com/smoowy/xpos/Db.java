@@ -18,7 +18,9 @@ public class Db extends RealmObject {
     Integer apalancamiento;
     String precioDialogPos;
     String porcentajeDialogPos;
+    String precisionDialogPos;
     Boolean seLimpioDIalogPos;
+    Boolean esForexDialogPos;
     String precioDialogReferencia;
     String cantidadDialogReferencia;
     Boolean hayDatosDialogReferencia;
@@ -105,12 +107,28 @@ public class Db extends RealmObject {
         this.porcentajeDialogPos = porcentajeDialogPos;
     }
 
+    public String getPrecisionDialogPos() {
+        return precisionDialogPos;
+    }
+
+    public void setPrecisionDialogPos(String precisionDialogPos) {
+        this.precisionDialogPos = precisionDialogPos;
+    }
+
     public Boolean getSeLimpioDIalogPos() {
         return seLimpioDIalogPos;
     }
 
     public void setSeLimpioDIalogPos(Boolean seLimpioDIalogPos) {
         this.seLimpioDIalogPos = seLimpioDIalogPos;
+    }
+
+    public Boolean getEsForexDialogPos() {
+        return esForexDialogPos;
+    }
+
+    public void setEsForexDialogPos(Boolean esForexDialogPos) {
+        this.esForexDialogPos = esForexDialogPos;
     }
 
     public String getPrecioDialogReferencia() {
@@ -208,6 +226,7 @@ public class Db extends RealmObject {
     public void setCortaDialogPorcentaje(String cortaDialogPorcentaje) {
         this.cortaDialogPorcentaje = cortaDialogPorcentaje;
     }
+
     public Boolean getSeLimpioDialogPorcentaje() {
         return seLimpioDialogPorcentaje;
     }
