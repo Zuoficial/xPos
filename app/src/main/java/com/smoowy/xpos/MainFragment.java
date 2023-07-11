@@ -1262,6 +1262,7 @@ public class MainFragment extends Fragment {
 
             case R.id.b_salir_dialog_pos: {
                 etPrecisionDialogPosM.setText("1");
+                inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
                 dialog.dismiss();
                 break;
             }
@@ -1391,6 +1392,7 @@ public class MainFragment extends Fragment {
                     etPorcentaje.setText(tPorcentajeDialogPorcentaje.getText().toString().replace("-", ""));
                 else
                     etPorcentaje.setText("");
+                inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
                 dialog.dismiss();
 
                 break;
