@@ -1160,33 +1160,32 @@ public class MainFragment extends Fragment {
                 porcentajeDialogPos /= 100;
 
 
-                if (esForexDialogPos) {
-                    superiorDialogPos = precioDialogPos / (1 - porcentajeDialogPos);
-                    inferiorDialogPos = precioDialogPos / (1 + porcentajeDialogPos);
-                } else {
-                    superiorDialogPos = precioDialogPos * (1 + porcentajeDialogPos);
-                    inferiorDialogPos = precioDialogPos * (1 - porcentajeDialogPos);
-                }
-
-
                 if (hayMultiplicador) {
+
                     if (!etPrecisionDialogPosM.getText().toString().isEmpty()) {
 
                         if (etPrecisionDialogPosM.getText().toString().equals(".")) {
                             formatoDialogPosM = 2;
                         } else {
                             formatoDialogPosM = Double.parseDouble(etPrecisionDialogPosM.getText().toString());
-                        }
-
-                        if (esForexDialogPos) {
-                            superiorDialogPos = precioDialogPos / (1 - porcentajeDialogPos);
-                            inferiorDialogPos = precioDialogPos / (1 + porcentajeDialogPos);
-                        } else {
-                            superiorDialogPos = precioDialogPos * (1 + porcentajeDialogPos);
-                            inferiorDialogPos = precioDialogPos * (1 - porcentajeDialogPos);
+                            if (esForexDialogPos) {
+                                superiorDialogPos = precioDialogPos / (1 - porcentajeDialogPos * formatoDialogPosM);
+                                inferiorDialogPos = precioDialogPos / (1 + porcentajeDialogPos * formatoDialogPosM);
+                            } else {
+                                superiorDialogPos = precioDialogPos * (1 + porcentajeDialogPos * formatoDialogPosM);
+                                inferiorDialogPos = precioDialogPos * (1 - porcentajeDialogPos * formatoDialogPosM);
+                            }
                         }
                     }
+                } else {
 
+                    if (esForexDialogPos) {
+                        superiorDialogPos = precioDialogPos / (1 - porcentajeDialogPos);
+                        inferiorDialogPos = precioDialogPos / (1 + porcentajeDialogPos);
+                    } else {
+                        superiorDialogPos = precioDialogPos * (1 + porcentajeDialogPos);
+                        inferiorDialogPos = precioDialogPos * (1 - porcentajeDialogPos);
+                    }
                 }
 
 
@@ -1262,6 +1261,7 @@ public class MainFragment extends Fragment {
             }
 
             case R.id.b_salir_dialog_pos: {
+                etPrecisionDialogPosM.setText("1");
                 dialog.dismiss();
                 break;
             }
@@ -1284,6 +1284,7 @@ public class MainFragment extends Fragment {
             case R.id.t_margenC:
 
             case R.id.t_margen: {
+
 
                 if (!hayMultiplicador) {
                     hayMultiplicador = true;
