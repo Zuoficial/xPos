@@ -123,7 +123,7 @@ public class MainFragment extends Fragment {
         bRegresarClaro.setOnClickListener(onClickListener);
         bPR = view.findViewById(R.id.b_pr);
         bPR.setOnClickListener(onClickListener);
-        bXT = view.findViewById(R.id.b_xt);
+      //  bXT = view.findViewById(R.id.b_xt);
         bXT.setOnClickListener(onClickListener);
         bId = view.findViewById(R.id.b_id);
         bIdMenos = view.findViewById(R.id.b_id_menos);
