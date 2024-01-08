@@ -123,8 +123,8 @@ public class MainFragment extends Fragment {
         bRegresarClaro.setOnClickListener(onClickListener);
         bPR = view.findViewById(R.id.b_pr);
         bPR.setOnClickListener(onClickListener);
-      //  bXT = view.findViewById(R.id.b_xt);
-        bXT.setOnClickListener(onClickListener);
+        //  bXT = view.findViewById(R.id.b_xt);
+        // bXT.setOnClickListener(onClickListener);
         bId = view.findViewById(R.id.b_id);
         bIdMenos = view.findViewById(R.id.b_id_menos);
         bIdMas = view.findViewById(R.id.b_id_mas);
@@ -1866,8 +1866,8 @@ public class MainFragment extends Fragment {
                         tPorcentajeMantener.setVisibility(View.INVISIBLE);
                         etPorcentaje.setVisibility(View.VISIBLE);
                         etPorcentajeModoPo.setVisibility(View.GONE);
-                       // etCantidadMostrador.setText(String.valueOf(cantidadMantenerGuardado));
-                      //  etPorcentaje.setText(String.valueOf(porcentajeMantenerGuardado));
+                        // etCantidadMostrador.setText(String.valueOf(cantidadMantenerGuardado));
+                        //  etPorcentaje.setText(String.valueOf(porcentajeMantenerGuardado));
                         etPorcentaje.requestFocus();
                         break;
 
@@ -2118,8 +2118,6 @@ public class MainFragment extends Fragment {
 
         @Override
         public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-
 
 
             if (!etCantidad.getText().toString().isEmpty() &&
