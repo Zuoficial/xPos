@@ -140,6 +140,23 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/t_titulo_cant" />
 
+    <EditText
+        android:id="@+id/et_cantidad_modoCA"
+        android:visibility="invisible"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="Cantidad"
+        android:inputType="numberDecimal"
+        android:selectAllOnFocus="true"
+        android:textAlignment="center"
+        android:textColor="@android:color/white"
+        android:textColorHint="@android:color/white"
+        android:textSize="28dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/t_titulo_cant" />
+
     <TextView
         android:id="@+id/t_cantidad_mostrador_mantener"
         android:layout_width="wrap_content"
@@ -172,6 +189,23 @@
         android:id="@+id/et_porcentaje"
         android:layout_width="wrap_content"
         android:layout_height="59dp"
+        android:hint="Porcentaje"
+        android:inputType="numberDecimal"
+        android:selectAllOnFocus="true"
+        android:textAlignment="center"
+        android:textColor="@android:color/white"
+        android:textColorHint="@android:color/white"
+        android:textSize="28dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/t_titulo_porcen" />
+
+    <EditText
+        android:id="@+id/et_porcentaje_modoPO"
+        android:layout_width="wrap_content"
+        android:layout_height="59dp"
+        android:visibility="invisible"
         android:hint="Porcentaje"
         android:inputType="numberDecimal"
         android:selectAllOnFocus="true"
