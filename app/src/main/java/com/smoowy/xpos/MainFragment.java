@@ -1726,16 +1726,24 @@ public class MainFragment extends Fragment {
 
 
             case R.id.t_titulo_cant:
-                respaldoDeET();
-                etCantidadMostrador.getText().clear();
-                yaRedondeo = false;
-                hayDatosDialogCantidad = false;
+                if (idBotonMantener == 0) {
+                    respaldoDeET();
+                    etCantidadMostrador.getText().clear();
+                    yaRedondeo = false;
+                    hayDatosDialogCantidad = false;
+                } else if (idBotonMantener == 2) {
+                    etCantidadModoCA.getText().clear();
+                }
                 break;
 
             case R.id.t_titulo_porcen:
-                respaldoDeET();
-                etPorcentaje.getText().clear();
-                yaRedondeo = false;
+
+                if (idBotonMantener == 0) {
+                    respaldoDeET();
+                    etPorcentaje.getText().clear();
+                    yaRedondeo = false;
+                } else if (idBotonMantener == 1)
+                    etPorcentajeModoPo.getText().clear();
                 break;
 
             case R.id.t_titulo_referencia:
@@ -2144,11 +2152,6 @@ public class MainFragment extends Fragment {
 
                     break;
             }
-
-            // Funcion para evitar que haga mas los calculos
-            /*
-            if (idBotonMantener != 0)
-                return;*/
 
 
             if (!etCantidad.getText().toString().isEmpty() &&
