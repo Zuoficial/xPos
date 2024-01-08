@@ -1866,8 +1866,8 @@ public class MainFragment extends Fragment {
                         tPorcentajeMantener.setVisibility(View.INVISIBLE);
                         etPorcentaje.setVisibility(View.VISIBLE);
                         etPorcentajeModoPo.setVisibility(View.GONE);
-                        etCantidadMostrador.setText(String.valueOf(cantidadMantenerGuardado));
-                        etPorcentaje.setText(String.valueOf(porcentajeMantenerGuardado));
+                       // etCantidadMostrador.setText(String.valueOf(cantidadMantenerGuardado));
+                      //  etPorcentaje.setText(String.valueOf(porcentajeMantenerGuardado));
                         etPorcentaje.requestFocus();
                         break;
 
