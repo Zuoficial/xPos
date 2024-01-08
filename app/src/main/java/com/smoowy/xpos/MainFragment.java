@@ -2119,39 +2119,7 @@ public class MainFragment extends Fragment {
         @Override
         public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-            switch (idBotonMantener) {
 
-                case 0:
-                    tCantidadMantener.setText("0.00");
-                    break;
-
-                case 1:
-                    if (!etPorcentajeModoPo.getText().toString().isEmpty() &&
-                            !etPorcentajeModoPo.getText().toString().equals(".")) {
-
-                        double porcentaje = Double.parseDouble(etPorcentajeModoPo.getText().toString());
-                        double calculo = tamanoPosicion * porcentaje;
-
-                        tCantidadMantener.setText(String.format("%,.2f", calculo / 100));
-                    } else {
-                        tCantidadMantener.setText("0.00");
-                    }
-                    break;
-
-                case 2:
-
-                    if (!etCantidadModoCA.getText().toString().isEmpty() &&
-                            !etCantidadModoCA.getText().toString().equals(".")) {
-
-                        double cantidadCalculo = Double.parseDouble(etCantidadModoCA.getText().toString());
-                        double calculo = cantidadCalculo / tamanoPosicion;
-                        tPorcentajeMantener.setText(String.format("%,.2f", calculo * 100));
-                    } else {
-                        tPorcentajeMantener.setText("0%");
-                    }
-
-                    break;
-            }
 
 
             if (!etCantidad.getText().toString().isEmpty() &&
@@ -2243,6 +2211,40 @@ public class MainFragment extends Fragment {
                     tSeguroC.setText("SC");
                 }
 
+            }
+
+            switch (idBotonMantener) {
+
+                case 0:
+                    tCantidadMantener.setText("0.00");
+                    break;
+
+                case 1:
+                    if (!etPorcentajeModoPo.getText().toString().isEmpty() &&
+                            !etPorcentajeModoPo.getText().toString().equals(".")) {
+
+                        double porcentaje = Double.parseDouble(etPorcentajeModoPo.getText().toString());
+                        double calculo = tamanoPosicion * porcentaje;
+
+                        tCantidadMantener.setText(String.format("%,.2f", calculo / 100));
+                    } else {
+                        tCantidadMantener.setText("0.00");
+                    }
+                    break;
+
+                case 2:
+
+                    if (!etCantidadModoCA.getText().toString().isEmpty() &&
+                            !etCantidadModoCA.getText().toString().equals(".")) {
+
+                        double cantidadCalculo = Double.parseDouble(etCantidadModoCA.getText().toString());
+                        double calculo = cantidadCalculo / tamanoPosicion;
+                        tPorcentajeMantener.setText(String.format("%,.2f", calculo * 100));
+                    } else {
+                        tPorcentajeMantener.setText("0%");
+                    }
+
+                    break;
             }
 
         }
