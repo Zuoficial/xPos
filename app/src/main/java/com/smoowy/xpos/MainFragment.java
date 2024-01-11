@@ -1720,6 +1720,8 @@ public class MainFragment extends Fragment {
                 tCantidadMantener.setVisibility(View.GONE);
                 etPorcentaje.setVisibility(View.VISIBLE);
                 tPorcentajeMantener.setVisibility(View.GONE);
+                etPorcentajeModoPo.setVisibility(View.GONE);
+                etCantidadModoCA.setVisibility(View.GONE);
                 hayDecimales = false;
                 tTituloTamano.performClick();
                 break;

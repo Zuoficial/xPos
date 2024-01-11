@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#181818</color>
-    <color name="colorPrimaryDark">#181818</color>
+    <color name="colorPrimary">#000000</color>
+    <color name="colorPrimaryDark">#000000</color>
     <color name="colorAccent">#FFFFFF</color>
     <color name="perdida">#e53935</color>
     <color name="ganancia">#45c042</color>
-    <color name="fondoPrincipal">#181818</color>
-    <color name="colorMenu">#181818</color>
+    <color name="fondoPrincipal">#000000</color>
+    <color name="fondoDePantallaEmergente">#181818</color>
+    <color name="colorMenu">#000000</color>
     <color name="colorBotonForex">#4b1717</color>
     <color name="colorBotonForexClaro">#7e1d1d</color>
-    <color name="neutro">#95000000</color>
+    <color name="neutro">#000000</color>
     <color name="blanco">#ffffff</color>
 </resources>
