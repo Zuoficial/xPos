@@ -1392,9 +1392,12 @@ public class MainFragment extends Fragment {
                 etCortaDialogPorcentaje.requestFocus();
                 break;
             case R.id.b_salir_dialog_porcentaje:
-                if (!seLimpioDialogPorcentaje)
-                    etPorcentaje.setText(tPorcentajeDialogPorcentaje.getText().toString().replace("-", ""));
-                else
+                if (!seLimpioDialogPorcentaje) {
+                    if (idBotonMantener == 0)
+                        etPorcentaje.setText(tPorcentajeDialogPorcentaje.getText().toString().replace("-", ""));
+                    else if (idBotonMantener == 1)
+                        etPorcentajeModoPo.setText(tPorcentajeDialogPorcentaje.getText().toString().replace("-", ""));
+                } else
                     etPorcentaje.setText("");
                 inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
                 dialog.dismiss();
