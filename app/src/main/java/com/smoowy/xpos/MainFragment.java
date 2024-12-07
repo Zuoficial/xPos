@@ -1103,6 +1103,7 @@ public class MainFragment extends Fragment {
         });
 
         etDialogNombre.requestFocus();
+        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
 
         etDialogNombre.setOnKeyListener(((view, i, keyEvent) -> {
 
