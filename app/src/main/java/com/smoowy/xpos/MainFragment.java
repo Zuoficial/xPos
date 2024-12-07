@@ -53,9 +53,9 @@ public class MainFragment extends Fragment {
             resHayDatosDialogReferencia, resHayDatosDialogCantidad, hayDecimalesDoble;
     ClipboardManager clipboard;
     Button bApalancamiento, bLimpiarClaro, bRedondeoDescendente,
-            bRedondeoAscendente, bRegresarClaro, bPR, bXT, bId, bIdMenos, bIdMas, bBorrarTodo;
+            bRedondeoAscendente, bRegresarClaro, bPR, bNM, bId, bIdMenos, bIdMas, bBorrarTodo;
     SharedPreferences sharedPreferences;
-    String resCantidad, resCantidadMostrador, resPorcentaje, resReferencia, precision = "", resPrecision;
+    String resCantidad, resCantidadMostrador, resPorcentaje, resReferencia, precision = "", resPrecision, resBNM;
     InputMethodManager inputMethodManager;
 
     @Override
@@ -123,8 +123,8 @@ public class MainFragment extends Fragment {
         bRegresarClaro.setOnClickListener(onClickListener);
         bPR = view.findViewById(R.id.b_pr);
         bPR.setOnClickListener(onClickListener);
-        //  bXT = view.findViewById(R.id.b_xt);
-        // bXT.setOnClickListener(onClickListener);
+        bNM = view.findViewById(R.id.b_xt);
+        bNM.setOnClickListener(onClickListener);
         bId = view.findViewById(R.id.b_id);
         bIdMenos = view.findViewById(R.id.b_id_menos);
         bIdMas = view.findViewById(R.id.b_id_mas);
@@ -1086,6 +1086,47 @@ public class MainFragment extends Fragment {
         dialog.dismiss();
     };
 
+
+    EditText etDialogNombre;
+    TextView tDialogNombreTitulo;
+
+    private void crearDialogNombre() {
+        dialog = new Dialog(getActivity(), R.style.MyDialogStyle);
+        dialog.setContentView(R.layout.dialog_nm);
+        dialog.show();
+
+        etDialogNombre = dialog.findViewById(R.id.et_dialog_nm_ref);
+        tDialogNombreTitulo = dialog.findViewById(R.id.t_dialog_nm_titulo);
+
+        tDialogNombreTitulo.setOnClickListener(view -> {
+            etDialogNombre.getText().clear();
+        });
+
+        etDialogNombre.requestFocus();
+        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+        etDialogNombre.setOnKeyListener(((view, i, keyEvent) -> {
+
+            if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_ENTER) {
+
+
+                if (!etDialogNombre.getText().toString().isEmpty())
+                    bNM.setText(etDialogNombre.getText().toString());
+
+            }
+
+            inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+            respaldoDeET();
+            dialog.dismiss();
+            return true;
+
+        }
+
+        ));
+
+
+    }
+
+
     EditText etPrecioDialogPos, etPorcentajeDialogPos, etPrecisionDialogPos, etPrecisionDialogPosM;
     TextView tPrecioDialogPos, tPorcentajeDialogPos, tSuperiorDialogPos, tInferiorDialogPos, tActivadorMultiplicador, tActivadorMultiplicador2, tEsForexDialogPos;
     double precioDialogPos, porcentajeDialogPos, superiorDialogPos, inferiorDialogPos;
@@ -1248,6 +1289,7 @@ public class MainFragment extends Fragment {
                     tEsForexDialogPos.setText("N");
                 else
                     tEsForexDialogPos.setText("F");
+
 
                 break;
             }
@@ -1681,6 +1723,7 @@ public class MainFragment extends Fragment {
                     precioDialogReferencia = resPrecioDialogReferencia;
                     precision = resPrecision;
                     etPrecision.setText(precision);
+                    bNM.setText(resBNM);
                     seAplanoLimpiar = false;
                     checarTituloReferencia();
                 }
@@ -1702,6 +1745,7 @@ public class MainFragment extends Fragment {
                 tMargenC.setText("MC");
                 tSeguro.setText("Seguro");
                 tSeguroC.setText("SC");
+                bNM.setText("N");
                 yaRedondeo = false;
                 resPrecioXDialogPos = precioDialogPos;
                 resPorcentajeXDialogPos = porcentajeDialogPos;
@@ -1792,9 +1836,8 @@ public class MainFragment extends Fragment {
                 break;
 
             case R.id.b_xt:
-                Intent i = getActivity().getPackageManager().
-                        getLaunchIntentForPackage("com.smoowy.xTrade");
-                startActivity(i);
+
+                crearDialogNombre();
                 break;
 
             case R.id.b_pr:
@@ -1964,6 +2007,8 @@ public class MainFragment extends Fragment {
         resCantidadDialogReferencia = cantidadDialogReferencia;
         resPrecioDialogReferencia = precioDialogReferencia;
         resPrecision = precision;
+        resBNM = bNM.getText().toString();
+
     }
 
     private void ajusteRedondeo(boolean esAscendente) {
@@ -2340,6 +2385,7 @@ public class MainFragment extends Fragment {
                 etPorcentaje.setText(db.getPorcentajeEntero());
                 etReferencia.setText(db.getReferencia());
                 redondeoRef = Double.parseDouble(db.getRedondeoRef());
+                bNM.setText(db.getBotonNombre());
                 apalancamiento = db.getApalancamiento();
                 precioDialogPos = Double.parseDouble(db.getPrecioDialogPos());
                 porcentajeDialogPos = Double.parseDouble(db.getPorcentajeDialogPos());
@@ -2391,6 +2437,7 @@ public class MainFragment extends Fragment {
             db.setPorcentajeEntero(etPorcentaje.getText().toString());
             db.setReferencia(etReferencia.getText().toString());
             db.setRedondeoRef(String.valueOf(redondeoRef));
+            db.setBotonNombre(bNM.getText().toString());
             db.setApalancamiento(apalancamiento);
             db.setPrecioDialogPos(String.valueOf(precioDialogPos));
             db.setPorcentajeDialogPos(String.valueOf(porcentajeDialogPos));

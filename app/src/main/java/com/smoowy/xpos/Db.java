@@ -35,6 +35,8 @@ public class Db extends RealmObject {
     String cortaDialogPorcentaje;
     Boolean seLimpioDialogPorcentaje;
 
+    String botonNombre;
+
     public int getTipoApalancamiento() {
         return tipoApalancamiento;
     }
@@ -81,6 +83,14 @@ public class Db extends RealmObject {
 
     public void setRedondeoRef(String redondeoRef) {
         this.redondeoRef = redondeoRef;
+    }
+
+    public String getBotonNombre() {
+        return botonNombre;
+    }
+
+    public void setBotonNombre(String botonNombre) {
+        this.botonNombre = botonNombre;
     }
 
     public Integer getApalancamiento() {

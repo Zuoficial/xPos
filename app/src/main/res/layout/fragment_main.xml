@@ -450,7 +450,7 @@
         android:layout_marginBottom="16dp"
         android:background="@android:color/transparent"
         android:focusable="false"
-        android:text="xt"
+        android:text="N"
         android:textColor="@android:color/white"
         android:textSize="30dp"
         app:layout_constraintBottom_toBottomOf="parent"
