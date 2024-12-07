@@ -1103,7 +1103,7 @@ public class MainFragment extends Fragment {
         });
 
         etDialogNombre.requestFocus();
-        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+
         etDialogNombre.setOnKeyListener(((view, i, keyEvent) -> {
 
             if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_ENTER) {
@@ -2333,7 +2333,7 @@ public class MainFragment extends Fragment {
         Realm.init(getContext());
         RealmConfiguration config = new RealmConfiguration.Builder()
                 .name("xpos.realm")
-                .schemaVersion(0)
+                .schemaVersion(0).deleteRealmIfMigrationNeeded()
                 .build();
 
         Realm.setDefaultConfiguration(config);
@@ -2385,7 +2385,7 @@ public class MainFragment extends Fragment {
                 etPorcentaje.setText(db.getPorcentajeEntero());
                 etReferencia.setText(db.getReferencia());
                 redondeoRef = Double.parseDouble(db.getRedondeoRef());
-                bNM.setText(db.getBotonNombre());
+              bNM.setText(db.getBotonNombre());
                 apalancamiento = db.getApalancamiento();
                 precioDialogPos = Double.parseDouble(db.getPrecioDialogPos());
                 porcentajeDialogPos = Double.parseDouble(db.getPorcentajeDialogPos());
