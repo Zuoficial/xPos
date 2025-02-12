@@ -362,8 +362,8 @@ public class MainFragment extends Fragment {
         @Override
         public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-            if (!etDialogTamano.getText().toString().isEmpty() &&
-                    !etCantidadDialogTamano.getText().toString().isEmpty()) {
+            if (!etDialogTamano.getText().toString().isEmpty() && !etDialogTamano.getText().toString().equals(".") &&
+                    !etCantidadDialogTamano.getText().toString().equals(".") && !etCantidadDialogTamano.getText().toString().isEmpty()) {
 
 
                 double referencia = Double.parseDouble(etDialogTamano.getText().toString());
@@ -374,7 +374,7 @@ public class MainFragment extends Fragment {
                 } else {
                     tValorDialogTamano.setText(String.format("%,.0f", (referencia * cantidad)));
                 }
-            } else if (!etDialogTamano.getText().toString().isEmpty() &&
+            } else if (!etDialogTamano.getText().toString().isEmpty() && !etDialogTamano.getText().toString().equals(".") &&
                     etCantidadDialogTamano.getText().toString().isEmpty()) {
 
                 if (hayDecimalesDoble) {
