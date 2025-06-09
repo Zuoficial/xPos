@@ -495,9 +495,14 @@ public class MainFragment extends Fragment {
                         tTamanoC.setText(String.format("%,.2f", tamanoPosicionC));
                     else {
 
-                        tTamanoC.setText(String.format("%,." +
-                                (precision = etPrecision.getText().toString()) +
-                                "f", tamanoPosicionC));
+                        if (!etPrecision.getText().toString().equals(".")) {
+                            tTamanoC.setText(String.format("%,." +
+                                    (precision = etPrecision.getText().toString()) +
+                                    "f", tamanoPosicionC));
+                        } else {
+                            etPrecision.getText().clear();
+                        }
+
                     }
                 }
             }
@@ -2216,6 +2221,8 @@ public class MainFragment extends Fragment {
                     tLoteC.setText(String.format("%.4f", loteC));
                     tMargenC.setText(String.format("%,.2f", margenC));
                     tSeguroC.setText(String.format("%,.2f", necesarioC));
+
+
                 } else {
 
                     if (!tTamanoC.getText().toString().equals("TPC")) {
@@ -2386,7 +2393,7 @@ public class MainFragment extends Fragment {
                 etPorcentaje.setText(db.getPorcentajeEntero());
                 etReferencia.setText(db.getReferencia());
                 redondeoRef = Double.parseDouble(db.getRedondeoRef());
-              bNM.setText(db.getBotonNombre());
+                bNM.setText(db.getBotonNombre());
                 apalancamiento = db.getApalancamiento();
                 precioDialogPos = Double.parseDouble(db.getPrecioDialogPos());
                 porcentajeDialogPos = Double.parseDouble(db.getPorcentajeDialogPos());
