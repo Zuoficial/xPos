@@ -1943,7 +1943,13 @@ public class MainFragment extends Fragment {
                         }
                         if (!etPorcentajeModoPo.getText().toString().isEmpty() &&
                                 !etCantidadMostrador.getText().toString().equals(".")) {
-                            porcentajeMantenerGuardado = Double.parseDouble(etPorcentaje.getText().toString());
+                            try {
+                                porcentajeMantenerGuardado = Double.parseDouble(etPorcentaje.getText().toString());
+                            }
+                            catch (NumberFormatException n) {
+                                porcentajeMantenerGuardado = 0;
+                            }
+
                         }
                         etPorcentajeModoPo.getText().clear();
                         etPorcentajeModoPo.requestFocus();
